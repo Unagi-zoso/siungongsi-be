@@ -21,9 +21,17 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // swagger
+    // 기존 2.2.0 버전은 Spring Boot 3.4.x 버전에서 Controller Handler 호환성 문제가 있어 최신 버전으로 맞춘다.
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // DB
+    runtimeOnly 'com.mysql:mysql-connector-j'
 }
 
 jar {
