@@ -51,6 +51,8 @@ public class AuthController implements AuthControllerSpec {
           .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION));
     }
 
+    UserEntity user = authService.login(authRequest);
+
     return ResponseEntity.ok(
         ApiResponseWrapper.success(
             ApiResponseCode.AUTH_LOGIN_SUCCESS, LoginSuccessResponse.of(accessToken)));

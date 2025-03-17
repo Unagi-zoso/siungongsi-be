@@ -31,4 +31,26 @@ public class AuthServiceImpl implements AuthService {
     UserEntity userEntity = new UserEntity(authRequest.socialId(), authRequest.accessToken());
     return authRepository.save(userEntity);
   }
+
+  @Override
+  public UserEntity login(AuthRequest authRequest) {
+    String accessToken = authRequest.accessToken();
+
+    if (accessToken == null || accessToken.isEmpty()) {
+      throw new CustomException(
+          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION,
+          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION.getMessage());
+    }
+
+    Optional<UserEntity> user = authRepository.findBySocialId(authRequest.socialId());
+    if (!user.isPresent()) {
+      throw new CustomException(
+          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION,
+          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION.getMessage());
+    } else {
+      UserEntity userEntity = user.get();
+      userEntity.updateAccessToken(accessToken);
+      return authRepository.save(userEntity);
+    }
+  }
 }
