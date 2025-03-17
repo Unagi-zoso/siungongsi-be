@@ -1,7 +1,35 @@
 package org.bob.siungongsi.service;
 
-import org.bob.siungongsi.controller.dto.CompanyResponse.CompanyNameListResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public interface CompanyService {
-  CompanyNameListResponse getCompanyNames(String keyword);
+import org.bob.siungongsi.controller.dto.CompanyResponse;
+import org.bob.siungongsi.domain.CompanyNameAutofillEntity;
+import org.bob.siungongsi.repository.CompanyNameAutofillRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CompanyService {
+  private final CompanyNameAutofillRepository companyNameAutofillRepository;
+
+  @Autowired
+  public CompanyService(CompanyNameAutofillRepository companyNameAutofillRepository) {
+    this.companyNameAutofillRepository = companyNameAutofillRepository;
+  }
+
+  public CompanyResponse.CompanyNameListResponse getCompanyNames(String keyword) {
+    List<CompanyNameAutofillEntity> companies =
+        companyNameAutofillRepository.findByKeyword(keyword);
+
+    List<CompanyResponse.CompanyNameResponse> companyNameList =
+        companies.stream()
+            .map(
+                autofill ->
+                    new CompanyResponse.CompanyNameResponse(
+                        autofill.getCompanyId(), autofill.getCompanyName()))
+            .collect(Collectors.toList());
+
+    return new CompanyResponse.CompanyNameListResponse(companyNameList.size(), companyNameList);
+  }
 }
