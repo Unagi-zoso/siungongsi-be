@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.sentry.Sentry;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
@@ -44,12 +45,13 @@ public class MessageSender {
           .sendMessage(request)
           .exceptionally(
               ex -> {
-                System.err.println("Message sending failed: " + message);
+                Sentry.captureException(ex);
                 ex.printStackTrace();
                 return null;
               });
 
     } catch (JsonProcessingException e) {
+      Sentry.captureException(e);
       throw new RuntimeException("Failed to serialize message", e);
     }
   }

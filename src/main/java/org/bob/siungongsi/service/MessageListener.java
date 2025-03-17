@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.sentry.Sentry;
 import jakarta.annotation.PreDestroy;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
@@ -145,6 +146,7 @@ public class MessageListener {
 
       uploadGongsi(message);
     } catch (Exception e) {
+      Sentry.captureException(e);
       e.printStackTrace();
     }
   }
@@ -167,6 +169,7 @@ public class MessageListener {
               originalUrl + message.receiptNo(),
               s3Key));
     } catch (IOException e) {
+      Sentry.captureException(e);
       throw new RuntimeException(e);
     }
   }
