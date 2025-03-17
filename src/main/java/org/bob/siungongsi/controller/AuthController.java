@@ -6,20 +6,21 @@ import org.bob.siungongsi.controller.dto.AuthRequest;
 import org.bob.siungongsi.controller.dto.AuthResponse.LoginSuccessResponse;
 import org.bob.siungongsi.controller.dto.TermsResponse;
 import org.bob.siungongsi.controller.spec.AuthControllerSpec;
+import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
+import org.bob.siungongsi.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/auth") // 회원 관련 API의 기본 경로
 public class AuthController implements AuthControllerSpec {
+  private final AuthService authService;
+
+  public AuthController(AuthService authService) {
+    this.authService = authService;
+  }
 
   @Override
   @PostMapping("/register")
@@ -32,6 +33,8 @@ public class AuthController implements AuthControllerSpec {
       return ResponseEntity.status(401)
           .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION));
     }
+
+    UserEntity user = authService.authRequest(authRequest);
 
     return ResponseEntity.status(201)
         .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_REGISTER_SUCCESS));
@@ -47,6 +50,8 @@ public class AuthController implements AuthControllerSpec {
       return ResponseEntity.status(401)
           .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION));
     }
+
+    UserEntity user = authService.login(authRequest);
 
     return ResponseEntity.ok(
         ApiResponseWrapper.success(
