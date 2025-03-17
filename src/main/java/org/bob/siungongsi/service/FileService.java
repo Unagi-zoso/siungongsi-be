@@ -14,7 +14,9 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
@@ -60,8 +62,14 @@ public class FileService {
   }
 
   public String generateS3Key(String fileName) {
-    String now = LocalDate.now().toString().replace("-", "");
-    return s3KeyPrefix + now + "/" + fileName;
+    String extractedDate = fileName.length() >= 8 ? fileName.substring(0, 8) : "";
+
+    if (!extractedDate.matches("\\d{8}")) {
+      String now = LocalDate.now().toString().replace("-", "");
+      extractedDate = now;
+    }
+
+    return s3KeyPrefix + extractedDate + "/" + fileName;
   }
 
   public boolean isZipFile(byte[] file) {
@@ -70,5 +78,22 @@ public class FileService {
     } catch (IOException e) {
       return false;
     }
+  }
+
+  public boolean doesFileExist(String s3Key) {
+    try {
+      String bucketName = s3Properties.bucket();
+      s3Client.getObjectMetadata(new GetObjectMetadataRequest(bucketName, s3Key));
+      return true;
+    } catch (AmazonS3Exception e) {
+      if (e.getStatusCode() == 404) {
+        return false;
+      }
+      throw e;
+    }
+  }
+
+  public boolean doesFileNotExist(String s3Key) {
+    return !doesFileExist(s3Key);
   }
 }

@@ -132,18 +132,19 @@ public class MessageListener {
 
     try {
       String gongsiId = message.receiptNo();
-      byte[] file = openDartReader.fetchGongsiDocument(gongsiId);
-
-      if (!fileService.isZipFile(file)) {
-        ProcessingFailedGongsiEntity processingFailedGongsi =
-            new ProcessingFailedGongsiEntity(message.receiptNo());
-        processingFailedGongsiRepository.save(processingFailedGongsi);
-        return;
-      }
-
       String s3Key = fileService.generateS3Key(gongsiId + ".zip");
-      fileService.uploadFile(s3Key, new ByteArrayInputStream(file), file.length);
 
+      if (fileService.doesFileNotExist(s3Key)) {
+        byte[] file = openDartReader.fetchGongsiDocument(gongsiId);
+
+        if (!fileService.isZipFile(file)) {
+          ProcessingFailedGongsiEntity processingFailedGongsi =
+              new ProcessingFailedGongsiEntity(message.receiptNo());
+          processingFailedGongsiRepository.save(processingFailedGongsi);
+          return;
+        }
+        fileService.uploadFile(s3Key, new ByteArrayInputStream(file), file.length);
+      }
       uploadGongsi(message);
     } catch (Exception e) {
       Sentry.captureException(e);
@@ -165,6 +166,7 @@ public class MessageListener {
           new GongsiEntity(
               company,
               summarized,
+              message.receiptNo(),
               message.receiptTitle(),
               originalUrl + message.receiptNo(),
               s3Key));
