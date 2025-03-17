@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bob.siungongsi.domain.TodayProcessedGongsiEntity;
-import org.bob.siungongsi.domain.TodayProcessedGongsiRepository;
+import org.bob.siungongsi.repository.TodayProcessedGongsiRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 

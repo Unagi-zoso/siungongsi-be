@@ -3,7 +3,7 @@ package org.bob.siungongsi.service;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bob.siungongsi.domain.CompanyRepository;
+import org.bob.siungongsi.repository.CompanyRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
