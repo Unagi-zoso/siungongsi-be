@@ -21,8 +21,8 @@ public class TodayProcessedGongsiEntity extends BaseTimeEntity {
   @Column(name = "id", nullable = false, updatable = false)
   private Long id;
 
-  @Column(name = "gongsi_id", nullable = false, unique = true)
-  private String gongsiId; // 공시 ID (OpenDart 공시 식별자)
+  @Column(name = "gongsi_code", nullable = false, unique = true)
+  private String gongsiCode; // 공시 ID (OpenDart 공시 식별자)
 
   @Column(name = "processed_at", nullable = false, updatable = false)
   private LocalDateTime processedAt;
@@ -31,8 +31,8 @@ public class TodayProcessedGongsiEntity extends BaseTimeEntity {
   protected TodayProcessedGongsiEntity() {}
 
   // 생성자
-  public TodayProcessedGongsiEntity(String gongsiId) {
-    this.gongsiId = gongsiId;
+  public TodayProcessedGongsiEntity(String gongsiCode) {
+    this.gongsiCode = gongsiCode;
     this.processedAt = LocalDateTime.now(); // 생성 시점 자동 설정
   }
 
@@ -40,8 +40,8 @@ public class TodayProcessedGongsiEntity extends BaseTimeEntity {
     return id;
   }
 
-  public String getGongsiId() {
-    return gongsiId;
+  public String getGongsiCode() {
+    return gongsiCode;
   }
 
   public LocalDateTime getProcessedAt() {
