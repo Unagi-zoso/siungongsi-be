@@ -9,9 +9,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "gongsi")
+@Table(
+    name = "gongsi",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"gongsi_code"})})
 public class GongsiEntity extends ModifiableEntity {
 
   @Id
@@ -25,6 +28,9 @@ public class GongsiEntity extends ModifiableEntity {
 
   @Column(name = "content_summary", columnDefinition = "TEXT", nullable = false)
   private String contentSummary;
+
+  @Column(name = "gongsi_code", unique = true, nullable = false)
+  private String gongsiCode;
 
   @Column(name = "gongsi_title", nullable = false)
   private String gongsiTitle;
@@ -42,11 +48,13 @@ public class GongsiEntity extends ModifiableEntity {
   public GongsiEntity(
       CompanyEntity company,
       String contentSummary,
+      String gongsiCode,
       String gongsiTitle,
       String originalGongsiLink,
       String originalFileS3Key) {
     this.company = company;
     this.contentSummary = contentSummary;
+    this.gongsiCode = gongsiCode;
     this.gongsiTitle = gongsiTitle;
     this.originalGongsiLink = originalGongsiLink;
     this.originalFileS3Key = originalFileS3Key;
@@ -62,6 +70,10 @@ public class GongsiEntity extends ModifiableEntity {
 
   public String getContentSummary() {
     return contentSummary;
+  }
+
+  public String getGongsiCode() {
+    return gongsiCode;
   }
 
   public String getGongsiTitle() {
