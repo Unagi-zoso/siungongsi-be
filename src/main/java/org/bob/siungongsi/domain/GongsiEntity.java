@@ -26,7 +26,7 @@ public class GongsiEntity extends ModifiableEntity {
   @Column(name = "content_summary", columnDefinition = "TEXT", nullable = false)
   private String contentSummary;
 
-  @Column(name = "gongsi_title", length = 50, nullable = false)
+  @Column(name = "gongsi_title", nullable = false)
   private String gongsiTitle;
 
   @Column(name = "original_gongsi_link", length = 300, nullable = false)
