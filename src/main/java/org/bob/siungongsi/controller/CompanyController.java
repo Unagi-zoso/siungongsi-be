@@ -26,6 +26,7 @@ public class CompanyController implements CompanyControllerSpec {
       @RequestParam String keyword) {
 
     CompanyNameListResponse companies = companyService.getCompanyNames(keyword);
+
     // 구현 없음 (Swagger 문서화만 유지)
     return ResponseEntity.ok(
         ApiResponseWrapper.success(
