@@ -1,5 +1,7 @@
 package org.bob.siungongsi.service;
 
+import static org.bob.siungongsi.util.TextUtil.removeMarkdown;
+
 import org.bob.siungongsi.client.RetryClientHttpRequestInterceptor.RetriesExceededException;
 import org.bob.siungongsi.client.clientinterface.GoogleAiClientInterface;
 import org.bob.siungongsi.client.dto.GoogleAiDtos.GoogleAiRequest;
@@ -30,13 +32,13 @@ public class GongsiSummarizer {
     try {
       // 🔥 1. 기본 모델 (`gemini-2.0-flash`) 요청
       GoogleAiResponse response = googleAiClientInterface.summarizeWithGemini2Flash(request);
-      return response.getSummary();
+      return removeMarkdown(response.getSummary());
     } catch (RetriesExceededException e) {
       try {
         // 🔥 2. 대체 모델 (`gemini-2.0-flash-lite`) 요청
         GoogleAiResponse fallbackResponse =
             googleAiClientInterface.summarizeWithGemini2FlashLite(request);
-        return fallbackResponse.getSummary();
+        return removeMarkdown(fallbackResponse.getSummary());
       } catch (RetriesExceededException ex) {
         throw new RuntimeException("모든 모델 요청 실패", ex);
       }
