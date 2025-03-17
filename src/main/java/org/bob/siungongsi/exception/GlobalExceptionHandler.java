@@ -1,5 +1,6 @@
 package org.bob.siungongsi.exception;
 
+import io.sentry.Sentry;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(CustomException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST) // 400 오류 반환
   public ApiResponseWrapper handleCustomException(CustomException ex) {
+    Sentry.captureException(ex);  // Sentry에 예외 전송
     return ApiResponseWrapper.error(ex.getErrorCode());
   }
 
@@ -21,6 +23,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(IllegalArgumentException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST) // 400 오류 반환
   public ApiResponseWrapper handleIllegalArgumentException(IllegalArgumentException ex) {
+    Sentry.captureException(ex);  // Sentry에 예외 전송
     return ApiResponseWrapper.error(ApiResponseCode.GONGSI_INVALID_SORT_TYPE);
   }
 
@@ -28,6 +31,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NullPointerException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500 오류 반환
   public ApiResponseWrapper handleNullPointerException(NullPointerException ex) {
+    Sentry.captureException(ex);  // Sentry에 예외 전송
     return ApiResponseWrapper.error(ApiResponseCode.GONGSI_INTERNAL_SERVER_ERROR);
   }
 
@@ -35,6 +39,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500 오류 반환
   public ApiResponseWrapper handleException(Exception ex) {
+    Sentry.captureException(ex);  // Sentry에 예외 전송
     return ApiResponseWrapper.error(ApiResponseCode.GONGSI_INTERNAL_SERVER_ERROR);
   }
 }
