@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bob.siungongsi.controller.dto.CompanyResponse;
-import org.bob.siungongsi.model.CompanyNameAutofill;
+import org.bob.siungongsi.domain.CompanyNameAutofillEntity;
 import org.bob.siungongsi.repository.CompanyNameAutofillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,8 @@ public class CompanyServiceImpl implements CompanyService {
 
   @Override
   public CompanyResponse.CompanyNameListResponse getCompanyNames(String keyword) {
-    List<CompanyNameAutofill> companies = companyNameAutofillRepository.findByKeyword(keyword);
+    List<CompanyNameAutofillEntity> companies =
+        companyNameAutofillRepository.findByKeyword(keyword);
 
     List<CompanyResponse.CompanyNameResponse> companyNameList =
         companies.stream()

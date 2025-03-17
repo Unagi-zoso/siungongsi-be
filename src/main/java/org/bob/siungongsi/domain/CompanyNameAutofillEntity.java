@@ -1,4 +1,4 @@
-package org.bob.siungongsi.model;
+package org.bob.siungongsi.domain;
 
 import java.time.LocalDateTime;
 
@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "company_name_autofill")
-public class CompanyNameAutofill {
+public class CompanyNameAutofillEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class CompanyNameAutofill {
   @Column(name = "created_dt", nullable = false)
   private LocalDateTime createdDate;
 
-  public CompanyNameAutofill() {}
+  public CompanyNameAutofillEntity() {}
 
   public Long getCompanyId() {
     return companyId;
