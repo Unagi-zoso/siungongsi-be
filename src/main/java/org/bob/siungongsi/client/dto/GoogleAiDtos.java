@@ -6,8 +6,8 @@ public class GoogleAiDtos {
   public record GoogleAiRequest(List<Content> contents, GenerationConfig generationConfig) {
     public static GoogleAiRequest fromText(String prompt, String text) {
       return new GoogleAiRequest(
-          List.of(new Content("user", List.of(new Part(prompt + text)))),
-          new GenerationConfig(1, 40, 0.95, 8192, "text/plain"));
+          List.of(new Content("user", List.of(new Part(prompt), new Part(text)))),
+          new GenerationConfig(0, 25, 0.85, 1500, "text/plain"));
     }
 
     public record Content(String role, List<Part> parts) {}

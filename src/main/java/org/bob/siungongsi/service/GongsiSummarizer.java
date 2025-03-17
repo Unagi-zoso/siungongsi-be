@@ -17,7 +17,14 @@ public class GongsiSummarizer {
   }
 
   public String summarizeText(String text) {
-    String prompt = "다음 문서를 요약해 주세요:\n마침표나 문맥이 끊길때마다 개행을 꼭 넣어주세요.\n\n";
+    String prompt =
+        "다음 문서를 요약해 주세요.\n"
+            + "반드시 일반 텍스트로만 작성하고, 표, 강조 표시(예: **, __, *), 마크다운 문법(#, -, • 등)을 절대 사용하지 마세요.\n"
+            + "모든 문서는 동일한 형식으로 정리해야 합니다.\n"
+            + "주요 내용을 개요, 세부 정보, 일정 순서로 정리해 주세요.\n"
+            + "문장은 간결하게 작성하고, 문맥이 끊길 때마다 개행해 주세요.\n"
+            + "항목 구분은 기호 없이 문장으로 표현하고, 제목은 따로 표시하지 마세요.\n"
+            + "각 항목은 새로운 줄에서 시작해야 합니다.\n";
     GoogleAiRequest request = GoogleAiRequest.fromText(prompt, Jsoup.parse(text).text());
 
     try {
