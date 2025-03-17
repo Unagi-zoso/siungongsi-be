@@ -4,12 +4,9 @@ import java.util.List;
 
 public class GoogleAiDtos {
   public record GoogleAiRequest(List<Content> contents, GenerationConfig generationConfig) {
-    public static GoogleAiRequest fromText(String text) {
+    public static GoogleAiRequest fromText(String prompt, String text) {
       return new GoogleAiRequest(
-          List.of(
-              new Content(
-                  "user",
-                  List.of(new Part("다음 문서를 요약해 주세요:\n마침표나 문맥이 끊길때마다 개행을 꼭 넣어주세요.\n\n" + text)))),
+          List.of(new Content("user", List.of(new Part(prompt + text)))),
           new GenerationConfig(1, 40, 0.95, 8192, "text/plain"));
     }
 
