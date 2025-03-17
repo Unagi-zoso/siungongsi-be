@@ -3,7 +3,7 @@ name: Deploy Backend to AWS EC2
 on:
   push:
     branches:
-      - develop  # develop 브랜치 푸시 시 실행
+      - AhnSunday-dev-deploy  # develop 브랜치 푸시 시 실행
 
 jobs:
   build-and-push-backend:
