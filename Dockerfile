@@ -1,10 +1,15 @@
-# OpenJDK 21 기반 이미지 사용
-FROM eclipse-temurin:21-jdk AS build
-
+FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
 
-COPY target/*.jar app.jar
+COPY . .
+RUN ./gradlew clean build -x test
+
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+COPY --from=builder /app/build/libs/*.jar app.jar
 
 CMD ["java", "-jar", "app.jar"]
 
+# 6. 포트 노출
 EXPOSE 8080
