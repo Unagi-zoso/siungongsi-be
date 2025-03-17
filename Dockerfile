@@ -9,7 +9,9 @@ WORKDIR /app
 
 COPY --from=builder /app/build/libs/*.jar app.jar
 
+# Sentry 환경 변수 추가
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+
 CMD ["java", "-jar", "app.jar"]
 
-# 6. 포트 노출
 EXPOSE 8080

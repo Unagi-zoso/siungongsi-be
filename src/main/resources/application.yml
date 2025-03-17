@@ -23,3 +23,9 @@ spring:
     api-docs:
       enabled: true
       path: /v3/api-docs  # API 문서 경로 설정
+
+sentry:
+  dsn: ${SENTRY_DSN:}
+  tracesSampleRate: 1.0 # 1.0 = 100% 트레이스 샘플링 (0.1 = 10%)
+  environment: develop
+  release: dev-siungongsi-be
