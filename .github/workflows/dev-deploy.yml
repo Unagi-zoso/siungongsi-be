@@ -19,11 +19,16 @@ jobs:
         with:
             distribution: 'temurin'
             java-version: '21'
+      
+      - name: Fix Code Formatting
+        run: ./gradlew spotlessApply
 
       - name: Set Environment Variables
         run: echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> $GITHUB_ENV
 
       - name: Build Spring Boot JAR
+        env:
+            SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }} 
         run: |
           chmod +x gradlew
           ./gradlew clean build -x test
@@ -77,6 +82,7 @@ jobs:
                 echo "Running new backend container..."
                 docker run -d --name siungongsi-backend -p 8080:8080 \
                     --restart always \
+                    -e TZ=Asia/Seoul \
                     -e DB_HOST=${{ secrets.DB_HOST }} \
                     -e DB_PORT=${{ secrets.DB_PORT }} \
                     -e DB_USER=${{ secrets.DB_USER }} \
@@ -89,4 +95,10 @@ jobs:
                     -e SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
                     -e OPENDART_API_KEY=${{ secrets.OPENDART_API_KEY }} \
                     -e GOOGLE_AI_API_KEY=${{ secrets.GOOGLE_AI_API_KEY }} \
+                    -e SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
+                    -e SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
+                    -e SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
+                    -e AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
+                    -e AWS_SQS_QUEUE_NAME=${{ secrets.AWS_SQS_QUEUE_NAME }} \
+                    -e AWS_SQS_QUEUE_URL=${{ secrets.AWS_SQS_QUEUE_URL }} \
                     ${{ secrets.ECR_REGISTRY }}/siungongsi:latest-backend
