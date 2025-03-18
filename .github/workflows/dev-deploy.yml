@@ -20,11 +20,14 @@ jobs:
             distribution: 'temurin'
             java-version: '21'
 
+      - name: Set Environment Variables
+        run: echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> $GITHUB_ENV
+
       - name: Build Spring Boot JAR
         run: |
-            chmod +x gradlew
-            ./gradlew clean build -x test -Dsentry.auth.token=${{ secrets.SENTRY_AUTH_TOKEN }}
-            
+          chmod +x gradlew
+          ./gradlew clean build -x test
+
       - name: Configure AWS Credentials
         run: |
             aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
