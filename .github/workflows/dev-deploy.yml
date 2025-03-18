@@ -23,8 +23,8 @@ jobs:
       - name: Build Spring Boot JAR
         run: |
             chmod +x gradlew
-            ./gradlew clean build -x test
-
+            ./gradlew clean build -x test -Dsentry.auth.token=${{ secrets.SENTRY_AUTH_TOKEN }}
+            
       - name: Configure AWS Credentials
         run: |
             aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
