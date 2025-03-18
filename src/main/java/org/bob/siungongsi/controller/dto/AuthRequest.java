@@ -1,3 +1,7 @@
 package org.bob.siungongsi.controller.dto;
 
-public record AuthRequest(String accessToken, String socialId) {}
+public class AuthRequest {
+  public record RegisterRequest(String accessToken, String socialId) {}
+
+  public record LoginRequest(String accessToken) {}
+}

@@ -62,7 +62,8 @@ public interface AuthControllerSpec {
                   })
             })
       })
-  ResponseEntity<ApiResponseWrapper<LoginSuccessResponse>> loginUser(AuthRequest requestDto);
+  ResponseEntity<ApiResponseWrapper<LoginSuccessResponse>> loginUser(
+      AuthRequest.LoginRequest requestDto);
 
   @Operation(
       summary = "회원가입",
@@ -121,7 +122,7 @@ public interface AuthControllerSpec {
                   })
             })
       })
-  ResponseEntity<ApiResponseWrapper<?>> registerUser(AuthRequest requestDto);
+  ResponseEntity<ApiResponseWrapper<?>> registerUser(AuthRequest.RegisterRequest requestDto);
 
   @Operation(
       summary = "약관 조회",
