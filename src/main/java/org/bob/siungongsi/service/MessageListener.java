@@ -18,6 +18,7 @@ import org.bob.siungongsi.repository.CompanyRepository;
 import org.bob.siungongsi.repository.GongsiRepository;
 import org.bob.siungongsi.repository.ProcessingFailedGongsiRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,6 +36,7 @@ import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 
 @Service
+@ConditionalOnProperty(name = "sqs.listener.enabled", havingValue = "true", matchIfMissing = false)
 public class MessageListener {
 
   private final SqsAsyncClient sqsAsyncClient;
@@ -183,6 +185,7 @@ public class MessageListener {
 }
 
 @Component
+@ConditionalOnProperty(name = "sqs.listener.enabled", havingValue = "true", matchIfMissing = false)
 class SqsShutdownListener implements ApplicationListener<ContextClosedEvent> {
 
   private final SqsAsyncClient sqsAsyncClient;
