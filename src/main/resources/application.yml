@@ -2,6 +2,10 @@ spring:
   application:
     name: siungongsi
 
+  threads:
+    virtual:
+      enabled: false
+
   datasource:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}
     username: ${DB_USER}
@@ -29,3 +33,5 @@ sentry:
   tracesSampleRate: 1.0 # 1.0 = 100% 트레이스 샘플링 (0.1 = 10%)
   environment: develop
   release: dev-siungongsi-be
+
+  
