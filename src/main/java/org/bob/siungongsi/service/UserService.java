@@ -25,7 +25,7 @@ public class UserService {
 
     // 인증된 사용자의 socialId를 가져오기
     String socialId = (String) authentication.getPrincipal();
-    System.out.println("socialId: " + kakaoAuthService.getUserId(socialId));
+    System.out.println("userId: " + kakaoAuthService.getUserId(socialId));
     return kakaoAuthService.getUserId(socialId); // socialId로 유저 ID 조회
   }
 }

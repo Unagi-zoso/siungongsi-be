@@ -16,7 +16,7 @@ public class UserEntity {
   @Column(name = "social_id", nullable = false, length = 50, unique = true)
   private String socialId;
 
-  @Column(name = "access_token", nullable = false, length = 50)
+  @Column(name = "access_token", nullable = false, length = 2048)
   private String accessToken;
 
   @Column(name = "push_token_id", length = 150)
