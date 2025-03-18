@@ -28,7 +28,7 @@ spring:
       sqs:
         queue:
           name: ${AWS_SQS_QUEUE_NAME}
-          url: ${AWS_SQS_QUEUE_URL}/siungongsi
+          url: ${AWS_SQS_QUEUE_URL}
           region: ${AWS_REGION}
           max-number-of-messages: 5
           wait-time-seconds: 20
