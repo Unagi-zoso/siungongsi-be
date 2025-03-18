@@ -3,8 +3,8 @@ WORKDIR /app
 
 COPY . .
 
-# 빌드 시 환경 변수를 사용하지 않도록 변경
-RUN --mount=type=secret,id=sentry_token ./gradlew clean build -x test
+# 🔹 빌드 시 Sentry 관련 태스크 제외
+RUN ./gradlew clean build -x test -x sentryBundleSourcesJava -x sentryUploadSourceBundleJava
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
