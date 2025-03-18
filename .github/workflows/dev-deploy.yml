@@ -21,6 +21,8 @@ jobs:
             java-version: '21'
 
       - name: Build Spring Boot JAR
+        env:
+            SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }} 
         run: |
             chmod +x gradlew
             ./gradlew clean build -x test
