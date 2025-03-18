@@ -59,4 +59,25 @@ public class AuthService {
     userEntity.updateAccessToken(accessToken);
     return authRepository.save(userEntity);
   }
+  // 회원탈퇴 로직: 인증된 사용자의 계정을 삭제
+  public void withdrawUser(String accessToken) {
+    // 액세스 토큰이 없으면 예외 처리
+    if (accessToken == null || accessToken.isEmpty()) {
+      throw new CustomException(
+              ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION,
+              ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION.getMessage());
+    }
+
+    Optional<UserEntity> user = authRepository.findByAccessToken(accessToken);
+
+    // 유효하지 않은 액세스 토큰인 경우 예외 처리
+    if (!user.isPresent()) {
+      throw new CustomException(
+              ApiResponseCode.AUTH_USER_NOT_FOUND,
+              ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
+    }
+
+    // 사용자 계정 삭제
+    authRepository.delete(user.get());
+  }
 }
