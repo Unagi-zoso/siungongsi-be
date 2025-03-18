@@ -260,4 +260,5 @@ gradle-app.setting
 
 node_modules/
 
+.env
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,intellij+iml,java,windows,macos

@@ -36,6 +36,16 @@ dependencies {
     // 기존 2.2.0 버전은 Spring Boot 3.4.x 버전에서 Controller Handler 호환성 문제가 있어 최신 버전으로 맞춘다.
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 
+    //S3를 위한 라이브러리
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.671'  // AWS S3 SDK
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'  // Spring Cloud AWS
+
+    // ✅ Spring Cloud AWS 3.x (AWS SDK v2 기반)
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.0.2'
+
+    // 불필요한 HTML 태그 제거를 위한 라이브러리
+    implementation 'org.jsoup:jsoup:1.18.3'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
