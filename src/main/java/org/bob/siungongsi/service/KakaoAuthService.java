@@ -1,7 +1,10 @@
 package org.bob.siungongsi.service;
 
 import java.util.Map;
+import java.util.Optional;
 
+import org.bob.siungongsi.domain.UserEntity;
+import org.bob.siungongsi.repository.AuthRepository;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -10,6 +13,12 @@ import org.springframework.web.client.RestTemplate;
 public class KakaoAuthService {
 
   private final RestTemplate restTemplate = new RestTemplate();
+
+  private final AuthRepository authRepository;
+
+  public KakaoAuthService(AuthRepository authRepository) {
+    this.authRepository = authRepository;
+  }
 
   public String validateAccessToken(String accessToken) {
     String url = "https://kapi.kakao.com/v1/user/access_token_info";
@@ -42,5 +51,10 @@ public class KakaoAuthService {
     }
 
     return null; // 유효하지 않거나 예외 발생 시 null 반환
+  }
+
+  public Long getUserId(String socialId) {
+    Optional<UserEntity> user = authRepository.findBySocialId(socialId);
+    return user.map(UserEntity::getId).orElse(null);
   }
 }
