@@ -19,6 +19,9 @@ jobs:
         with:
             distribution: 'temurin'
             java-version: '21'
+      
+      - name: Fix Code Formatting
+        run: ./gradlew spotlessApply
 
       - name: Build Spring Boot JAR
         env:
