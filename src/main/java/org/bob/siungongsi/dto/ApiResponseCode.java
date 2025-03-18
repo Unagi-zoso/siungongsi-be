@@ -19,6 +19,7 @@ public enum ApiResponseCode {
   AUTH_ACCESS_TOKEN_EXPIRED(2401, "access_token_expired"),
   AUTH_USER_NOT_FOUND(2402, "user_not_found"),
   AUTH_TERMS_NOT_FOUND(2403, "terms_not_found"),
+  AUTH_USER_ALREADY_EXISTS(2404, "user_already_exists"),
   AUTH_INTERNAL_SERVER_ERROR(2500, "internal_server_error"),
 
   // 유저 관련 응답 코드 (3)

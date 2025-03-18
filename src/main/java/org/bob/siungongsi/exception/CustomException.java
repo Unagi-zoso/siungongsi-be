@@ -1,7 +1,8 @@
 package org.bob.siungongsi.exception;
 
-import io.sentry.Sentry;
 import org.bob.siungongsi.dto.ApiResponseCode;
+
+import io.sentry.Sentry;
 
 public class CustomException extends RuntimeException {
   private final ApiResponseCode errorCode;
