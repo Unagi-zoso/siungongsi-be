@@ -84,6 +84,6 @@ sentry {
     includeSourceContext = true
 
     org = "siungongsi"
-    projectName = "siungongsi"
-    authToken = System.getenv("SENTRY_AUTH_TOKEN") ?: ""
+    projectName = "dev-siungongsi-be"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
