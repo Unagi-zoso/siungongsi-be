@@ -2,9 +2,7 @@ FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
 
 COPY . .
-
-# 🔹 빌드 시 Sentry 관련 태스크 제외
-RUN ./gradlew clean build -x test -x sentryBundleSourcesJava -x sentryUploadSourceBundleJava
+RUN ./gradlew clean build -x test
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

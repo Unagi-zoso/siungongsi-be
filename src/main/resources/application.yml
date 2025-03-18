@@ -24,40 +24,6 @@ spring:
       enabled: true
       path: /v3/api-docs  # API 문서 경로 설정
 
-  threads:
-    virtual:
-      enabled: true
-
-  cloud:
-    aws:
-      credentials:
-        access-key: ${AWS_ACCESS_KEY_ID}
-        secret-key: ${AWS_SECRET_ACCESS_KEY}
-      s3:
-        bucket: ${AWS_BUCKET_NAME}
-        region: ${AWS_REGION}
-      sqs:
-        queue:
-          name: ${AWS_SQS_QUEUE_NAME}
-          url: ${AWS_SQS_QUEUE_URL}
-          region: ${AWS_REGION}
-          max-number-of-messages: 5
-          wait-time-seconds: 20
-          visibility-timeout: 30
-
-server:
-  shutdown: graceful
-
-opendart:
-  api:
-    key: ${OPENDART_API_KEY}
-  viewer:
-    url: https://dart.fss.or.kr/dsaf001/main.do?rcpNo=
-
-google-ai:
-  api:
-    key: ${GOOGLE_AI_API_KEY}
-
 sentry:
   dsn: ${SENTRY_DSN:}
   tracesSampleRate: 1.0 # 1.0 = 100% 트레이스 샘플링 (0.1 = 10%)
