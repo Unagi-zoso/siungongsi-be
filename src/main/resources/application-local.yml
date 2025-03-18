@@ -1,0 +1,63 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  cloud:
+    aws:
+      credentials:
+        access-key: local-access-key
+        secret-key: local-secret-key
+      s3:
+        bucket: local-bucket
+        region: us-east-1
+      sqs:
+        queue:
+          name: local-queue
+          url: https://sqs.local.com/1234
+          region: us-east-1
+          max-number-of-messages: 1
+          wait-time-seconds: 5
+          visibility-timeout: 10
+
+sentry:
+  enabled: false
+
+doc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+
+scheduler:
+  enabled: false
+sqs:
+  listener:
+    enabled: false
+
+
+opendart:
+  api:
+    key: "dummy"
+  viewer:
+    url: https://dart.fss.or.kr/dsaf001/main.do?rcpNo=
+
+google-ai:
+  api:
+    key: "dummy"

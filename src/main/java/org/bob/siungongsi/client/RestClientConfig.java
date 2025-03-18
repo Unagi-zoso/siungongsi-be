@@ -22,8 +22,7 @@ public class RestClientConfig {
   private static final String GOOGLE_AI_STUDIO_URL =
       "https://generativelanguage.googleapis.com/v1beta";
 
-  @Value("${spring.threads.virtual.enabled}")
-  private boolean virtualThreadEnabled;
+  private boolean virtualThreadEnabled = true;
 
   @Bean
   public OpenDartClientInterface openDartClient(@Value("${opendart.api.key}") String apiKey) {

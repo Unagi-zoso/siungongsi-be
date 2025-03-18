@@ -23,12 +23,15 @@ jobs:
       - name: Fix Code Formatting
         run: ./gradlew spotlessApply
 
+      - name: Set Environment Variables
+        run: echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> $GITHUB_ENV
+
       - name: Build Spring Boot JAR
         env:
             SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }} 
         run: |
-            chmod +x gradlew
-            ./gradlew clean build -x test
+          chmod +x gradlew
+          ./gradlew clean build -x test
 
       - name: Configure AWS Credentials
         run: |
