@@ -82,6 +82,7 @@ jobs:
                 echo "Running new backend container..."
                 docker run -d --name siungongsi-backend -p 8080:8080 \
                     --restart always \
+                    -e TZ=Asia/Seoul \
                     -e DB_HOST=${{ secrets.DB_HOST }} \
                     -e DB_PORT=${{ secrets.DB_PORT }} \
                     -e DB_USER=${{ secrets.DB_USER }} \
