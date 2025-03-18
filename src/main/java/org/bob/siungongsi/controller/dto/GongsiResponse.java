@@ -15,13 +15,13 @@ public class GongsiResponse {
   }
 
   public record GongsiItem(
-      int gongsiId,
+      long gongsiId,
       String gongsiTitle,
       String companyName,
       String publishedDatetime,
       String content) {
     public static GongsiItem of(
-        int gongsiId,
+        long gongsiId,
         String gongsiTitle,
         String companyName,
         String publishedDatetime,
@@ -37,9 +37,9 @@ public class GongsiResponse {
   }
 
   public record GongsiInfo(
-      int id, String title, String date, int viewCount, String content, String originalUrl) {
+      long id, String title, String date, int viewCount, String content, String originalUrl) {
     public static GongsiInfo of(
-        int id, String title, String date, int viewCount, String content, String originalUrl) {
+        long id, String title, String date, int viewCount, String content, String originalUrl) {
       return new GongsiInfo(id, title, date, viewCount, content, originalUrl);
     }
   }

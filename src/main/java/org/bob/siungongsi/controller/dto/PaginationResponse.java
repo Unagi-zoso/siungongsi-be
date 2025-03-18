@@ -1,7 +1,7 @@
 package org.bob.siungongsi.controller.dto;
 
-public record PaginationResponse(int currentPage, int totalPages, int totalResults) {
-  public static PaginationResponse of(int currentPage, int totalPages, int totalResults) {
+public record PaginationResponse(long currentPage, long totalPages, long totalResults) {
+  public static PaginationResponse of(long currentPage, long totalPages, long totalResults) {
     return new PaginationResponse(currentPage, totalPages, totalResults);
   }
 }
