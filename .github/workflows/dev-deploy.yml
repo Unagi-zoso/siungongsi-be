@@ -84,6 +84,6 @@ jobs:
                     -e AWS_REGION=${{ secrets.AWS_REGION }} \
                     -e SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \
                     -e SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
-                    -e GOOGLE_AI_API_KEY=${{ secrets.GOOGLE_AI_API_KEY }} \
                     -e OPENDART_API_KEY=${{ secrets.OPENDART_API_KEY }} \
+                    -e GOOGLE_AI_API_KEY=${{ secrets.GOOGLE_AI_API_KEY }} \
                     ${{ secrets.ECR_REGISTRY }}/siungongsi:latest-backend
