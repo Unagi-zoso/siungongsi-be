@@ -1,13 +1,12 @@
 FROM eclipse-temurin:21-jdk AS builder
-
 WORKDIR /app
 
 COPY . .
 
-RUN ./gradlew clean build -x test
+# 빌드 시 환경 변수를 사용하지 않도록 변경
+RUN --mount=type=secret,id=sentry_token ./gradlew clean build -x test
 
 FROM eclipse-temurin:21-jre
-
 WORKDIR /app
 
 COPY --from=builder /app/build/libs/*.jar app.jar
