@@ -34,11 +34,14 @@ sentry:
   environment: develop
   release: dev-siungongsi-be
 
+# ✅ AWS 관련 설정 (spring: 아래가 아니라 최상위 레벨에 위치해야 함)
 aws:
-  region: ${AWS_REGION}
-  access-key: ${AWS_ACCESS_KEY_ID}
-  secret-key: ${AWS_SECRET_ACCESS_KEY}
+  region: ${AWS_REGION}  # AWS 리전 (예: ap-northeast-2)
+  access-key: ${AWS_ACCESS_KEY_ID}  # AWS Access Key
+  secret-key: ${AWS_SECRET_ACCESS_KEY}  # AWS Secret Key
 
-external:
-  opendart-api-key: ${OPENDART_API_KEY}
-  google-ai-api-key: ${GOOGLE_AI_API_KEY}
+  sqs:
+    queue-url: https://sqs.ap-northeast-2.amazonaws.com/699475931681/siungongsi
+
+  s3:
+    bucket-name: siungongsi-dev   # S3 버킷 이름
