@@ -35,10 +35,7 @@ spring:
           visibility-timeout: 10
 
 sentry:
-  dsn: ${SENTRY_DSN}
-  tracesSampleRate: 0.0 # 로컬에서는 Sentry 비활성화
-  environment: local
-  release: local-siungongsi-be
+  enabled: false
 
 doc:
   swagger-ui:
