@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.bob.siungongsi.domain.UserEntity;
-import org.bob.siungongsi.repository.AuthRepository;
+import org.bob.siungongsi.repository.UserRepository;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,9 +14,9 @@ public class KakaoAuthService {
 
   private final RestTemplate restTemplate = new RestTemplate();
 
-  private final AuthRepository authRepository;
+  private final UserRepository authRepository;
 
-  public KakaoAuthService(AuthRepository authRepository) {
+  public KakaoAuthService(UserRepository authRepository) {
     this.authRepository = authRepository;
   }
 
