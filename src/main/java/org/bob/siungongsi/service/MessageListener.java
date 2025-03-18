@@ -5,8 +5,6 @@ import static org.bob.siungongsi.util.GongsiDataProcessingTimeChecker.isNotWithi
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.bob.siungongsi.client.OpenDartReader;
 import org.bob.siungongsi.config.SqsProperties;
@@ -34,6 +32,7 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
 @Service
 @ConditionalOnProperty(name = "sqs.listener.enabled", havingValue = "true", matchIfMissing = false)
@@ -86,25 +85,29 @@ public class MessageListener {
       return;
     }
 
-    try {
-      ReceiveMessageRequest receiveRequest =
-          ReceiveMessageRequest.builder()
-              .queueUrl(queueUrl)
-              .maxNumberOfMessages(maxNumberOfMessages)
-              .waitTimeSeconds(waitTimeSeconds)
-              .build();
+    ReceiveMessageRequest receiveRequest =
+        ReceiveMessageRequest.builder()
+            .queueUrl(queueUrl)
+            .maxNumberOfMessages(maxNumberOfMessages)
+            .waitTimeSeconds(waitTimeSeconds)
+            .build();
 
-      List<Message> messages = sqsAsyncClient.receiveMessage(receiveRequest).get().messages();
-
-      for (Message message : messages) {
-        if (handleMessage(message)) {
-          deleteMessage(message);
-        }
-      }
-
-    } catch (InterruptedException | ExecutionException e) {
-      e.printStackTrace();
-    }
+    sqsAsyncClient
+        .receiveMessage(receiveRequest)
+        .thenApply(ReceiveMessageResponse::messages)
+        .thenAccept(
+            messages -> {
+              for (Message message : messages) {
+                if (handleMessage(message)) {
+                  deleteMessage(message);
+                }
+              }
+            })
+        .exceptionally(
+            e -> {
+              e.printStackTrace();
+              return null;
+            });
   }
 
   private boolean handleMessage(Message message) {

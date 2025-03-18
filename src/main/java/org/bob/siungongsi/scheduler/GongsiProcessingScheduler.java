@@ -5,6 +5,7 @@ import static org.bob.siungongsi.util.GongsiDataProcessingTimeChecker.isNotWithi
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.bob.siungongsi.client.OpenDartReader;
 import org.bob.siungongsi.client.dto.OpenDartDtos.GongsiData;
@@ -39,7 +40,10 @@ public class GongsiProcessingScheduler {
             LocalDate.now(KOREA_ZONE), LocalDate.now(KOREA_ZONE));
 
     for (GongsiData notice : response) {
-      messageSender.sendGongsiMessage(GongsiMessage.from(notice));
+      CompletableFuture.runAsync(
+          () -> {
+            messageSender.sendGongsiMessage(GongsiMessage.from(notice));
+          });
     }
   }
 }
