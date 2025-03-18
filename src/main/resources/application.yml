@@ -4,13 +4,3 @@ spring:
 
 server:
   shutdown: graceful
-
-opendart:
-  api:
-    key: ${OPENDART_API_KEY}
-  viewer:
-    url: https://dart.fss.or.kr/dsaf001/main.do?rcpNo=
-
-google-ai:
-  api:
-    key: ${GOOGLE_AI_API_KEY}

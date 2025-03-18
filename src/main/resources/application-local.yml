@@ -50,3 +50,14 @@ scheduler:
 sqs:
   listener:
     enabled: false
+
+
+opendart:
+  api:
+    key: "dummy"
+  viewer:
+    url: https://dart.fss.or.kr/dsaf001/main.do?rcpNo=
+
+google-ai:
+  api:
+    key: "dummy"
