@@ -45,7 +45,8 @@ jobs:
 
       - name: Build Backend Docker Image
         run: |
-            docker build -t ${{ secrets.ECR_REGISTRY }}/siungongsi:latest-backend .
+            docker build --build-arg SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+            -t ${{ secrets.ECR_REGISTRY }}/siungongsi:latest-backend .
             docker tag ${{ secrets.ECR_REGISTRY }}/siungongsi:latest-backend \
             ${{ secrets.ECR_REGISTRY }}/siungongsi:${{ env.VERSION_TAG }}-backend
 
