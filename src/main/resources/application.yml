@@ -2,24 +2,5 @@ spring:
   application:
     name: siungongsi
 
-  datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  jpa:
-      hibernate:
-        ddl-auto: none
-      show-sql: false
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.MySQLDialect
-
-  doc:
-    swagger-ui:
-      enabled: true
-      path: /swagger-ui  # Swagger UI 경로 변경
-    api-docs:
-      enabled: true
-      path: /v3/api-docs  # API 문서 경로 설정
+server:
+  shutdown: graceful

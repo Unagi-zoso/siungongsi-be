@@ -1,8 +1,17 @@
+// sentry
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.3'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.diffplug.spotless' version '6.21.0' // spotless 플러그인 추가
+    // sentry
+    id "io.sentry.jvm.gradle" version "5.3.0"
 }
 
 group = 'org.bob'
@@ -27,11 +36,24 @@ dependencies {
     // 기존 2.2.0 버전은 Spring Boot 3.4.x 버전에서 Controller Handler 호환성 문제가 있어 최신 버전으로 맞춘다.
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 
+    //S3를 위한 라이브러리
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.671'  // AWS S3 SDK
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'  // Spring Cloud AWS
+
+    // ✅ Spring Cloud AWS 3.x (AWS SDK v2 기반)
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.0.2'
+
+    // 불필요한 HTML 태그 제거를 위한 라이브러리
+    implementation 'org.jsoup:jsoup:1.18.3'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // DB
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // sentry
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.4.0'
 }
 
 jar {
@@ -63,4 +85,15 @@ spotless {
         endWithNewline()
         removeUnusedImports() // 사용하지 않는 import 제거
     }
+}
+
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "siungongsi"
+    projectName = "dev-siungongsi-be"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
