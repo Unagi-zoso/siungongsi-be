@@ -32,6 +32,11 @@ public class TodayProcessedGongsiManager {
     }
   }
 
+  public void removeProcessedGongsi(String gongsiCode) {
+    processedGongsiCodes.remove(gongsiCode);
+    todayProcessedGongsiRepository.deleteByGongsiCode(gongsiCode);
+  }
+
   public boolean isProcessed(String gongsiCode) {
     return processedGongsiCodes.contains(gongsiCode)
         || todayProcessedGongsiRepository.existsByGongsiCode(gongsiCode);

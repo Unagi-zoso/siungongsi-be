@@ -43,7 +43,10 @@ public enum ApiResponseCode {
   NOTIFICATION_ALREADY_EXISTS(5402, "notifications_already_exist"),
   NOTIFICATION_REQUIRED_STATUS(5403, "required_notification_status"),
   NOTIFICATION_NOT_FOUND(5404, "notification_not_found"),
-  NOTIFICATION_INTERNAL_SERVER_ERROR(5500, "internal_server_error");
+  NOTIFICATION_INTERNAL_SERVER_ERROR(5500, "internal_server_error"),
+
+  // 처리 실패 공시 관련 응답 코드 (123)
+  FAILED_GONGSI_NOT_FOUND(123400, "failed_gongsi_not_found");
 
   private final int code;
   private final String message;

@@ -64,3 +64,6 @@ opendart:
 google-ai:
   api:
     key: ${GOOGLE_AI_API_KEY}
+
+admin:
+  key: ${ADMIN_KEY}
