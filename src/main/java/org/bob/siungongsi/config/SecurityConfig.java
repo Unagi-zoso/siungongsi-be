@@ -29,6 +29,7 @@ public class SecurityConfig {
           authorizeRequests.anyRequest().permitAll();
         });
 
+    http.cors(AbstractHttpConfigurer::disable);
     http.csrf(AbstractHttpConfigurer::disable);
 
     http.addFilterBefore(
