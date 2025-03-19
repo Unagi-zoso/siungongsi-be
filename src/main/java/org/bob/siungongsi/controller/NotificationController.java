@@ -1,6 +1,7 @@
 package org.bob.siungongsi.controller;
 
 import org.bob.siungongsi.controller.dto.NotificationRequest.NotificationCompanyRequest;
+import org.bob.siungongsi.controller.dto.NotificationResponse;
 import org.bob.siungongsi.controller.spec.NotificationControllerSpec;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
@@ -20,7 +21,12 @@ public class NotificationController implements NotificationControllerSpec {
   @GetMapping("/recommended-companies")
   public ResponseEntity<ApiResponseWrapper<?>> getRecommendedCompanies(
       @RequestHeader("Authorization") String authorization) {
-    return null;
+    NotificationResponse.NotificationRecommendedCompanyList companies =
+        notificationService.recommendedCompanyNotification();
+
+    return ResponseEntity.ok(
+        ApiResponseWrapper.success(
+            ApiResponseCode.NOTIFICATION_RECOMMENDED_COMPANY_SUCCESS, companies));
   }
 
   @PostMapping
