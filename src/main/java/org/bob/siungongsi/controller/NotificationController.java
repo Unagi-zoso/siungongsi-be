@@ -36,7 +36,10 @@ public class NotificationController implements NotificationControllerSpec {
   @DeleteMapping("/{companyId}")
   public ResponseEntity<ApiResponseWrapper<?>> removeNotification(
       @RequestHeader("Authorization") String authorization,
-      @PathVariable("companyId") int companyId) {
-    return null;
+      @PathVariable("companyId") Long companyId) {
+
+    notificationService.deleteNotification(companyId);
+    return ResponseEntity.ok(
+        ApiResponseWrapper.success(ApiResponseCode.NOTIFICATION_UNSUBSCRIBE_SUCCESS, null));
   }
 }

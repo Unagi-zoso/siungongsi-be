@@ -32,6 +32,14 @@ public class NotificationService {
     }
 
     notificationRepository.save(new NotiHistoryEntity(userId, notificationRequest.companyId()));
-    System.out.println(userId);
+  }
+
+  public void deleteNotification(Long companyId) {
+    Long userId = userService.getAuthenticatedUserId();
+    if (notificationRepository.existsByUserIdAndCompanyId(userId, companyId)) {
+      notificationRepository.deleteByUserIdAndCompanyId(companyId, userId);
+    } else {
+      throw new CustomException(ApiResponseCode.NOTIFICATION_NOT_FOUND, "존재하지 않는 알림 내역입니다.");
+    }
   }
 }
