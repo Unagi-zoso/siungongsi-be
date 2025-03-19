@@ -1,6 +1,5 @@
 package org.bob.siungongsi.controller.dto;
 
 public class NotificationRequest {
-
-  public record NotificationCompanyRequest(int companyId) {}
+  public record NotificationCompanyRequest(Long companyId) {}
 }
