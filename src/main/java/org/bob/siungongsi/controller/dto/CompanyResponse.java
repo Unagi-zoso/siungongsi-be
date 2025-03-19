@@ -17,8 +17,8 @@ public class CompanyResponse {
     }
   }
 
-  public record CompanyInfo(int id, String name, double prdyCtr, boolean isSubscribed) {
-    public static CompanyInfo of(int id, String name, double prdyCtr, boolean isSubscribed) {
+  public record CompanyInfo(long id, String name, double prdyCtr, boolean isSubscribed) {
+    public static CompanyInfo of(long id, String name, double prdyCtr, boolean isSubscribed) {
       return new CompanyInfo(id, name, prdyCtr, isSubscribed);
     }
   }

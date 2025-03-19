@@ -2,16 +2,13 @@ package org.bob.siungongsi.controller;
 
 import static org.bob.siungongsi.dto.ApiResponseCode.GONGSI_LIST_SUCCESS;
 
-import java.util.List;
-
 import org.bob.siungongsi.controller.dto.CompanyResponse.CompanyInfo;
-import org.bob.siungongsi.controller.dto.GongsiResponse;
 import org.bob.siungongsi.controller.dto.GongsiResponse.GongsiDetailResponse;
 import org.bob.siungongsi.controller.dto.GongsiResponse.GongsiInfo;
 import org.bob.siungongsi.controller.dto.GongsiResponse.GongsiListResponse;
-import org.bob.siungongsi.controller.dto.PaginationResponse;
 import org.bob.siungongsi.controller.spec.GongsiControllerSpec;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
+import org.bob.siungongsi.service.GongsiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +17,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 @RestController
 @RequestMapping("/v1/gongsi") // 공시 API의 기본 경로
 public class GongsiController implements GongsiControllerSpec {
+
+  private final GongsiService gongsiService;
+
+  public GongsiController(GongsiService gongsiService) {
+    this.gongsiService = gongsiService;
+  }
 
   @Override
   @GetMapping
@@ -31,19 +34,11 @@ public class GongsiController implements GongsiControllerSpec {
       @RequestParam(defaultValue = "8") Integer size,
       @RequestParam(required = false) String startDate,
       @RequestParam(required = false) String endDate) {
-    return ResponseEntity.ok(
-        ApiResponseWrapper.success(
-            GONGSI_LIST_SUCCESS,
-            GongsiListResponse.of(
-                List.of(
-                    GongsiResponse.GongsiItem.of(
-                        101,
-                        "삼성전자, 새로운 반도체 기술 발표",
-                        "삼성전자",
-                        "25.02.25 16:04",
-                        "삼성전자가 새로운 반도체 기술을 공개하며...")),
-                1,
-                PaginationResponse.of(1, 3, 25))));
+
+    GongsiListResponse response =
+        gongsiService.getGongsiList(companyId, sort, content, page, size, startDate, endDate);
+
+    return ResponseEntity.ok(ApiResponseWrapper.success(GONGSI_LIST_SUCCESS, response));
   }
 
   @Override
