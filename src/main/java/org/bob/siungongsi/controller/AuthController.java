@@ -61,11 +61,11 @@ public class AuthController implements AuthControllerSpec {
           .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION));
     }
 
-    UserEntity user = authService.login(authRequest, socialId);
+    boolean isUser = authService.login(authRequest, socialId) != null;
 
     return ResponseEntity.ok(
         ApiResponseWrapper.success(
-            ApiResponseCode.AUTH_LOGIN_SUCCESS, LoginSuccessResponse.of(accessToken)));
+            ApiResponseCode.AUTH_LOGIN_SUCCESS, LoginSuccessResponse.of(accessToken, isUser)));
   }
 
   @Override

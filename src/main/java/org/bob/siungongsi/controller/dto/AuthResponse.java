@@ -6,9 +6,10 @@ public class AuthResponse {
 
   public record LoginSuccessResponse(
       @Schema(description = "JWT 액세스 토큰", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
-          String accessToken) {
-    public static LoginSuccessResponse of(String accessToken) {
-      return new LoginSuccessResponse(accessToken);
+          String accessToken,
+      boolean isUser) {
+    public static LoginSuccessResponse of(String accessToken, boolean isUser) {
+      return new LoginSuccessResponse(accessToken, isUser);
     }
   }
 }
