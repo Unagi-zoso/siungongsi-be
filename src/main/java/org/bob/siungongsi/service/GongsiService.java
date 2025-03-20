@@ -6,28 +6,72 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.bob.siungongsi.client.clientinterface.KoreanInvestmentClient;
+import org.bob.siungongsi.controller.dto.CompanyResponse;
 import org.bob.siungongsi.controller.dto.GongsiResponse;
 import org.bob.siungongsi.controller.dto.PaginationResponse;
 import org.bob.siungongsi.domain.CompanyEntity;
 import org.bob.siungongsi.domain.GongsiEntity;
+import org.bob.siungongsi.domain.GongsiViewHistoryEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.repository.CompanyRepository;
 import org.bob.siungongsi.repository.GongsiRepository;
+import org.bob.siungongsi.repository.GongsiViewHistoryRepository;
+import org.bob.siungongsi.repository.NotificationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class GongsiService {
   private final GongsiRepository gongsiRepository;
   private final CompanyRepository companyRepository;
+  private final GongsiViewHistoryRepository gongsiViewHistoryRepository;
+  private final NotificationRepository notificationRepository;
+  private final KoreanInvestmentClient koreanInvestmentClient;
 
-  public GongsiService(GongsiRepository gongsiRepository, CompanyRepository companyRepository) {
+  public GongsiService(
+      GongsiRepository gongsiRepository,
+      CompanyRepository companyRepository,
+      GongsiViewHistoryRepository gongsiViewHistoryRepository,
+      NotificationRepository notificationRepository,
+      KoreanInvestmentClient koreanInvestmentClient) {
     this.gongsiRepository = gongsiRepository;
     this.companyRepository = companyRepository;
+    this.gongsiViewHistoryRepository = gongsiViewHistoryRepository;
+    this.notificationRepository = notificationRepository;
+    this.koreanInvestmentClient = koreanInvestmentClient;
+  }
+
+  private Long getCurrentUserId() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null
+        && authentication.isAuthenticated()
+        && !"anonymousUser".equals(authentication.getPrincipal().toString())) {
+      try {
+        return Long.valueOf(authentication.getName());
+      } catch (Exception e) {
+        System.err.println("Error extracting user ID: " + e.getMessage());
+      }
+    }
+    return null; // 익명의 유저면 null 반환
+  }
+
+  public Long getCompanyIdByGongsiId(Long gongsiId) {
+    GongsiEntity gongsi =
+        gongsiRepository
+            .findById(gongsiId)
+            .orElseThrow(
+                () ->
+                    new CustomException(
+                        ApiResponseCode.GONGSI_NOT_FOUND, "Gongsi not found with ID: " + gongsiId));
+    return Long.valueOf(gongsi.getCompany().getId());
   }
 
   public GongsiResponse.GongsiListResponse getGongsiList(
@@ -99,6 +143,68 @@ public class GongsiService {
         PaginationResponse.of(page, gongsiPage.getTotalPages(), gongsiPage.getTotalElements());
 
     return GongsiResponse.GongsiListResponse.of(gongsiItems, gongsiItems.size(), pagination);
+  }
+
+  @Transactional
+  public GongsiResponse.GongsiDetailResponse getGongsiDetail(Long gongsiId, String ipAddress) {
+    GongsiEntity gongsi =
+        gongsiRepository
+            .findById(gongsiId)
+            .orElseThrow(
+                () ->
+                    new CustomException(
+                        ApiResponseCode.GONGSI_NOT_FOUND, "Gongsi not found with ID: " + gongsiId));
+
+    if (!gongsiViewHistoryRepository.existsByGongsiIdAndIpAddress(gongsiId, ipAddress)) {
+      GongsiViewHistoryEntity viewHistory = new GongsiViewHistoryEntity(gongsiId, ipAddress);
+      gongsiViewHistoryRepository.save(viewHistory);
+    }
+
+    int viewCount = gongsiViewHistoryRepository.countUniqueViewsByGongsiId(gongsiId);
+
+    String formattedDate =
+        gongsi.getCreatedDt().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm"));
+
+    GongsiResponse.GongsiInfo gongsiInfo =
+        GongsiResponse.GongsiInfo.of(
+            gongsi.getId(),
+            gongsi.getGongsiTitle(),
+            formattedDate,
+            viewCount,
+            gongsi.getContentSummary(),
+            gongsi.getOriginalGongsiLink());
+
+    CompanyEntity company = gongsi.getCompany();
+
+    boolean isSubscribed = false;
+    try {
+      Long userId = getCurrentUserId();
+      if (userId != null) {
+        isSubscribed =
+            notificationRepository.existsByUserIdAndCompanyId(
+                userId, Long.valueOf(company.getId()));
+      }
+    } catch (Exception e) {
+      System.err.println("Error checking subscription status: " + e.getMessage());
+    }
+
+    double prdyCtr = 0.0;
+    try {
+      String stockCode = company.getStockCode();
+
+      if (stockCode != null && !stockCode.isEmpty()) {
+        prdyCtr = koreanInvestmentClient.getPrdyCtr(stockCode);
+      }
+    } catch (Exception e) {
+      System.err.println("Error fetching prdyCtr: " + e.getMessage());
+      prdyCtr = 0.0; // Default value
+    }
+
+    CompanyResponse.CompanyInfo companyInfo =
+        CompanyResponse.CompanyInfo.of(
+            company.getId(), company.getCompanyName(), prdyCtr, isSubscribed);
+
+    return GongsiResponse.GongsiDetailResponse.of(gongsiInfo, companyInfo);
   }
 
   private GongsiResponse.GongsiItem mapToGongsiItem(GongsiEntity entity, boolean includeContent) {
