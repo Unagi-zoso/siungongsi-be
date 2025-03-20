@@ -67,3 +67,12 @@ google-ai:
 
 admin:
   key: ${ADMIN_KEY}
+
+korean:
+  investment:
+    appkey: ${KOREAN_INVESTMENT_APPKEY}
+    secretkey: ${KOREAN_INVESTMENT_SECRETKEY}
+    token:
+      url: https://openapi.koreainvestment.com:9443/oauth2/tokenP
+    stock:
+      url: https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price
