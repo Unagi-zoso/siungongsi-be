@@ -76,3 +76,6 @@ korean:
       url: https://openapi.koreainvestment.com:9443/oauth2/tokenP
     stock:
       url: https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price
+
+fcm:
+  key: ${FCM_KEY}
