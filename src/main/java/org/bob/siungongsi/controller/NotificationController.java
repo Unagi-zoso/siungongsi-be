@@ -65,8 +65,27 @@ public class NotificationController implements NotificationControllerSpec {
       @RequestHeader("Authorization") String authorization,
       @PathVariable("companyId") Long companyId) {
 
-    notificationService.deleteNotification(companyId);
-    return ResponseEntity.ok(
-        ApiResponseWrapper.success(ApiResponseCode.NOTIFICATION_UNSUBSCRIBE_SUCCESS, null));
+    try {
+      notificationService.deleteNotification(companyId);
+      return ResponseEntity.ok(
+          ApiResponseWrapper.success(ApiResponseCode.NOTIFICATION_UNSUBSCRIBE_SUCCESS, null));
+    } catch (CustomException e) {
+      HttpStatus status;
+
+      if (e.getErrorCode() == ApiResponseCode.NOTIFICATION_NOT_FOUND) {
+        status = HttpStatus.CONFLICT; // 409
+      } else if (e.getErrorCode() == ApiResponseCode.NOTIFICATION_INVALID_COMPANY_ID) {
+        status = HttpStatus.NOT_FOUND; // 404
+      } else if (e.getErrorCode() == ApiResponseCode.NOTIFICATION_REQUIRED_STATUS) {
+        status = HttpStatus.FORBIDDEN; // 403
+      } else {
+        status = HttpStatus.BAD_REQUEST; // 기본값
+      }
+
+      return ResponseEntity.status(status).body(ApiResponseWrapper.error(e.getErrorCode()));
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(ApiResponseWrapper.error(ApiResponseCode.NOTIFICATION_INTERNAL_SERVER_ERROR));
+    }
   }
 }

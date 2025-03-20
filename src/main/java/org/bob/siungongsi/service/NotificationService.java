@@ -58,11 +58,21 @@ public class NotificationService {
 
   public void deleteNotification(Long companyId) {
     Long userId = userService.getAuthenticatedUserId();
-    if (notificationRepository.existsByUserIdAndCompanyId(userId, companyId)) {
-      notificationRepository.deleteByUserIdAndCompanyId(companyId, userId);
-    } else {
+
+    if (!notificationRepository.existsByUserIdAndCompanyId(userId, companyId)) {
       throw new CustomException(ApiResponseCode.NOTIFICATION_NOT_FOUND, "존재하지 않는 알림 내역입니다.");
     }
+
+    if (!companyRepository.existsById(companyId)) {
+      throw new CustomException(ApiResponseCode.NOTIFICATION_INVALID_COMPANY_ID, "존재하지 않는 기업입니다.");
+    }
+
+    if (userRepository.findNotiFlagById(userId) == 0) {
+      throw new CustomException(
+          ApiResponseCode.NOTIFICATION_REQUIRED_STATUS, "유저가 알림을 동의하지 않았습니다. ");
+    }
+
+    notificationRepository.deleteByUserIdAndCompanyId(companyId, userId);
   }
 
   public NotificationResponse.NotificationRecommendedCompanyList recommendedCompanyNotification() {
