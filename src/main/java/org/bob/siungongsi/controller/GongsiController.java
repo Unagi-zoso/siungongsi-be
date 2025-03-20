@@ -1,27 +1,37 @@
 package org.bob.siungongsi.controller;
 
+import static org.bob.siungongsi.dto.ApiResponseCode.GONGSI_DETAIL_SUCCESS;
 import static org.bob.siungongsi.dto.ApiResponseCode.GONGSI_LIST_SUCCESS;
 
-import org.bob.siungongsi.controller.dto.CompanyResponse.CompanyInfo;
+import org.bob.siungongsi.controller.dto.CompanyResponse;
 import org.bob.siungongsi.controller.dto.GongsiResponse.GongsiDetailResponse;
-import org.bob.siungongsi.controller.dto.GongsiResponse.GongsiInfo;
 import org.bob.siungongsi.controller.dto.GongsiResponse.GongsiListResponse;
 import org.bob.siungongsi.controller.spec.GongsiControllerSpec;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
+import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.service.GongsiService;
+import org.bob.siungongsi.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/v1/gongsi") // 공시 API의 기본 경로
 public class GongsiController implements GongsiControllerSpec {
 
   private final GongsiService gongsiService;
+  private final UserService userService;
+  private final NotificationRepository notificationRepository;
 
-  public GongsiController(GongsiService gongsiService) {
+  public GongsiController(
+      GongsiService gongsiService,
+      UserService userService,
+      NotificationRepository notificationRepository) {
     this.gongsiService = gongsiService;
+    this.userService = userService;
+    this.notificationRepository = notificationRepository;
   }
 
   @Override
@@ -42,24 +52,58 @@ public class GongsiController implements GongsiControllerSpec {
   }
 
   @Override
-  @GetMapping("/{gongsild}")
+  @GetMapping("/{gongsiId}")
   public ResponseEntity<ApiResponseWrapper<GongsiDetailResponse>> getGongsiDetail(
-      @Parameter(description = "공시 ID", example = "101", required = true) @PathVariable("gongsild")
-          Long gongsild) {
+      @Parameter(description = "공시 ID", example = "101", required = true) @PathVariable("gongsiId")
+          Long gongsiId,
+      HttpServletRequest request) {
 
-    GongsiInfo gongsi =
-        GongsiInfo.of(
-            101,
-            "삼성전자, 새로운 반도체 기술 발표",
-            "25.02.25 16:04",
-            1200,
-            "삼성전자가 새로운 반도체 기술을 공개하며...",
-            "https://hellothere.xxx");
+    String ipAddress = getClientIpAddress(request);
 
-    CompanyInfo company = CompanyInfo.of(1, "삼성전자", 2.43, false);
+    boolean isSubscribed = false;
 
-    GongsiDetailResponse response = GongsiDetailResponse.of(gongsi, company);
+    try {
+      Long userId = userService.getAuthenticatedUserId();
 
-    return ResponseEntity.ok(ApiResponseWrapper.success(GONGSI_LIST_SUCCESS, response));
+      if (userId != null) {
+        Long companyId = gongsiService.getCompanyIdByGongsiId(gongsiId);
+
+        isSubscribed = notificationRepository.existsByUserIdAndCompanyId(userId, companyId);
+      }
+    } catch (Exception e) {
+    }
+
+    GongsiDetailResponse response = gongsiService.getGongsiDetail(gongsiId, ipAddress);
+
+    if (response != null) {
+      CompanyResponse.CompanyInfo companyInfo = response.company();
+      CompanyResponse.CompanyInfo updatedCompanyInfo =
+          CompanyResponse.CompanyInfo.of(
+              companyInfo.id(), companyInfo.name(), companyInfo.prdyCtr(), isSubscribed);
+
+      response = GongsiDetailResponse.of(response.gongsi(), updatedCompanyInfo);
+    }
+
+    return ResponseEntity.ok(ApiResponseWrapper.success(GONGSI_DETAIL_SUCCESS, response));
+  }
+
+  private String getClientIpAddress(HttpServletRequest request) {
+    String ipAddress = request.getHeader("X-Forwarded-For");
+    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+      ipAddress = request.getHeader("Proxy-Client-IP");
+    }
+    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+      ipAddress = request.getHeader("WL-Proxy-Client-IP");
+    }
+    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+      ipAddress = request.getHeader("HTTP_CLIENT_IP");
+    }
+    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+      ipAddress = request.getHeader("HTTP_X_FORWARDED_FOR");
+    }
+    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+      ipAddress = request.getRemoteAddr();
+    }
+    return ipAddress;
   }
 }

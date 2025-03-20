@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Tag(name = "공시 API", description = "공시 정보를 조회하는 API")
 public interface GongsiControllerSpec {
@@ -87,7 +88,7 @@ public interface GongsiControllerSpec {
   ResponseEntity<ApiResponseWrapper<GongsiListResponse>> getGongsiList(
       @Parameter(description = "조회 대상 회사 ID", example = "1") Long companyId,
       @Parameter(description = "정렬 기준 (latest, views, oldest)", example = "latest") String sort,
-      @Parameter(description = "내용 포함 여부", example = "false") Boolean content,
+      @Parameter(description = "내용 포함 여부", example = "false") Boolean includeContent,
       @Parameter(description = "페이지 번호 (1~100)", example = "1") Integer page,
       @Parameter(description = "페이지 크기 (10~100)", example = "8") Integer size,
       @Parameter(description = "시작 날짜 (yyyy-MM-dd)", example = "2025-03-01") String startDate,
@@ -151,5 +152,6 @@ public interface GongsiControllerSpec {
             })
       })
   ResponseEntity<ApiResponseWrapper<GongsiDetailResponse>> getGongsiDetail(
-      @Parameter(description = "공시 ID", example = "101", required = true) Long gongsild);
+      @Parameter(description = "공시 ID", example = "101", required = true) Long gongsiId,
+      HttpServletRequest request);
 }

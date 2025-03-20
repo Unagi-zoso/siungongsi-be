@@ -3,6 +3,7 @@ package org.bob.siungongsi.dto;
 public enum ApiResponseCode {
   // 공시 관련 응답 코드 (1)
   GONGSI_LIST_SUCCESS(1200, "get_gongsi_list_success"),
+  GONGSI_DETAIL_SUCCESS(1201, "get_detail_gongsi_success"),
   GONGSI_INVALID_SORT_TYPE(1400, "invalid_sort_type"),
   GONGSI_INVALID_COMPANY_ID(1401, "invalid_company_id"),
   GONGSI_INVALID_DATE_PAIR(1402, "invalid_date_pair"),
@@ -44,6 +45,9 @@ public enum ApiResponseCode {
   NOTIFICATION_REQUIRED_STATUS(5403, "required_notification_status"),
   NOTIFICATION_NOT_FOUND(5404, "notification_not_found"),
   NOTIFICATION_INTERNAL_SERVER_ERROR(5500, "internal_server_error"),
+
+  // 외부 API 관련 응답 코드 (6)
+  EXTERNAL_API_ERROR(6400, "external_api_error"),
 
   // 처리 실패 공시 관련 응답 코드 (123)
   FAILED_GONGSI_NOT_FOUND(123400, "failed_gongsi_not_found");
