@@ -21,6 +21,7 @@ public class NotificationController implements NotificationControllerSpec {
   @GetMapping("/recommended-companies")
   public ResponseEntity<ApiResponseWrapper<?>> getRecommendedCompanies(
       @RequestHeader("Authorization") String authorization) {
+
     NotificationResponse.NotificationRecommendedCompanyList companies =
         notificationService.recommendedCompanyNotification();
 
@@ -35,6 +36,7 @@ public class NotificationController implements NotificationControllerSpec {
       @RequestBody NotificationCompanyRequest request) {
 
     notificationService.createNotification(request);
+
     return ResponseEntity.ok(
         ApiResponseWrapper.success(ApiResponseCode.NOTIFICATION_SUBSCRIPTION_SUCCESS, null));
   }
@@ -45,6 +47,7 @@ public class NotificationController implements NotificationControllerSpec {
       @PathVariable("companyId") Long companyId) {
 
     notificationService.deleteNotification(companyId);
+
     return ResponseEntity.ok(
         ApiResponseWrapper.success(ApiResponseCode.NOTIFICATION_UNSUBSCRIBE_SUCCESS, null));
   }
