@@ -83,22 +83,6 @@ public class GongsiService {
       String startDate,
       String endDate) {
 
-    Sort.Direction direction;
-    String sortProperty;
-
-    if ("latest".equals(sort)) {
-      direction = Sort.Direction.DESC;
-      sortProperty = "createdDt";
-    } else if ("oldest".equals(sort)) {
-      direction = Sort.Direction.ASC;
-      sortProperty = "createdDt";
-    } else {
-      throw new CustomException(
-          ApiResponseCode.GONGSI_INVALID_SORT_TYPE, "Invalid sort parameter: " + sort);
-    }
-
-    Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, sortProperty));
-
     LocalDate parsedStartDate = null;
     LocalDate parsedEndDate = null;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -117,26 +101,70 @@ public class GongsiService {
     }
 
     Page<GongsiEntity> gongsiPage;
+    Pageable pageable = PageRequest.of(page - 1, size);
 
-    if (companyId != null) {
-      CompanyEntity company =
-          companyRepository
-              .findById(companyId.toString())
-              .orElseThrow(
-                  () ->
-                      new CustomException(
-                          ApiResponseCode.GONGSI_COMPANY_NOT_FOUND,
-                          "Company not found with ID: " + companyId));
-      gongsiPage =
-          gongsiRepository.findByCompanyAndDateRange(
-              company, parsedStartDate, parsedEndDate, pageable);
+    if ("views".equals(sort)) {
+      if (companyId != null) {
+        CompanyEntity company =
+            companyRepository
+                .findById(companyId.toString())
+                .orElseThrow(
+                    () ->
+                        new CustomException(
+                            ApiResponseCode.GONGSI_COMPANY_NOT_FOUND,
+                            "Company not found with ID: " + companyId));
+
+        gongsiPage =
+            gongsiRepository.findByCompanyAndDateRangeOrderByViewCount(
+                company.getId(), parsedStartDate, parsedEndDate, pageable);
+      } else {
+        gongsiPage =
+            gongsiRepository.findByDateRangeOrderByViewCount(
+                parsedStartDate, parsedEndDate, pageable);
+      }
     } else {
-      gongsiPage = gongsiRepository.findByDateRange(parsedStartDate, parsedEndDate, pageable);
+      Sort.Direction direction;
+      String sortProperty;
+
+      if ("latest".equals(sort)) {
+        direction = Sort.Direction.DESC;
+        sortProperty = "createdDt";
+      } else if ("oldest".equals(sort)) {
+        direction = Sort.Direction.ASC;
+        sortProperty = "createdDt";
+      } else {
+        throw new CustomException(
+            ApiResponseCode.GONGSI_INVALID_SORT_TYPE, "Invalid sort parameter: " + sort);
+      }
+
+      pageable = PageRequest.of(page - 1, size, Sort.by(direction, sortProperty));
+
+      if (companyId != null) {
+        CompanyEntity company =
+            companyRepository
+                .findById(companyId.toString())
+                .orElseThrow(
+                    () ->
+                        new CustomException(
+                            ApiResponseCode.GONGSI_COMPANY_NOT_FOUND,
+                            "Company not found with ID: " + companyId));
+
+        gongsiPage =
+            gongsiRepository.findByCompanyAndDateRange(
+                company, parsedStartDate, parsedEndDate, pageable);
+      } else {
+        gongsiPage = gongsiRepository.findByDateRange(parsedStartDate, parsedEndDate, pageable);
+      }
     }
 
     List<GongsiResponse.GongsiItem> gongsiItems =
         gongsiPage.getContent().stream()
-            .map(entity -> mapToGongsiItem(entity, includeContent))
+            .map(
+                entity -> {
+                  int viewCount =
+                      gongsiViewHistoryRepository.countUniqueViewsByGongsiId(entity.getId());
+                  return mapToGongsiItem(entity, includeContent, viewCount);
+                })
             .collect(Collectors.toList());
 
     PaginationResponse pagination =
@@ -207,7 +235,8 @@ public class GongsiService {
     return GongsiResponse.GongsiDetailResponse.of(gongsiInfo, companyInfo);
   }
 
-  private GongsiResponse.GongsiItem mapToGongsiItem(GongsiEntity entity, boolean includeContent) {
+  private GongsiResponse.GongsiItem mapToGongsiItem(
+      GongsiEntity entity, boolean includeContent, int viewCount) {
     String formattedDate =
         entity.getCreatedDt().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm"));
 
@@ -216,6 +245,7 @@ public class GongsiService {
         entity.getGongsiTitle(),
         entity.getCompany().getCompanyName(),
         formattedDate,
+        viewCount,
         includeContent ? entity.getContentSummary() : null);
   }
 }
