@@ -11,6 +11,7 @@ import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.repository.CompanyRepository;
 import org.bob.siungongsi.repository.NotificationRepository;
+import org.bob.siungongsi.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,29 +20,40 @@ public class NotificationService {
   private final UserService userService;
   private final NotificationRepository notificationRepository;
   private final CompanyRepository companyRepository;
+  private final UserRepository userRepository;
 
   public NotificationService(
       UserService userService,
       NotificationRepository notificationRepository,
-      CompanyRepository companyRepository) {
+      CompanyRepository companyRepository,
+      UserRepository userRepository) {
     this.userService = userService;
     this.notificationRepository = notificationRepository;
     this.companyRepository = companyRepository;
+    this.userRepository = userRepository;
   }
 
-  public void createNotification(
+  public NotiHistoryEntity createNotification(
       NotificationRequest.NotificationCompanyRequest notificationRequest) {
     // 인증된 유저의 ID 가져오기
     Long userId = userService.getAuthenticatedUserId();
 
     if (notificationRepository.existsByUserIdAndCompanyId(
         userId, notificationRequest.companyId())) {
-      throw new CustomException(
-          ApiResponseCode.NOTIFICATION_ALREADY_EXISTS,
-          ApiResponseCode.NOTIFICATION_ALREADY_EXISTS.getMessage());
+      throw new CustomException(ApiResponseCode.NOTIFICATION_ALREADY_EXISTS, "이미 존재하는 알림입니다.");
     }
 
-    notificationRepository.save(new NotiHistoryEntity(userId, notificationRequest.companyId()));
+    if (!companyRepository.existsById(notificationRequest.companyId())) {
+      throw new CustomException(ApiResponseCode.NOTIFICATION_INVALID_COMPANY_ID, "존재하지 않는 기업입니다.");
+    }
+
+    if (userRepository.findNotiFlagById(userId) == 0) {
+      throw new CustomException(
+          ApiResponseCode.NOTIFICATION_REQUIRED_STATUS, "유저가 알림을 동의하지 않았습니다. ");
+    }
+
+    return notificationRepository.save(
+        new NotiHistoryEntity(userId, notificationRequest.companyId()));
   }
 
   public void deleteNotification(Long companyId) {
