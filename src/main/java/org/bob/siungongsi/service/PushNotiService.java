@@ -2,9 +2,11 @@ package org.bob.siungongsi.service;
 
 import java.util.List;
 
+import org.bob.siungongsi.domain.CompanyEntity;
 import org.bob.siungongsi.domain.GongsiEntity;
 import org.bob.siungongsi.domain.NotiHistoryEntity;
 import org.bob.siungongsi.domain.UserEntity;
+import org.bob.siungongsi.repository.CompanyRepository;
 import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.repository.UserRepository;
 import org.springframework.context.annotation.Profile;
@@ -17,14 +19,17 @@ public class PushNotiService {
   private final FcmService fcmService;
   private final NotificationRepository notificationRepository;
   private final UserRepository userRepository;
+  private final CompanyRepository companyRepository;
 
   public PushNotiService(
       FcmService fcmService,
       NotificationRepository notificationRepository,
-      UserRepository userRepository) {
+      UserRepository userRepository,
+      CompanyRepository companyRepository) {
     this.fcmService = fcmService;
     this.notificationRepository = notificationRepository;
     this.userRepository = userRepository;
+    this.companyRepository = companyRepository;
   }
 
   public boolean sendPushNotification(GongsiEntity gongsi) {
@@ -42,7 +47,12 @@ public class PushNotiService {
   }
 
   private boolean sendMessage(String token, GongsiEntity gongsi) {
-    String title = gongsi.getCompany().getCompanyName() + "기업의 새로운 공시가 나왔습니다.";
+    CompanyEntity company =
+        companyRepository
+            .findById(gongsi.getCompany().getId().toString())
+            .orElseThrow(() -> new RuntimeException("Company not found"));
+
+    String title = company.getCompanyName() + " 기업의 새로운 공시가 나왔습니다.";
     String body = "http://siungongsi.site/gongsi/" + gongsi.getId();
     fcmService.sendNotification(token, title, body);
     return true;
