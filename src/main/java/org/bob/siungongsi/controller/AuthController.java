@@ -31,7 +31,6 @@ public class AuthController implements AuthControllerSpec {
       @RequestBody AuthRequest.RegisterRequest authRequest) {
 
     String socialId = authRequest.socialId();
-    String accessToken = authRequest.accessToken();
 
     if (socialId == null || socialId.isBlank() || socialId.length() > 100) {
       return ResponseEntity.status(401)
@@ -39,6 +38,11 @@ public class AuthController implements AuthControllerSpec {
     }
 
     UserEntity user = authService.authRequest(authRequest);
+
+    if (user == null) {
+      return ResponseEntity.status(409)
+          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_USER_ALREADY_EXISTS));
+    }
 
     return ResponseEntity.status(201)
         .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_REGISTER_SUCCESS));
@@ -58,7 +62,7 @@ public class AuthController implements AuthControllerSpec {
     String socialId = kakaoAuthService.validateAccessToken(accessToken);
     if (socialId == null) {
       return ResponseEntity.status(401)
-          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION));
+          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED));
     }
 
     boolean isUser = authService.login(authRequest, socialId) != null;

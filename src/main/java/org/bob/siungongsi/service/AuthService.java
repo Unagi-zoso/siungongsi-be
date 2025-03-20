@@ -31,9 +31,7 @@ public class AuthService {
 
     // 이미 존재하는 사용자가 있다면 예외 처리
     if (existingUser.isPresent()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_USER_ALREADY_EXISTS,
-          ApiResponseCode.AUTH_USER_ALREADY_EXISTS.getMessage());
+      return null;
     }
 
     // 새로운 사용자 등록
