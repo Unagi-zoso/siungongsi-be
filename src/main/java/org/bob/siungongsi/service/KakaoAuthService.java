@@ -7,7 +7,12 @@ import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.repository.UserRepository;
-import org.springframework.http.*;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,7 +36,8 @@ public class KakaoAuthService {
     HttpEntity<String> entity = new HttpEntity<>(headers);
 
     try {
-      ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+      ResponseEntity<Map<String, Object>> response =
+          restTemplate.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {});
 
       if (response.getStatusCode() == HttpStatus.OK) {
         Map<String, Object> body = response.getBody();
