@@ -18,4 +18,6 @@ public interface NotificationRepository extends JpaRepository<NotiHistoryEntity,
   @Query(
       "SELECT n.companyId FROM NotiHistoryEntity n GROUP BY n.companyId ORDER BY COUNT(n.companyId) DESC LIMIT 5")
   List<Long> findTop5Companies();
+
+  List<NotiHistoryEntity> findByCompanyId(Long companyId);
 }
