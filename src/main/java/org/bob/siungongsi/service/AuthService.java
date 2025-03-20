@@ -31,9 +31,7 @@ public class AuthService {
 
     // 이미 존재하는 사용자가 있다면 예외 처리
     if (existingUser.isPresent()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_USER_ALREADY_EXISTS,
-          ApiResponseCode.AUTH_USER_ALREADY_EXISTS.getMessage());
+      return null;
     }
 
     // 새로운 사용자 등록
@@ -45,20 +43,11 @@ public class AuthService {
   public UserEntity login(AuthRequest.LoginRequest authRequest, String socialId) {
     String accessToken = authRequest.accessToken();
 
-    // 액세스 토큰이 없으면 예외 처리
-    if (accessToken == null || accessToken.isEmpty()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION,
-          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION.getMessage());
-    }
-
     Optional<UserEntity> user = userRepository.findBySocialId(socialId);
 
-    // 가입되지 않은 사용자의 경우 예외 처리
+    // 가입되지 않은 사용자의 경우
     if (!user.isPresent()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION,
-          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION.getMessage());
+      return null;
     }
 
     // 기존 사용자일 경우 액세스 토큰 갱신
