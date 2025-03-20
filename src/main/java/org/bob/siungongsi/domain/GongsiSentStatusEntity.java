@@ -20,12 +20,15 @@ public class GongsiSentStatusEntity extends ModifiableEntity {
   private Long id;
 
   @OneToOne
-  @JoinColumn(name = "gongsi_id", nullable = false, unique = true) // 공시 ID, 1:1 관계
+  @JoinColumn(name = "gongsi_id", nullable = false, unique = true)
   private GongsiEntity gongsi;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 10)
   private PushStatus status = PushStatus.PENDING;
+
+  @Column(name = "retry_count", nullable = false)
+  private int retryCount = 0;
 
   protected GongsiSentStatusEntity() {}
 
@@ -48,5 +51,13 @@ public class GongsiSentStatusEntity extends ModifiableEntity {
 
   public PushStatus getStatus() {
     return status;
+  }
+
+  public int getRetryCount() {
+    return retryCount;
+  }
+
+  public void incrementRetryCount() {
+    this.retryCount++;
   }
 }
