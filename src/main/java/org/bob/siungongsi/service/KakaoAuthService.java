@@ -10,17 +10,14 @@ import org.bob.siungongsi.repository.UserRepository;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class KakaoAuthService {
 
-  private final RestTemplate restTemplate = new RestTemplate();
+  private final UserRepository userRepository;
 
-  private final UserRepository authRepository;
-
-  public KakaoAuthService(UserRepository authRepository) {
-    this.authRepository = authRepository;
+  public KakaoAuthService(UserRepository userRepository) {
+    this.userRepository = userRepository;
   }
 
   public String validateAccessToken(String accessToken) {
@@ -36,13 +33,18 @@ public class KakaoAuthService {
             ((req, res) -> {
               throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED, "토큰 만료입니다.");
             }))
+        .onStatus(
+            HttpStatusCode::is5xxServerError,
+            ((req, res) -> {
+              throw new CustomException(ApiResponseCode.AUTH_INTERNAL_SERVER_ERROR, "서버 오류입니다.");
+            }))
         .body(Map.class)
         .get("id")
         .toString();
   }
 
   public Long getUserId(String socialId) {
-    Optional<UserEntity> user = authRepository.findBySocialId(socialId);
+    Optional<UserEntity> user = userRepository.findBySocialId(socialId);
     return user.map(UserEntity::getId).orElse(null);
   }
 }

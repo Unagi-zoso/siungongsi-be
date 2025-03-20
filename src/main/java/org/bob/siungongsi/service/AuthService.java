@@ -25,29 +25,24 @@ public class AuthService {
     this.termRepository = termRepository;
   }
 
-  // 회원가입 로직: 사용자가 처음으로 로그인 시 회원을 등록
-  public UserEntity authRequest(AuthRequest.RegisterRequest authRequest) {
+  public UserEntity register(AuthRequest.RegisterRequest authRequest) {
     Optional<UserEntity> existingUser = userRepository.findBySocialId(authRequest.socialId());
 
-    // 이미 존재하는 사용자가 있다면 예외 처리
     if (existingUser.isPresent()) {
-      return null;
+      throw new CustomException(ApiResponseCode.AUTH_USER_ALREADY_EXISTS, "이미 가입된 사용자입니다. ");
     }
 
-    // 새로운 사용자 등록
     UserEntity newUserEntity = new UserEntity(authRequest.socialId(), authRequest.accessToken());
     return userRepository.save(newUserEntity);
   }
 
-  // 로그인 로직: 이미 가입된 사용자가 로그인 시 액세스 토큰 갱신
   public UserEntity login(AuthRequest.LoginRequest authRequest, String socialId) {
     String accessToken = authRequest.accessToken();
 
     Optional<UserEntity> user = userRepository.findBySocialId(socialId);
 
-    // 가입되지 않은 사용자의 경우
     if (!user.isPresent()) {
-      return null;
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND, "회원을 찾을 수 없습니다.");
     }
 
     // 기존 사용자일 경우 액세스 토큰 갱신
