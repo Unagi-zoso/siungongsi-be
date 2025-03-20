@@ -44,4 +44,8 @@ public class NotiHistoryEntity extends BaseTimeEntity {
   public void setCompanyId(Long companyId) {
     this.companyId = companyId;
   }
+
+  public Long getUserId() {
+    return userId;
+  }
 }
