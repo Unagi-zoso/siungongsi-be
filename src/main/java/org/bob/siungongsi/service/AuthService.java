@@ -1,5 +1,6 @@
 package org.bob.siungongsi.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -7,33 +8,73 @@ import java.util.stream.Collectors;
 import org.bob.siungongsi.controller.dto.AuthRequest;
 import org.bob.siungongsi.controller.dto.TermsResponse;
 import org.bob.siungongsi.domain.TermEntity;
+import org.bob.siungongsi.domain.UserAgreedTermEntity;
 import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.repository.TermRepository;
+import org.bob.siungongsi.repository.UserAgreedTermRepository;
 import org.bob.siungongsi.repository.UserRepository;
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AuthService {
 
   private final TermRepository termRepository;
   private final UserRepository userRepository;
+  private final UserAgreedTermRepository userAgreedTermRepository;
+  private final KakaoAuthService kakaoAuthService;
 
-  public AuthService(TermRepository termRepository, UserRepository userRepository) {
+  public AuthService(
+      TermRepository termRepository,
+      UserRepository userRepository,
+      UserAgreedTermRepository userAgreedTermRepository,
+      KakaoAuthService kakaoAuthService) {
     this.userRepository = userRepository;
     this.termRepository = termRepository;
+    this.userAgreedTermRepository = userAgreedTermRepository;
+    this.kakaoAuthService = kakaoAuthService;
   }
 
-  public UserEntity register(AuthRequest.RegisterRequest authRequest) {
-    Optional<UserEntity> existingUser = userRepository.findBySocialId(authRequest.socialId());
+  @Transactional
+  public void register(AuthRequest.RegisterRequest authRequest) {
+    String socialId = kakaoAuthService.validateAccessToken(authRequest.accessToken());
 
-    if (existingUser.isPresent()) {
-      throw new CustomException(ApiResponseCode.AUTH_USER_ALREADY_EXISTS, "이미 가입된 사용자입니다. ");
+    if (userRepository.existsBySocialId(socialId)) {
+      throw new CustomException(ApiResponseCode.AUTH_USER_ALREADY_EXISTS, "이미 가입된 사용자입니다.");
     }
 
-    UserEntity newUserEntity = new UserEntity(authRequest.socialId(), authRequest.accessToken());
-    return userRepository.save(newUserEntity);
+    UserEntity newUserEntity =
+        userRepository.save(new UserEntity(socialId, authRequest.accessToken()));
+
+    List<UserAgreedTermEntity> userAgreedTerms =
+        validateAndCreateUserAgreedTerms(authRequest.agreedTermIds(), newUserEntity.getId());
+    if (!userAgreedTerms.isEmpty()) {
+      userAgreedTermRepository.saveAll(userAgreedTerms);
+    }
+  }
+
+  // 유저가 약관이 필수인 걸 모두 동의해야 가능인 로직을 추가해야 함
+  private List<UserAgreedTermEntity> validateAndCreateUserAgreedTerms(
+      List<Long> agreedTermIds, Long userId) {
+    List<UserAgreedTermEntity> userAgreedTermEntities = new ArrayList<>();
+
+    for (Long termId : agreedTermIds) {
+      if (!termRepository.existsById(termId)) {
+        throw new CustomException(ApiResponseCode.AUTH_TERMS_ID_NOT_FOUND, "찾을 수 없는 term_id 입니다.");
+      }
+
+      if (userAgreedTermRepository.existsByUserIdAndTermId(userId, termId)) {
+        throw new CustomException(
+            ApiResponseCode.AUTH_USER_AGREED_TERMS_ID_ALREADY_EXISTS, "이미 존재하는 회원 동의 약관 id 입니다.");
+      }
+
+      userAgreedTermEntities.add(new UserAgreedTermEntity(userId, termId));
+    }
+
+    return userAgreedTermEntities;
   }
 
   public UserEntity login(AuthRequest.LoginRequest authRequest, String socialId) {

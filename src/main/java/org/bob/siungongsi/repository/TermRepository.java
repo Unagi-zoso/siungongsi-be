@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TermRepository extends JpaRepository<TermEntity, Long> {
   List<TermEntity> findAllByOrderByIdAsc();
+
+  boolean existsById(Long id);
 }

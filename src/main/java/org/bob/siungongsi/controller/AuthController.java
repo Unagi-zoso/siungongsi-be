@@ -29,13 +29,6 @@ public class AuthController implements AuthControllerSpec {
   public ResponseEntity<ApiResponseWrapper<?>> registerUser(
       @RequestBody AuthRequest.RegisterRequest authRequest) {
 
-    String socialId = authRequest.socialId();
-
-    if (socialId == null || socialId.isBlank() || socialId.length() > 100) {
-      return ResponseEntity.status(401)
-          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION));
-    }
-
     authService.register(authRequest);
 
     return ResponseEntity.status(201)
