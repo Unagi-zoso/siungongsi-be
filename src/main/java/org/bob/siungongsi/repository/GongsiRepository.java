@@ -19,8 +19,8 @@ public interface GongsiRepository extends JpaRepository<GongsiEntity, Long> {
 
   @Query(
       "SELECT g FROM GongsiEntity g WHERE g.company = :company "
-          + "AND (:startDate IS NULL OR g.createdDt >= :startDate) "
-          + "AND (:endDate IS NULL OR g.createdDt <= :endDate)")
+          + "AND (:startDate IS NULL OR DATE(g.createdDt) >= :startDate) "
+          + "AND (:endDate IS NULL OR DATE(g.createdDt) <= :endDate)")
   Page<GongsiEntity> findByCompanyAndDateRange(
       @Param("company") CompanyEntity company,
       @Param("startDate") LocalDate startDate,
@@ -29,8 +29,8 @@ public interface GongsiRepository extends JpaRepository<GongsiEntity, Long> {
 
   @Query(
       "SELECT g FROM GongsiEntity g WHERE "
-          + "(:startDate IS NULL OR g.createdDt >= :startDate) "
-          + "AND (:endDate IS NULL OR g.createdDt <= :endDate)")
+          + "(:startDate IS NULL OR DATE(g.createdDt) >= :startDate) "
+          + "AND (:endDate IS NULL OR DATE(g.createdDt) <= :endDate)")
   Page<GongsiEntity> findByDateRange(
       @Param("startDate") LocalDate startDate,
       @Param("endDate") LocalDate endDate,
