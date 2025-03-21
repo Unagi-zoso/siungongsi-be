@@ -19,14 +19,17 @@ public class GongsiResponse {
       String gongsiTitle,
       String companyName,
       String publishedDatetime,
+      int viewCount,
       String content) {
     public static GongsiItem of(
         long gongsiId,
         String gongsiTitle,
         String companyName,
         String publishedDatetime,
+        int viewCount,
         String content) {
-      return new GongsiItem(gongsiId, gongsiTitle, companyName, publishedDatetime, content);
+      return new GongsiItem(
+          gongsiId, gongsiTitle, companyName, publishedDatetime, viewCount, content);
     }
   }
 

@@ -7,6 +7,8 @@ import org.bob.siungongsi.controller.dto.UserResponse.NotificationStatusResponse
 import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
+import org.bob.siungongsi.repository.NotificationRepository;
+import org.bob.siungongsi.repository.UserAgreedTermRepository;
 import org.bob.siungongsi.repository.UserRepository;
 import org.bob.siungongsi.security.KakaoAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,10 +20,18 @@ public class UserService {
 
   private final KakaoAuthService kakaoAuthService;
   private final UserRepository userRepository;
+  private final NotificationRepository notificationRepository;
+  private final UserAgreedTermRepository userAgreedTermRepository;
 
-  public UserService(KakaoAuthService kakaoAuthService, UserRepository userRepository) {
+  public UserService(
+      KakaoAuthService kakaoAuthService,
+      UserRepository userRepository,
+      NotificationRepository notificationRepository,
+      UserAgreedTermRepository userAgreedTermRepository) {
     this.kakaoAuthService = kakaoAuthService;
     this.userRepository = userRepository;
+    this.notificationRepository = notificationRepository;
+    this.userAgreedTermRepository = userAgreedTermRepository;
   }
 
   public Long getAuthenticatedUserId() {
@@ -90,5 +100,27 @@ public class UserService {
     userRepository.save(user);
 
     return NotificationStatusResponse.of(user.getId(), request.notificationFlag());
+  }
+
+  @Transactional
+  public void withdrawUser() {
+    Long userId = getAuthenticatedUserId();
+    if (userId == null) {
+      throw new CustomException(
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
+    }
+
+    // 1. 사용자의 알림 구독 정보 삭제
+    notificationRepository.deleteAllByUserId(userId);
+
+    // 2. 사용자의 약관 동의 정보 삭제
+    userAgreedTermRepository.deleteAllByUserId(userId);
+
+    // 3. 사용자 정보 삭제
+    userRepository.deleteById(userId);
+
+    // 4. 인증 정보 제거 (로그아웃)
+    SecurityContextHolder.clearContext();
   }
 }

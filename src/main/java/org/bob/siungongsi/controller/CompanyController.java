@@ -4,6 +4,7 @@ import static org.bob.siungongsi.dto.ApiResponseCode.COMPANY_GET_NAME_LIST_SUCCE
 
 import org.bob.siungongsi.controller.dto.CompanyResponse.CompanyNameListResponse;
 import org.bob.siungongsi.controller.spec.CompanyControllerSpec;
+import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.bob.siungongsi.service.CompanyService;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,11 @@ public class CompanyController implements CompanyControllerSpec {
   @GetMapping("/name")
   public ResponseEntity<ApiResponseWrapper<CompanyNameListResponse>> getCompanyNames(
       @RequestParam String keyword) {
+
+    if (keyword.length() > 18 || keyword.length() < 1) {
+      return ResponseEntity.status(400)
+          .body(ApiResponseWrapper.success(ApiResponseCode.COMPANY_INVALID_KEYWORD_LENGTH));
+    }
 
     CompanyNameListResponse companies = companyService.getCompanyNames(keyword);
 

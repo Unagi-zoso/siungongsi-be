@@ -1,7 +1,6 @@
 package org.bob.siungongsi.controller;
 
-import static org.bob.siungongsi.dto.ApiResponseCode.USER_GET_STATUS;
-import static org.bob.siungongsi.dto.ApiResponseCode.USER_UPDATE_STATUS_SUCCESS;
+import static org.bob.siungongsi.dto.ApiResponseCode.*;
 
 import org.bob.siungongsi.controller.dto.UserRequest.UserNotificationRequest;
 import org.bob.siungongsi.controller.dto.UserResponse.NotificationStatusResponse;
@@ -40,5 +39,12 @@ public class UserController implements UserControllerSpec {
     NotificationStatusResponse response = userService.updateNotificationStatus(request);
     return ResponseEntity.status(201)
         .body(ApiResponseWrapper.success(USER_UPDATE_STATUS_SUCCESS, response));
+  }
+
+  @DeleteMapping
+  public ResponseEntity<ApiResponseWrapper<?>> withdrawUser(
+      @RequestHeader("Authorization") String authorization) {
+    userService.withdrawUser();
+    return ResponseEntity.ok(ApiResponseWrapper.success(USER_NOTI_WITHDRAWAL_SUCCESS, null));
   }
 }
