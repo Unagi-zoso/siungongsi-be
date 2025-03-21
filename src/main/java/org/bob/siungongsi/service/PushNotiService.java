@@ -9,6 +9,7 @@ import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.repository.CompanyRepository;
 import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,9 @@ public class PushNotiService {
   private final NotificationRepository notificationRepository;
   private final UserRepository userRepository;
   private final CompanyRepository companyRepository;
+
+  @Value("${site.url}")
+  private String siteUrl;
 
   public PushNotiService(
       FcmService fcmService,
@@ -53,8 +57,9 @@ public class PushNotiService {
             .orElseThrow(() -> new RuntimeException("Company not found"));
 
     String title = company.getCompanyName() + " 기업의 새로운 공시가 나왔습니다.";
-    String body = "http://siungongsi.site/gongsi/" + gongsi.getId();
-    fcmService.sendNotification(token, title, body);
+    String body = "공시 제목 : " + gongsi.getGongsiTitle();
+    String url = siteUrl + "detail/" + gongsi.getId();
+    fcmService.sendNotification(token, title, body, url);
     return true;
   }
 }

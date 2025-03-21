@@ -3,6 +3,8 @@ package org.bob.siungongsi.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
@@ -15,7 +17,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 
 import io.sentry.Sentry;
 import jakarta.annotation.PostConstruct;
@@ -54,16 +55,17 @@ public class FcmService {
     }
   }
 
-  public void sendNotification(String token, String title, String body) {
+  public void sendNotification(String token, String title, String body, String url) {
     if (token == null || token.isBlank()) {
-      return; // 토큰이 없으면 푸시 전송하지 않음
+      return;
     }
 
-    Message message =
-        Message.builder()
-            .setToken(token)
-            .setNotification(Notification.builder().setTitle(title).setBody(body).build())
-            .build();
+    Map<String, String> data = new HashMap<>();
+    data.put("title", title);
+    data.put("body", body);
+    data.put("url", url);
+
+    Message message = Message.builder().setToken(token).putAllData(data).build();
 
     try {
       firebaseMessaging.send(message);
