@@ -23,10 +23,11 @@ public class UserService {
   private final NotificationRepository notificationRepository;
   private final UserAgreedTermsRepository userAgreedTermsRepository;
 
-  public UserService(KakaoAuthService kakaoAuthService,
-                     UserRepository userRepository,
-                     NotificationRepository notificationRepository,
-                     UserAgreedTermsRepository userAgreedTermsRepository) {
+  public UserService(
+      KakaoAuthService kakaoAuthService,
+      UserRepository userRepository,
+      NotificationRepository notificationRepository,
+      UserAgreedTermsRepository userAgreedTermsRepository) {
     this.kakaoAuthService = kakaoAuthService;
     this.userRepository = userRepository;
     this.notificationRepository = notificationRepository;
@@ -37,7 +38,7 @@ public class UserService {
   public Long getAuthenticatedUserId() {
     // 인증된 토큰을 가져오기
     KakaoAuthenticationToken authentication =
-            (KakaoAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        (KakaoAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
     if (authentication == null) {
       return null; // 인증되지 않은 경우 null 반환
@@ -53,14 +54,14 @@ public class UserService {
     Long userId = getAuthenticatedUserId();
     if (userId == null) {
       throw new CustomException(
-              ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
-              ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
     }
 
     Optional<UserEntity> userOpt = userRepository.findById(userId);
     if (!userOpt.isPresent()) {
       throw new CustomException(
-              ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
+          ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
     }
 
     UserEntity user = userOpt.get();
@@ -74,21 +75,21 @@ public class UserService {
   public NotificationStatusResponse updateNotificationStatus(UserNotificationRequest request) {
     if (request.notificationFlag() == null) {
       throw new CustomException(
-              ApiResponseCode.USER_STATUS_ALREADY_EXIST,
-              ApiResponseCode.USER_STATUS_ALREADY_EXIST.getMessage());
+          ApiResponseCode.USER_STATUS_ALREADY_EXIST,
+          ApiResponseCode.USER_STATUS_ALREADY_EXIST.getMessage());
     }
 
     Long userId = getAuthenticatedUserId();
     if (userId == null) {
       throw new CustomException(
-              ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
-              ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
     }
 
     Optional<UserEntity> userOpt = userRepository.findById(userId);
     if (!userOpt.isPresent()) {
       throw new CustomException(
-              ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
+          ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
     }
 
     UserEntity user = userOpt.get();
@@ -112,8 +113,8 @@ public class UserService {
     Long userId = getAuthenticatedUserId();
     if (userId == null) {
       throw new CustomException(
-              ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
-              ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
     }
 
     // 1. 사용자의 알림 구독 정보 삭제
