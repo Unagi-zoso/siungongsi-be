@@ -20,7 +20,7 @@ public class CompanyService {
 
   public CompanyResponse.CompanyNameListResponse getCompanyNames(String keyword) {
     List<CompanyNameAutofillEntity> companies =
-        companyNameAutofillRepository.findByKeyword(keyword);
+        companyNameAutofillRepository.findTop5ByKeyword(keyword);
 
     List<CompanyResponse.CompanyNameResponse> companyNameList =
         companies.stream()
