@@ -43,6 +43,9 @@ public class PushNotiService {
         userRepository.findAllById(
             notiHistoryEntities.stream().map(NotiHistoryEntity::getUserId).toList());
     for (UserEntity user : subscribers) {
+      if (user.getPushTokenId() == null || user.getPushTokenId().isBlank()) {
+        continue;
+      }
       if (!sendMessage(user.getPushTokenId(), gongsi)) {
         return false;
       }
