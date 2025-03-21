@@ -79,3 +79,6 @@ korean:
 
 fcm:
   key: ${FCM_KEY}
+
+site:
+  url: ${SITE_URL}
