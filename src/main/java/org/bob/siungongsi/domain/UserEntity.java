@@ -26,7 +26,7 @@ public class UserEntity extends ModifiableEntity {
   private String pushTokenId;
 
   @Column(name = "noti_flag", nullable = false)
-  private Short notiFlag = 0;
+  private boolean notiFlag = false;
 
   protected UserEntity() {}
 
@@ -52,7 +52,7 @@ public class UserEntity extends ModifiableEntity {
     return pushTokenId;
   }
 
-  public Short getNotiFlag() {
+  public boolean getNotiFlag() {
     return notiFlag;
   }
 
@@ -64,7 +64,7 @@ public class UserEntity extends ModifiableEntity {
     this.pushTokenId = pushTokenId;
   }
 
-  public void updateNotiFlag(Short notiFlag) {
+  public void updateNotiFlag(boolean notiFlag) {
     this.notiFlag = notiFlag;
   }
 }
