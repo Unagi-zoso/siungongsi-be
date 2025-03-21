@@ -7,6 +7,7 @@ import org.bob.siungongsi.controller.dto.UserResponse.NotificationStatusResponse
 import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
+import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.repository.UserRepository;
 import org.bob.siungongsi.security.KakaoAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,10 +19,15 @@ public class UserService {
 
   private final KakaoAuthService kakaoAuthService;
   private final UserRepository userRepository;
+  private final NotificationRepository notificationRepository;
 
-  public UserService(KakaoAuthService kakaoAuthService, UserRepository userRepository) {
+  public UserService(
+      KakaoAuthService kakaoAuthService,
+      UserRepository userRepository,
+      NotificationRepository notificationRepository) {
     this.kakaoAuthService = kakaoAuthService;
     this.userRepository = userRepository;
+    this.notificationRepository = notificationRepository;
   }
 
   // 인증된 유저의 ID 가져오기
@@ -96,5 +102,22 @@ public class UserService {
     userRepository.save(user);
 
     return NotificationStatusResponse.of(user.getId(), request.notificationFlag());
+  }
+
+  @Transactional
+  public void withdrawUser() {
+    Long userId = getAuthenticatedUserId();
+    if (userId == null) {
+      throw new CustomException(
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
+    }
+
+    // 1. 사용자의 모든 알림 구독 정보 삭제
+    notificationRepository.deleteAllByUserId(userId);
+    // 2. 사용자 정보 삭제
+    userRepository.deleteById(userId);
+    // 3. 인증 정보 제거 (로그아웃)
+    SecurityContextHolder.clearContext();
   }
 }

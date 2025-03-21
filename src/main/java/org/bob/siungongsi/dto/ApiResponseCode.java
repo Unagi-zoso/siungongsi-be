@@ -28,6 +28,7 @@ public enum ApiResponseCode {
   USER_REQUIRED_AUTHORIZATION(3400, "required_authorization"),
   USER_STATUS_ALREADY_EXIST(3401, "notification_status_already_exist"),
   USER_INTERNAL_SERVER_ERROR(3500, "internal_server_error"),
+  USER_NOTI_WITHDRAWAL_SUCCESS(3201, "user_noti_withdrawal_success"),
 
   // 회사 관련 응답 코드 (4)
   COMPANY_GET_NAME_LIST_SUCCESS(4200, "get_company_name_list_success"),
