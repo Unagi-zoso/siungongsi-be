@@ -1,6 +1,5 @@
 package org.bob.siungongsi.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,11 +55,25 @@ public class AuthService {
     }
   }
 
-  // 유저가 약관이 필수인 걸 모두 동의해야 가능인 로직을 추가해야 함
   private List<UserAgreedTermEntity> validateAndCreateUserAgreedTerms(
       List<Long> agreedTermIds, Long userId) {
-    List<UserAgreedTermEntity> userAgreedTermEntities = new ArrayList<>();
 
+    validateRequiredTerms(agreedTermIds);
+
+    validateTermIds(agreedTermIds, userId);
+
+    return agreedTermIds.stream().map(termId -> new UserAgreedTermEntity(userId, termId)).toList();
+  }
+
+  private void validateRequiredTerms(List<Long> agreedTermIds) {
+    List<Long> requiredTermIds = termRepository.findIdsByRequiredFlag();
+
+    if (!agreedTermIds.containsAll(requiredTermIds)) {
+      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_TERMS_NOT_AGREED, "필수 약관에 동의해야 합니다.");
+    }
+  }
+
+  private void validateTermIds(List<Long> agreedTermIds, Long userId) {
     for (Long termId : agreedTermIds) {
       if (!termRepository.existsById(termId)) {
         throw new CustomException(ApiResponseCode.AUTH_TERMS_ID_NOT_FOUND, "찾을 수 없는 term_id 입니다.");
@@ -70,11 +83,7 @@ public class AuthService {
         throw new CustomException(
             ApiResponseCode.AUTH_USER_AGREED_TERMS_ID_ALREADY_EXISTS, "이미 존재하는 회원 동의 약관 id 입니다.");
       }
-
-      userAgreedTermEntities.add(new UserAgreedTermEntity(userId, termId));
     }
-
-    return userAgreedTermEntities;
   }
 
   public UserEntity login(AuthRequest.LoginRequest authRequest, String socialId) {
