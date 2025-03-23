@@ -12,6 +12,6 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 # Sentry 환경 변수 추가
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 
-CMD ["java", "-jar", "app.jar", "--spring.profiles.active=dev"]
+CMD ["java", "-jar", "app.jar", "--spring.profiles.active=local"]
 
 EXPOSE 8080
