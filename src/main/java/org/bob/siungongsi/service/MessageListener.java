@@ -144,7 +144,8 @@ public class MessageListener {
 
         if (!fileService.isZipFile(file)) {
           ProcessingFailedGongsiEntity processingFailedGongsi =
-              new ProcessingFailedGongsiEntity(message.receiptNo());
+              new ProcessingFailedGongsiEntity(
+                  message.receiptNo(), message.companyCode(), message.receiptTitle());
           processingFailedGongsiRepository.save(processingFailedGongsi);
           return;
         }

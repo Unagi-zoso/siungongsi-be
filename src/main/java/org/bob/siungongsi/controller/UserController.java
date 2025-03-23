@@ -1,13 +1,12 @@
 package org.bob.siungongsi.controller;
 
-import static org.bob.siungongsi.dto.ApiResponseCode.USER_GET_STATUS;
-import static org.bob.siungongsi.dto.ApiResponseCode.USER_STATUS_ALREADY_EXIST;
-import static org.bob.siungongsi.dto.ApiResponseCode.USER_UPDATE_STATUS_SUCCESS;
+import static org.bob.siungongsi.dto.ApiResponseCode.*;
 
 import org.bob.siungongsi.controller.dto.UserRequest.UserNotificationRequest;
 import org.bob.siungongsi.controller.dto.UserResponse.NotificationStatusResponse;
 import org.bob.siungongsi.controller.spec.UserControllerSpec;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
+import org.bob.siungongsi.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,13 +17,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "사용자 API", description = "회원 알림 허용 여부 조회 및 변경 API") // Swagger에서 API 그룹 지정
 public class UserController implements UserControllerSpec {
 
+  private final UserService userService;
+
+  public UserController(UserService userService) {
+    this.userService = userService;
+  }
+
   @Override
   @GetMapping("/notification-status")
   public ResponseEntity<ApiResponseWrapper<?>> getNotificationStatus(
       @RequestHeader("Authorization") String authorization) {
-
-    return ResponseEntity.ok(
-        ApiResponseWrapper.success(USER_GET_STATUS, NotificationStatusResponse.of(1, true)));
+    NotificationStatusResponse response = userService.getNotificationStatus();
+    return ResponseEntity.ok(ApiResponseWrapper.success(USER_GET_STATUS, response));
   }
 
   @Override
@@ -32,16 +36,15 @@ public class UserController implements UserControllerSpec {
   public ResponseEntity<ApiResponseWrapper<?>> updateNotificationStatus(
       @RequestHeader("Authorization") String authorization,
       @RequestBody UserNotificationRequest request) {
-
-    Boolean notificationFlag = request.notificationFlag();
-
-    if (notificationFlag == null) {
-      return ResponseEntity.status(400).body(ApiResponseWrapper.error(USER_STATUS_ALREADY_EXIST));
-    }
-
+    NotificationStatusResponse response = userService.updateNotificationStatus(request);
     return ResponseEntity.status(201)
-        .body(
-            ApiResponseWrapper.success(
-                USER_UPDATE_STATUS_SUCCESS, NotificationStatusResponse.of(1, notificationFlag)));
+        .body(ApiResponseWrapper.success(USER_UPDATE_STATUS_SUCCESS, response));
+  }
+
+  @DeleteMapping
+  public ResponseEntity<ApiResponseWrapper<?>> withdrawUser(
+      @RequestHeader("Authorization") String authorization) {
+    userService.withdrawUser();
+    return ResponseEntity.ok(ApiResponseWrapper.success(USER_NOTI_WITHDRAWAL_SUCCESS, null));
   }
 }

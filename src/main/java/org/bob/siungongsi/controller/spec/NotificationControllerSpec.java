@@ -198,5 +198,5 @@ public interface NotificationControllerSpec {
       })
   ResponseEntity<ApiResponseWrapper<?>> removeNotification(
       String authorization,
-      @Parameter(description = "알림을 해제할 회사 ID", required = true) int companyId);
+      @Parameter(description = "알림을 해제할 회사 ID", required = true) Long companyId);
 }

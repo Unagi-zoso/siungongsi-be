@@ -10,6 +10,7 @@ import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.bob.siungongsi.service.AuthService;
+import org.bob.siungongsi.service.KakaoAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,17 +18,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/auth") // 회원 관련 API의 기본 경로
 public class AuthController implements AuthControllerSpec {
   private final AuthService authService;
+  private final KakaoAuthService kakaoAuthService;
 
-  public AuthController(AuthService authService) {
+  public AuthController(AuthService authService, KakaoAuthService kakaoAuthService) {
     this.authService = authService;
+    this.kakaoAuthService = kakaoAuthService;
   }
 
   @Override
   @PostMapping("/register")
-  public ResponseEntity<ApiResponseWrapper<?>> registerUser(@RequestBody AuthRequest authRequest) {
+  public ResponseEntity<ApiResponseWrapper<?>> registerUser(
+      @RequestBody AuthRequest.RegisterRequest authRequest) {
 
     String socialId = authRequest.socialId();
-    String accessToken = authRequest.accessToken();
 
     if (socialId == null || socialId.isBlank() || socialId.length() > 100) {
       return ResponseEntity.status(401)
@@ -36,6 +39,11 @@ public class AuthController implements AuthControllerSpec {
 
     UserEntity user = authService.authRequest(authRequest);
 
+    if (user == null) {
+      return ResponseEntity.status(409)
+          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_USER_ALREADY_EXISTS));
+    }
+
     return ResponseEntity.status(201)
         .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_REGISTER_SUCCESS));
   }
@@ -43,7 +51,7 @@ public class AuthController implements AuthControllerSpec {
   @Override
   @PostMapping("/login")
   public ResponseEntity<ApiResponseWrapper<LoginSuccessResponse>> loginUser(
-      @RequestBody AuthRequest authRequest) {
+      @RequestBody AuthRequest.LoginRequest authRequest) {
 
     String accessToken = authRequest.accessToken();
     if (accessToken == null || accessToken.isBlank()) {
@@ -51,11 +59,17 @@ public class AuthController implements AuthControllerSpec {
           .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION));
     }
 
-    UserEntity user = authService.login(authRequest);
+    String socialId = kakaoAuthService.validateAccessToken(accessToken);
+    if (socialId == null) {
+      return ResponseEntity.status(401)
+          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED));
+    }
+
+    boolean isUser = authService.login(authRequest, socialId) != null;
 
     return ResponseEntity.ok(
         ApiResponseWrapper.success(
-            ApiResponseCode.AUTH_LOGIN_SUCCESS, LoginSuccessResponse.of(accessToken)));
+            ApiResponseCode.AUTH_LOGIN_SUCCESS, LoginSuccessResponse.of(accessToken, isUser)));
   }
 
   @Override

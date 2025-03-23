@@ -101,4 +101,7 @@ jobs:
                     -e AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
                     -e AWS_SQS_QUEUE_NAME=${{ secrets.AWS_SQS_QUEUE_NAME }} \
                     -e AWS_SQS_QUEUE_URL=${{ secrets.AWS_SQS_QUEUE_URL }} \
+                    -e KOREAN_INVESTMENT_APPKEY=${{ secrets.KOREAN_INVESTMENT_APPKEY }} \
+                    -e KOREAN_INVESTMENT_SECRETKEY=${{ secrets.KOREAN_INVESTMENT_SECRETKEY }} \
+                    -e ADMIN_KEY=${{ secrets.ADMIN_KEY }} \
                     ${{ secrets.ECR_REGISTRY }}/siungongsi:latest-backend
