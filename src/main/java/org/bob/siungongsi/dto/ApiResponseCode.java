@@ -21,6 +21,9 @@ public enum ApiResponseCode {
   AUTH_USER_NOT_FOUND(2402, "user_not_found"),
   AUTH_TERMS_NOT_FOUND(2403, "terms_not_found"),
   AUTH_USER_ALREADY_EXISTS(2404, "user_already_exists"),
+  AUTH_TERMS_ID_NOT_FOUND(2405, "terms_id_not_found"),
+  AUTH_USER_AGREED_TERMS_ID_ALREADY_EXISTS(2406, "user_agreed_terms_id_already_exists"),
+  AUTH_REQUIRED_TERMS_NOT_AGREED(2407, "required_terms_not_agreed"),
   AUTH_INTERNAL_SERVER_ERROR(2500, "internal_server_error"),
 
   // 유저 관련 응답 코드 (3)

@@ -8,7 +8,7 @@ import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.repository.NotificationRepository;
-import org.bob.siungongsi.repository.UserAgreedTermsRepository;
+import org.bob.siungongsi.repository.UserAgreedTermRepository;
 import org.bob.siungongsi.repository.UserRepository;
 import org.bob.siungongsi.security.KakaoAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,33 +21,27 @@ public class UserService {
   private final KakaoAuthService kakaoAuthService;
   private final UserRepository userRepository;
   private final NotificationRepository notificationRepository;
-  private final UserAgreedTermsRepository userAgreedTermsRepository;
+  private final UserAgreedTermRepository userAgreedTermRepository;
 
   public UserService(
       KakaoAuthService kakaoAuthService,
       UserRepository userRepository,
       NotificationRepository notificationRepository,
-      UserAgreedTermsRepository userAgreedTermsRepository) {
+      UserAgreedTermRepository userAgreedTermRepository) {
     this.kakaoAuthService = kakaoAuthService;
     this.userRepository = userRepository;
     this.notificationRepository = notificationRepository;
-    this.userAgreedTermsRepository = userAgreedTermsRepository;
+    this.userAgreedTermRepository = userAgreedTermRepository;
   }
 
-  // 인증된 유저의 ID 가져오기
   public Long getAuthenticatedUserId() {
-    // 인증된 토큰을 가져오기
     KakaoAuthenticationToken authentication =
         (KakaoAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
     if (authentication == null) {
-      return null; // 인증되지 않은 경우 null 반환
+      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION, "토큰이 없습니다.");
     }
-
-    // 인증된 사용자의 socialId를 가져오기
-    String socialId = (String) authentication.getPrincipal();
-    System.out.println("userId: " + kakaoAuthService.getUserId(socialId));
-    return kakaoAuthService.getUserId(socialId); // socialId로 유저 ID 조회
+    return kakaoAuthService.getUserId(authentication.getSocialId());
   }
 
   public NotificationStatusResponse getNotificationStatus() {
@@ -121,7 +115,7 @@ public class UserService {
     notificationRepository.deleteAllByUserId(userId);
 
     // 2. 사용자의 약관 동의 정보 삭제
-    userAgreedTermsRepository.deleteAllByUserId(userId);
+    userAgreedTermRepository.deleteAllByUserId(userId);
 
     // 3. 사용자 정보 삭제
     userRepository.deleteById(userId);

@@ -7,47 +7,92 @@ import java.util.stream.Collectors;
 import org.bob.siungongsi.controller.dto.AuthRequest;
 import org.bob.siungongsi.controller.dto.TermsResponse;
 import org.bob.siungongsi.domain.TermEntity;
+import org.bob.siungongsi.domain.UserAgreedTermEntity;
 import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.repository.TermRepository;
+import org.bob.siungongsi.repository.UserAgreedTermRepository;
 import org.bob.siungongsi.repository.UserRepository;
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AuthService {
 
   private final TermRepository termRepository;
   private final UserRepository userRepository;
+  private final UserAgreedTermRepository userAgreedTermRepository;
+  private final KakaoAuthService kakaoAuthService;
 
-  public AuthService(TermRepository termRepository, UserRepository userRepository) {
+  public AuthService(
+      TermRepository termRepository,
+      UserRepository userRepository,
+      UserAgreedTermRepository userAgreedTermRepository,
+      KakaoAuthService kakaoAuthService) {
     this.userRepository = userRepository;
     this.termRepository = termRepository;
+    this.userAgreedTermRepository = userAgreedTermRepository;
+    this.kakaoAuthService = kakaoAuthService;
   }
 
-  // 회원가입 로직: 사용자가 처음으로 로그인 시 회원을 등록
-  public UserEntity authRequest(AuthRequest.RegisterRequest authRequest) {
-    Optional<UserEntity> existingUser = userRepository.findBySocialId(authRequest.socialId());
+  @Transactional
+  public void register(AuthRequest.RegisterRequest authRequest) {
+    String socialId = kakaoAuthService.validateAccessToken(authRequest.accessToken());
 
-    // 이미 존재하는 사용자가 있다면 예외 처리
-    if (existingUser.isPresent()) {
-      return null;
+    if (userRepository.existsBySocialId(socialId)) {
+      throw new CustomException(ApiResponseCode.AUTH_USER_ALREADY_EXISTS, "이미 가입된 사용자입니다.");
     }
 
-    // 새로운 사용자 등록
-    UserEntity newUserEntity = new UserEntity(authRequest.socialId(), authRequest.accessToken());
-    return userRepository.save(newUserEntity);
+    UserEntity newUserEntity =
+        userRepository.save(new UserEntity(socialId, authRequest.accessToken()));
+
+    List<UserAgreedTermEntity> userAgreedTerms =
+        validateAndCreateUserAgreedTerms(authRequest.agreedTermIds(), newUserEntity.getId());
+    if (!userAgreedTerms.isEmpty()) {
+      userAgreedTermRepository.saveAll(userAgreedTerms);
+    }
   }
 
-  // 로그인 로직: 이미 가입된 사용자가 로그인 시 액세스 토큰 갱신
+  private List<UserAgreedTermEntity> validateAndCreateUserAgreedTerms(
+      List<Long> agreedTermIds, Long userId) {
+
+    validateRequiredTerms(agreedTermIds);
+
+    validateTermIds(agreedTermIds, userId);
+
+    return agreedTermIds.stream().map(termId -> new UserAgreedTermEntity(userId, termId)).toList();
+  }
+
+  private void validateRequiredTerms(List<Long> agreedTermIds) {
+    List<Long> requiredTermIds = termRepository.findIdsByRequiredFlag();
+
+    if (!agreedTermIds.containsAll(requiredTermIds)) {
+      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_TERMS_NOT_AGREED, "필수 약관에 동의해야 합니다.");
+    }
+  }
+
+  private void validateTermIds(List<Long> agreedTermIds, Long userId) {
+    for (Long termId : agreedTermIds) {
+      if (!termRepository.existsById(termId)) {
+        throw new CustomException(ApiResponseCode.AUTH_TERMS_ID_NOT_FOUND, "찾을 수 없는 term_id 입니다.");
+      }
+
+      if (userAgreedTermRepository.existsByUserIdAndTermId(userId, termId)) {
+        throw new CustomException(
+            ApiResponseCode.AUTH_USER_AGREED_TERMS_ID_ALREADY_EXISTS, "이미 존재하는 회원 동의 약관 id 입니다.");
+      }
+    }
+  }
+
   public UserEntity login(AuthRequest.LoginRequest authRequest, String socialId) {
     String accessToken = authRequest.accessToken();
 
     Optional<UserEntity> user = userRepository.findBySocialId(socialId);
 
-    // 가입되지 않은 사용자의 경우
     if (!user.isPresent()) {
-      return null;
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND, "회원을 찾을 수 없습니다.");
     }
 
     // 기존 사용자일 경우 액세스 토큰 갱신

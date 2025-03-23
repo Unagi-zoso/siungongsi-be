@@ -6,7 +6,6 @@ import org.bob.siungongsi.controller.dto.AuthRequest;
 import org.bob.siungongsi.controller.dto.AuthResponse.LoginSuccessResponse;
 import org.bob.siungongsi.controller.dto.TermsResponse;
 import org.bob.siungongsi.controller.spec.AuthControllerSpec;
-import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.bob.siungongsi.service.AuthService;
@@ -30,19 +29,7 @@ public class AuthController implements AuthControllerSpec {
   public ResponseEntity<ApiResponseWrapper<?>> registerUser(
       @RequestBody AuthRequest.RegisterRequest authRequest) {
 
-    String socialId = authRequest.socialId();
-
-    if (socialId == null || socialId.isBlank() || socialId.length() > 100) {
-      return ResponseEntity.status(401)
-          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION));
-    }
-
-    UserEntity user = authService.authRequest(authRequest);
-
-    if (user == null) {
-      return ResponseEntity.status(409)
-          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_USER_ALREADY_EXISTS));
-    }
+    authService.register(authRequest);
 
     return ResponseEntity.status(201)
         .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_REGISTER_SUCCESS));
@@ -60,10 +47,6 @@ public class AuthController implements AuthControllerSpec {
     }
 
     String socialId = kakaoAuthService.validateAccessToken(accessToken);
-    if (socialId == null) {
-      return ResponseEntity.status(401)
-          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED));
-    }
 
     boolean isUser = authService.login(authRequest, socialId) != null;
 
