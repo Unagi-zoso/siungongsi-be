@@ -27,9 +27,10 @@ public class AuthController implements AuthControllerSpec {
   @Override
   @PostMapping("/register")
   public ResponseEntity<ApiResponseWrapper<?>> registerUser(
-      @RequestBody AuthRequest.RegisterRequest authRequest) {
+      @RequestBody AuthRequest.RegisterRequest authRequest,
+      @RequestHeader("Authorization") String accessToken) {
 
-    authService.register(authRequest);
+    authService.register(authRequest, accessToken.substring(7));
 
     return ResponseEntity.status(201)
         .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_REGISTER_SUCCESS));
@@ -38,17 +39,11 @@ public class AuthController implements AuthControllerSpec {
   @Override
   @PostMapping("/login")
   public ResponseEntity<ApiResponseWrapper<LoginSuccessResponse>> loginUser(
-      @RequestBody AuthRequest.LoginRequest authRequest) {
+      @RequestHeader("Authorization") String accessToken) {
 
-    String accessToken = authRequest.accessToken();
-    if (accessToken == null || accessToken.isBlank()) {
-      return ResponseEntity.status(401)
-          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION));
-    }
+    String socialId = kakaoAuthService.validateAccessToken(accessToken.substring(7));
 
-    String socialId = kakaoAuthService.validateAccessToken(accessToken);
-
-    boolean isUser = authService.login(authRequest, socialId) != null;
+    boolean isUser = authService.login(accessToken.substring(7), socialId);
 
     return ResponseEntity.ok(
         ApiResponseWrapper.success(

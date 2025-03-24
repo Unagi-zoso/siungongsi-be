@@ -12,6 +12,6 @@ public interface UserAgreedTermRepository extends JpaRepository<UserAgreedTermEn
   Boolean existsByUserIdAndTermId(Long userId, Long termId);
 
   @Modifying
-  @Query("DELETE FROM UserAgreedTermsEntity u WHERE u.userId = :userId")
+  @Query("DELETE FROM UserAgreedTermEntity u WHERE u.userId = :userId")
   void deleteAllByUserId(@Param("userId") Long userId);
 }
