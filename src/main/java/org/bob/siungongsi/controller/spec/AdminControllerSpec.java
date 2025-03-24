@@ -13,4 +13,7 @@ public interface AdminControllerSpec {
 
   @Operation(summary = "실패한 공시 재시도")
   void retryFailedGongsiList(String apiKey, List<String> gongsiCodes);
+
+  @Operation(summary = "회사명 자동완성")
+  void autofillCompanyName(String apiKey, String startDt, String endDt);
 }
