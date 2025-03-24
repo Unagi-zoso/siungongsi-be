@@ -27,9 +27,10 @@ public class AuthController implements AuthControllerSpec {
   @Override
   @PostMapping("/register")
   public ResponseEntity<ApiResponseWrapper<?>> registerUser(
-      @RequestBody AuthRequest.RegisterRequest authRequest) {
+      @RequestBody AuthRequest.RegisterRequest authRequest,
+      @RequestHeader("Authorization") String accessToken) {
 
-    authService.register(authRequest);
+    authService.register(authRequest, accessToken.substring(7));
 
     return ResponseEntity.status(201)
         .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_REGISTER_SUCCESS));
