@@ -40,11 +40,4 @@ public class UserController implements UserControllerSpec {
     return ResponseEntity.status(201)
         .body(ApiResponseWrapper.success(USER_UPDATE_STATUS_SUCCESS, response));
   }
-
-  @DeleteMapping
-  public ResponseEntity<ApiResponseWrapper<?>> withdrawUser(
-      @RequestHeader("Authorization") String authorization) {
-    userService.withdrawUser();
-    return ResponseEntity.ok(ApiResponseWrapper.success(USER_NOTI_WITHDRAWAL_SUCCESS, null));
-  }
 }
