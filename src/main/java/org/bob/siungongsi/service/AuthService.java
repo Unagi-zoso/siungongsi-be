@@ -38,15 +38,14 @@ public class AuthService {
   }
 
   @Transactional
-  public void register(AuthRequest.RegisterRequest authRequest) {
-    String socialId = kakaoAuthService.validateAccessToken(authRequest.accessToken());
+  public void register(AuthRequest.RegisterRequest authRequest, String accessToken) {
+    String socialId = kakaoAuthService.validateAccessToken(accessToken);
 
     if (userRepository.existsBySocialId(socialId)) {
       throw new CustomException(ApiResponseCode.AUTH_USER_ALREADY_EXISTS, "이미 가입된 사용자입니다.");
     }
 
-    UserEntity newUserEntity =
-        userRepository.save(new UserEntity(socialId, authRequest.accessToken()));
+    UserEntity newUserEntity = userRepository.save(new UserEntity(socialId, accessToken));
 
     List<UserAgreedTermEntity> userAgreedTerms =
         validateAndCreateUserAgreedTerms(authRequest.agreedTermIds(), newUserEntity.getId());
