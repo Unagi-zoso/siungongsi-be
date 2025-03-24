@@ -14,6 +14,8 @@ import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class NotificationService {
 
@@ -56,6 +58,7 @@ public class NotificationService {
         new NotiHistoryEntity(userId, notificationRequest.companyId()));
   }
 
+  @Transactional
   public void deleteNotification(Long companyId) {
     Long userId = userService.getAuthenticatedUserId();
 
@@ -72,7 +75,7 @@ public class NotificationService {
           ApiResponseCode.NOTIFICATION_REQUIRED_STATUS, "유저가 알림을 동의하지 않았습니다. ");
     }
 
-    notificationRepository.deleteByUserIdAndCompanyId(companyId, userId);
+    notificationRepository.deleteByUserIdAndCompanyId(userId, companyId);
   }
 
   public NotificationResponse.NotificationRecommendedCompanyList recommendedCompanyNotification() {
