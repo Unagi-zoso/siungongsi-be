@@ -2,6 +2,7 @@ package org.bob.siungongsi.service;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +22,8 @@ public class CompanyNameAutofillGenerator {
 
   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+  private final ZoneId KOREA_ZONE = ZoneId.of("Asia/Seoul");
+
   public CompanyNameAutofillGenerator(
       CompanyRepository companyRepository,
       CompanyNameAutofillRepository companyNameAutofillRepository) {
@@ -30,6 +33,9 @@ public class CompanyNameAutofillGenerator {
 
   @Transactional
   public void generate(String startDt, String endDt) {
+    if (endDt == null) {
+      endDt = LocalDateTime.now(KOREA_ZONE).format(formatter);
+    }
     List<CompanyEntity> companies =
         companyRepository.findByCreatedDtBetween(
             LocalDateTime.parse(startDt, formatter), LocalDateTime.parse(endDt, formatter));
