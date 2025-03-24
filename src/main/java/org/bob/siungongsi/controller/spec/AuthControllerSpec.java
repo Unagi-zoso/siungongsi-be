@@ -63,7 +63,11 @@ public interface AuthControllerSpec {
             })
       })
   ResponseEntity<ApiResponseWrapper<LoginSuccessResponse>> loginUser(
-      AuthRequest.LoginRequest requestDto);
+      @Parameter(
+              description = "JWT 토큰 (Bearer 포함)",
+              required = true,
+              example = "Bearer your_token_here")
+          String authorization);
 
   @Operation(
       summary = "회원가입",

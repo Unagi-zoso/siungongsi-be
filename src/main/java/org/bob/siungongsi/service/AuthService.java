@@ -86,19 +86,19 @@ public class AuthService {
     }
   }
 
-  public UserEntity login(AuthRequest.LoginRequest authRequest, String socialId) {
-    String accessToken = authRequest.accessToken();
+  public Boolean login(String accessToken, String socialId) {
 
     Optional<UserEntity> user = userRepository.findBySocialId(socialId);
 
     if (!user.isPresent()) {
-      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND, "회원을 찾을 수 없습니다.");
+      return false;
     }
 
     // 기존 사용자일 경우 액세스 토큰 갱신
     UserEntity userEntity = user.get();
     userEntity.updateAccessToken(accessToken);
-    return userRepository.save(userEntity);
+    userRepository.save(userEntity);
+    return true;
   }
 
   // 회원탈퇴 로직: 인증된 사용자의 계정을 삭제
