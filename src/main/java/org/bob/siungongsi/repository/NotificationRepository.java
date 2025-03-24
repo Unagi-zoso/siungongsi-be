@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface NotificationRepository extends JpaRepository<NotiHistoryEntity, Long> {
   boolean existsByUserIdAndCompanyId(Long userId, Long companyId);
 
+  @Modifying
   void deleteByUserIdAndCompanyId(Long userId, Long companyId);
 
   Long countByCompanyId(Long companyId);
