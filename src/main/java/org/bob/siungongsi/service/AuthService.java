@@ -11,6 +11,7 @@ import org.bob.siungongsi.domain.UserAgreedTermEntity;
 import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
+import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.repository.TermRepository;
 import org.bob.siungongsi.repository.UserAgreedTermRepository;
 import org.bob.siungongsi.repository.UserRepository;
@@ -25,16 +26,19 @@ public class AuthService {
   private final UserRepository userRepository;
   private final UserAgreedTermRepository userAgreedTermRepository;
   private final KakaoAuthService kakaoAuthService;
+  private final NotificationRepository notificationRepository;
 
   public AuthService(
       TermRepository termRepository,
       UserRepository userRepository,
       UserAgreedTermRepository userAgreedTermRepository,
-      KakaoAuthService kakaoAuthService) {
+      KakaoAuthService kakaoAuthService,
+      NotificationRepository notificationRepository) {
     this.userRepository = userRepository;
     this.termRepository = termRepository;
     this.userAgreedTermRepository = userAgreedTermRepository;
     this.kakaoAuthService = kakaoAuthService;
+    this.notificationRepository = notificationRepository;
   }
 
   @Transactional
@@ -101,7 +105,7 @@ public class AuthService {
     return userRepository.save(userEntity);
   }
 
-  // 회원탈퇴 로직: 인증된 사용자의 계정을 삭제
+  @Transactional
   public void withdrawUser(String accessToken) {
     // 액세스 토큰이 없으면 예외 처리
     if (accessToken == null || accessToken.isEmpty()) {
@@ -110,16 +114,27 @@ public class AuthService {
           ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION.getMessage());
     }
 
-    Optional<UserEntity> user = userRepository.findByAccessToken(accessToken);
+    String socialId = kakaoAuthService.validateAccessToken(accessToken);
 
-    // 유효하지 않은 액세스 토큰인 경우 예외 처리
-    if (!user.isPresent()) {
+    Optional<UserEntity> userOpt = userRepository.findBySocialId(socialId);
+
+    // 유효하지 않은 소셜 ID인 경우 예외 처리
+    if (!userOpt.isPresent()) {
       throw new CustomException(
           ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
     }
 
-    // 사용자 계정 삭제
-    userRepository.delete(user.get());
+    UserEntity user = userOpt.get();
+    Long userId = user.getId();
+
+    // 회원의 알림 구독 정보 삭제
+    notificationRepository.deleteAllByUserId(userId);
+
+    // 회원의 약관 동의 정보 삭제
+    userAgreedTermRepository.deleteAllByUserId(userId);
+
+    // 회원 정보 삭제
+    userRepository.delete(user);
   }
 
   // 약관 정보 조회 로직

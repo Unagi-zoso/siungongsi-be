@@ -101,26 +101,4 @@ public class UserService {
 
     return NotificationStatusResponse.of(user.getId(), request.notificationFlag());
   }
-
-  @Transactional
-  public void withdrawUser() {
-    Long userId = getAuthenticatedUserId();
-    if (userId == null) {
-      throw new CustomException(
-          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
-          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
-    }
-
-    // 1. 사용자의 알림 구독 정보 삭제
-    notificationRepository.deleteAllByUserId(userId);
-
-    // 2. 사용자의 약관 동의 정보 삭제
-    userAgreedTermRepository.deleteAllByUserId(userId);
-
-    // 3. 사용자 정보 삭제
-    userRepository.deleteById(userId);
-
-    // 4. 인증 정보 제거 (로그아웃)
-    SecurityContextHolder.clearContext();
-  }
 }
