@@ -31,6 +31,23 @@ class TodayProcessedGongsiManagerTest {
   }
 
   @Test
+  @DisplayName("생성 시 DB에서 공시 목록을 로드한다")
+  void whenConstruct_thenLoadFromDBToSet() {
+    // given
+    List<TodayProcessedGongsiEntity> processedGongsiEntities =
+        List.of(new TodayProcessedGongsiEntity("000001"), new TodayProcessedGongsiEntity("000002"));
+    TodayProcessedGongsiRepository repoMock = mock(TodayProcessedGongsiRepository.class);
+    when(repoMock.findAll()).thenReturn(processedGongsiEntities);
+
+    // when
+    TodayProcessedGongsiManager manager = new TodayProcessedGongsiManager(repoMock);
+
+    // then
+    assertThat(manager.isProcessed(processedGongsiEntities.get(0).getGongsiCode())).isTrue();
+    assertThat(manager.isProcessed(processedGongsiEntities.get(1).getGongsiCode())).isTrue();
+  }
+
+  @Test
   @DisplayName("신규 공시코드는 DB에 존재하지 않으면 저장된다")
   void givenNewCode_whenAddProcessedGongsi_thenSaveToDB() {
     String code = "000001";
@@ -90,27 +107,16 @@ class TodayProcessedGongsiManagerTest {
   }
 
   @Test
-  @DisplayName("매일 0시에 Set과 DB의 공시 정보가 초기화된다")
-  void whenClearProcessedGongsi_thenResetSetAndDB() {
+  @DisplayName("처리된 공시 목록이 존재할 때 처리된 공시 목록을 삭제하면 Set과 DB가 초기화된다")
+  void givenProcessedGongsi_whenClearProcessedGongsi_thenClearSetAndDB() {
+    String code = "000001";
+
+    when(repository.existsByGongsiCode(code)).thenReturn(false);
+    manager.addProcessedGongsi(code);
+
     manager.clearProcessedGongsi();
 
+    assertThat(manager.isProcessed(code)).isFalse();
     verify(repository).deleteAll();
-  }
-
-  @Test
-  @DisplayName("생성 시 DB에서 공시 목록을 로드한다")
-  void whenConstruct_thenLoadFromDBToSet() {
-    // given
-    List<TodayProcessedGongsiEntity> processedGongsiEntities =
-        List.of(new TodayProcessedGongsiEntity("000001"), new TodayProcessedGongsiEntity("000002"));
-    TodayProcessedGongsiRepository repoMock = mock(TodayProcessedGongsiRepository.class);
-    when(repoMock.findAll()).thenReturn(processedGongsiEntities);
-
-    // when
-    TodayProcessedGongsiManager manager = new TodayProcessedGongsiManager(repoMock);
-
-    // then
-    assertThat(manager.isProcessed(processedGongsiEntities.get(0).getGongsiCode())).isTrue();
-    assertThat(manager.isProcessed(processedGongsiEntities.get(1).getGongsiCode())).isTrue();
   }
 }
