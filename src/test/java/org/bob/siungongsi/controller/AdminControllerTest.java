@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import org.bob.siungongsi.service.CompanyNameAutofillGenerator;
 import org.bob.siungongsi.service.ProcessingFailedGongsiService;
 import org.bob.siungongsi.service.TodayProcessedGongsiService;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +37,8 @@ class AdminControllerTest {
   @MockitoBean private TodayProcessedGongsiService todayProcessedGongsiService;
 
   @MockitoBean private ProcessingFailedGongsiService processingFailedGongsiService;
+
+  @MockitoBean private CompanyNameAutofillGenerator companyNameAutofillGenerator;
 
   private static final String REQUEST_URL = "/admin";
 
@@ -111,5 +114,41 @@ class AdminControllerTest {
             result -> result.getResolvedException().getMessage().contains("Invalid admin key"));
 
     verifyNoInteractions(processingFailedGongsiService);
+  }
+
+  @Test
+  @DisplayName("유효한 API 키로 회사명 자동완성 요청 시 200 OK를 반환한다")
+  void givenValidApiKey_whenAutofillCompanyName_thenReturnsOk() throws Exception {
+    String startDt = "2021-01-01 00:00:00";
+    String endDt = "2021-01-01 23:59:59";
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(REQUEST_URL + "/company-name-autofill")
+                .param("api-key", "test-api-key")
+                .param("startDt", startDt)
+                .param("endDt", endDt))
+        .andExpect(status().isOk());
+
+    verify(companyNameAutofillGenerator).generate(startDt, endDt);
+  }
+
+  @Test
+  @DisplayName("잘못된 API 키로 회사명 자동완성 요청 시 예외를 반환한다")
+  void givenInvalidApiKey_whenAutofillCompanyName_thenThrowsException() throws Exception {
+    String startDt = "2021-01-01 00:00:00";
+    String endDt = "2021-01-01 23:59:59";
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(REQUEST_URL + "/company-name-autofill")
+                .param("api-key", "wrong-key")
+                .param("startDt", startDt)
+                .param("endDt", endDt))
+        .andExpect(status().isInternalServerError())
+        .andExpect(
+            result -> result.getResolvedException().getMessage().contains("Invalid admin key"));
+
+    verifyNoInteractions(companyNameAutofillGenerator);
   }
 }
