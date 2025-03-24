@@ -15,7 +15,6 @@ import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.repository.TermRepository;
 import org.bob.siungongsi.repository.UserAgreedTermRepository;
 import org.bob.siungongsi.repository.UserRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -30,11 +29,11 @@ public class AuthService {
   private final NotificationRepository notificationRepository;
 
   public AuthService(
-          TermRepository termRepository,
-          UserRepository userRepository,
-          UserAgreedTermRepository userAgreedTermRepository,
-          KakaoAuthService kakaoAuthService,
-          NotificationRepository notificationRepository) {
+      TermRepository termRepository,
+      UserRepository userRepository,
+      UserAgreedTermRepository userAgreedTermRepository,
+      KakaoAuthService kakaoAuthService,
+      NotificationRepository notificationRepository) {
     this.userRepository = userRepository;
     this.termRepository = termRepository;
     this.userAgreedTermRepository = userAgreedTermRepository;
@@ -51,17 +50,17 @@ public class AuthService {
     }
 
     UserEntity newUserEntity =
-            userRepository.save(new UserEntity(socialId, authRequest.accessToken()));
+        userRepository.save(new UserEntity(socialId, authRequest.accessToken()));
 
     List<UserAgreedTermEntity> userAgreedTerms =
-            validateAndCreateUserAgreedTerms(authRequest.agreedTermIds(), newUserEntity.getId());
+        validateAndCreateUserAgreedTerms(authRequest.agreedTermIds(), newUserEntity.getId());
     if (!userAgreedTerms.isEmpty()) {
       userAgreedTermRepository.saveAll(userAgreedTerms);
     }
   }
 
   private List<UserAgreedTermEntity> validateAndCreateUserAgreedTerms(
-          List<Long> agreedTermIds, Long userId) {
+      List<Long> agreedTermIds, Long userId) {
 
     validateRequiredTerms(agreedTermIds);
 
@@ -86,7 +85,7 @@ public class AuthService {
 
       if (userAgreedTermRepository.existsByUserIdAndTermId(userId, termId)) {
         throw new CustomException(
-                ApiResponseCode.AUTH_USER_AGREED_TERMS_ID_ALREADY_EXISTS, "이미 존재하는 회원 동의 약관 id 입니다.");
+            ApiResponseCode.AUTH_USER_AGREED_TERMS_ID_ALREADY_EXISTS, "이미 존재하는 회원 동의 약관 id 입니다.");
       }
     }
   }
@@ -111,8 +110,8 @@ public class AuthService {
     // 액세스 토큰이 없으면 예외 처리
     if (accessToken == null || accessToken.isEmpty()) {
       throw new CustomException(
-              ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION,
-              ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION.getMessage());
+          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION,
+          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION.getMessage());
     }
 
     String socialId = kakaoAuthService.validateAccessToken(accessToken);
@@ -122,7 +121,7 @@ public class AuthService {
     // 유효하지 않은 소셜 ID인 경우 예외 처리
     if (!userOpt.isPresent()) {
       throw new CustomException(
-              ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
+          ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
     }
 
     UserEntity user = userOpt.get();
@@ -144,18 +143,18 @@ public class AuthService {
 
     if (terms.isEmpty()) {
       throw new CustomException(
-              ApiResponseCode.AUTH_TERMS_NOT_FOUND, ApiResponseCode.AUTH_TERMS_NOT_FOUND.getMessage());
+          ApiResponseCode.AUTH_TERMS_NOT_FOUND, ApiResponseCode.AUTH_TERMS_NOT_FOUND.getMessage());
     }
 
     return terms.stream()
-            .map(
-                    term -> {
-                      String titleWithRequiredFlag =
-                              term.getRequiredFlag() == 1
-                                      ? term.getTitle() + " (필수)"
-                                      : term.getTitle() + " (선택)";
-                      return TermsResponse.of(term.getId(), titleWithRequiredFlag, term.getContent());
-                    })
-            .collect(Collectors.toList());
+        .map(
+            term -> {
+              String titleWithRequiredFlag =
+                  term.getRequiredFlag() == 1
+                      ? term.getTitle() + " (필수)"
+                      : term.getTitle() + " (선택)";
+              return TermsResponse.of(term.getId(), titleWithRequiredFlag, term.getContent());
+            })
+        .collect(Collectors.toList());
   }
 }

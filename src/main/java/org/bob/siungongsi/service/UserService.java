@@ -24,10 +24,10 @@ public class UserService {
   private final UserAgreedTermRepository userAgreedTermRepository;
 
   public UserService(
-          KakaoAuthService kakaoAuthService,
-          UserRepository userRepository,
-          NotificationRepository notificationRepository,
-          UserAgreedTermRepository userAgreedTermRepository) {
+      KakaoAuthService kakaoAuthService,
+      UserRepository userRepository,
+      NotificationRepository notificationRepository,
+      UserAgreedTermRepository userAgreedTermRepository) {
     this.kakaoAuthService = kakaoAuthService;
     this.userRepository = userRepository;
     this.notificationRepository = notificationRepository;
@@ -36,7 +36,7 @@ public class UserService {
 
   public Long getAuthenticatedUserId() {
     KakaoAuthenticationToken authentication =
-            (KakaoAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        (KakaoAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
     if (authentication == null) {
       throw new CustomException(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION, "토큰이 없습니다.");
@@ -48,14 +48,14 @@ public class UserService {
     Long userId = getAuthenticatedUserId();
     if (userId == null) {
       throw new CustomException(
-              ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
-              ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
     }
 
     Optional<UserEntity> userOpt = userRepository.findById(userId);
     if (!userOpt.isPresent()) {
       throw new CustomException(
-              ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
+          ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
     }
 
     UserEntity user = userOpt.get();
@@ -69,21 +69,21 @@ public class UserService {
   public NotificationStatusResponse updateNotificationStatus(UserNotificationRequest request) {
     if (request.notificationFlag() == null) {
       throw new CustomException(
-              ApiResponseCode.USER_STATUS_ALREADY_EXIST,
-              ApiResponseCode.USER_STATUS_ALREADY_EXIST.getMessage());
+          ApiResponseCode.USER_STATUS_ALREADY_EXIST,
+          ApiResponseCode.USER_STATUS_ALREADY_EXIST.getMessage());
     }
 
     Long userId = getAuthenticatedUserId();
     if (userId == null) {
       throw new CustomException(
-              ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
-              ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
+          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
     }
 
     Optional<UserEntity> userOpt = userRepository.findById(userId);
     if (!userOpt.isPresent()) {
       throw new CustomException(
-              ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
+          ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
     }
 
     UserEntity user = userOpt.get();
