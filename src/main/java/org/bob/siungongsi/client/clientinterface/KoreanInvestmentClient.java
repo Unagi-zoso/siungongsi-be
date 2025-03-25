@@ -1,6 +1,9 @@
 package org.bob.siungongsi.client.clientinterface;
 
-import org.bob.siungongsi.service.KoreanInvestmentTokenManager;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bob.siungongsi.service.ApiKeyStoreManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +22,7 @@ public class KoreanInvestmentClient {
 
   private final ObjectMapper objectMapper;
   private final RestTemplate restTemplate;
-  private final KoreanInvestmentTokenManager tokenManager;
+  private final ApiKeyStoreManager tokenManager;
 
   @Value("${korean.investment.appkey}")
   private String appKey;
@@ -30,8 +33,10 @@ public class KoreanInvestmentClient {
   @Value("${korean.investment.stock.url}")
   private String stockUrl;
 
-  public KoreanInvestmentClient(
-      ObjectMapper objectMapper, KoreanInvestmentTokenManager tokenManager) {
+  @Value("${korean.investment.token.url}")
+  private String tokenUrl;
+
+  public KoreanInvestmentClient(ObjectMapper objectMapper, ApiKeyStoreManager tokenManager) {
     this.objectMapper = objectMapper;
     this.tokenManager = tokenManager;
     this.restTemplate = new RestTemplate();
@@ -39,7 +44,7 @@ public class KoreanInvestmentClient {
 
   public double getPrdyCtr(String stockCode) {
     try {
-      String accessToken = tokenManager.getAccessToken();
+      String accessToken = tokenManager.getAccessToken(ApiKeyStoreManager.KI_API_KEY_NAME);
       return fetchStockData(accessToken, stockCode);
     } catch (Exception e) {
       System.err.println("Error fetching prdyCtr from Korean Investment API: " + e.getMessage());
@@ -77,6 +82,73 @@ public class KoreanInvestmentClient {
     } catch (Exception e) {
       System.err.println("Error processing stock data: " + e.getMessage());
       throw new RuntimeException("Failed to process stock data: " + e.getMessage());
+    }
+  }
+
+  public String fetchApprovalKeyWithDelayedRetry(int maxRetries, int delaySeconds) {
+    for (int i = 0; i < maxRetries; i++) {
+      try {
+        return fetchApprovalKey();
+      } catch (Exception e) {
+        if (i < maxRetries - 1) {
+          try {
+            Thread.sleep(delaySeconds * 1000L);
+          } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            break;
+          }
+        }
+      }
+    }
+    throw new IllegalStateException("Failed to fetch Korean Investment API key after retries.");
+  }
+
+  private String fetchApprovalKey() {
+    try {
+      Map<String, String> requestBody = new HashMap<>();
+      requestBody.put("grant_type", "client_credentials");
+      requestBody.put("appkey", appKey);
+      requestBody.put("appsecret", secretKey);
+
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.APPLICATION_JSON);
+
+      HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
+
+      ResponseEntity<String> response =
+          restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, String.class);
+
+      String responseBody = response.getBody();
+      JsonNode root = objectMapper.readTree(responseBody);
+
+      if (root.has("error_code")) {
+        throw new Exception(
+            "API Error: "
+                + root.path("error_code").asText()
+                + " - "
+                + root.path("error_description").asText());
+      }
+
+      String approvalKey = null;
+      if (root.has("approval_key")) {
+        approvalKey = root.path("approval_key").asText();
+      } else if (root.has("access_token")) {
+        approvalKey = root.path("access_token").asText();
+      } else if (root.has("token")) {
+        approvalKey = root.path("token").asText();
+      }
+
+      if (approvalKey == null || approvalKey.isEmpty()) {
+        root.fieldNames().forEachRemaining(fieldName -> System.out.println(" - " + fieldName));
+        throw new Exception(
+            "Failed to get approval key. Response fields don't match expected format.");
+      }
+      return approvalKey;
+    } catch (Exception e) {
+      System.err.println("Error refreshing Korean Investment API token: " + e.getMessage());
+
+      throw new RuntimeException(
+          "Failed to initialize access token. Please check your API credentials.");
     }
   }
 }
