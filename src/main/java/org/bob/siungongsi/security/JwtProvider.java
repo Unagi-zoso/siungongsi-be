@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import org.bob.siungongsi.dto.ApiResponseCode;
+import org.bob.siungongsi.exception.CustomException;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
@@ -30,16 +32,16 @@ public class JwtProvider {
   }
 
   public Long validateJwtToken(String token) {
-    //    try {
-    return Long.parseLong(
-        Jwts.parser()
-            .verifyWith(getKey())
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
-            .getSubject());
-    //    } catch (Exception e) {
-    //      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED, "잘못된 토큰입니다");
-    //    }
+    try {
+      return Long.parseLong(
+          Jwts.parser()
+              .verifyWith(getKey())
+              .build()
+              .parseSignedClaims(token)
+              .getPayload()
+              .getSubject());
+    } catch (Exception e) {
+      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED, "잘못된 토큰입니다");
+    }
   }
 }

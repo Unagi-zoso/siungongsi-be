@@ -22,22 +22,27 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+    //    http.authorizeHttpRequests(
+    //        (authorizeRequests) -> {
+    //          authorizeRequests
+    //              .requestMatchers(
+    //                  "/v1/auth/login",
+    //                  "/v1/auth/register",
+    //                  "/v1/auth/terms",
+    //                  "/v1/companies/**",
+    //                  "/v1/gongsi/**",
+    //                  "/swagger-ui/**",
+    //                  "/v3/api-docs/**",
+    //                  "/swagger-resources/**",
+    //                  "/webjars/**")
+    //              .permitAll()
+    //              .anyRequest()
+    //              .authenticated();
+    //        });
+
     http.authorizeHttpRequests(
         (authorizeRequests) -> {
-          authorizeRequests
-              .requestMatchers(
-                  "/v1/auth/login",
-                  "/v1/auth/register",
-                  "/v1/auth/terms",
-                  "/v1/companies/**",
-                  "/v1/gongsi/**",
-                  "/swagger-ui/**",
-                  "/v3/api-docs/**",
-                  "/swagger-resources/**",
-                  "/webjars/**")
-              .permitAll()
-              .anyRequest()
-              .authenticated();
+          authorizeRequests.anyRequest().permitAll();
         });
 
     http.cors(AbstractHttpConfigurer::disable);
