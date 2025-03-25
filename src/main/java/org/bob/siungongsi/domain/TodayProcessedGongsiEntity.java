@@ -13,7 +13,7 @@ import jakarta.persistence.UniqueConstraint;
 @Entity
 @Table(
     name = "today_processed_gongsi",
-    uniqueConstraints = @UniqueConstraint(columnNames = "gongsi_id"))
+    uniqueConstraints = @UniqueConstraint(columnNames = "gongsi_code"))
 public class TodayProcessedGongsiEntity extends BaseTimeEntity {
 
   @Id
