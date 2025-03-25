@@ -45,7 +45,8 @@ public class UserService {
   }
 
   public NotificationStatusResponse getNotificationStatus() {
-    Long userId = getAuthenticatedUserId();
+    Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
     if (userId == null) {
       throw new CustomException(
           ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
@@ -73,7 +74,8 @@ public class UserService {
           ApiResponseCode.USER_STATUS_ALREADY_EXIST.getMessage());
     }
 
-    Long userId = getAuthenticatedUserId();
+    Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
     if (userId == null) {
       throw new CustomException(
           ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
