@@ -7,9 +7,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import org.bob.siungongsi.security.JwtProvider;
 import org.bob.siungongsi.service.CompanyNameAutofillGenerator;
 import org.bob.siungongsi.service.ProcessingFailedGongsiService;
 import org.bob.siungongsi.service.TodayProcessedGongsiService;
+import org.bob.siungongsi.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,10 @@ class AdminControllerTest {
   @MockitoBean private ProcessingFailedGongsiService processingFailedGongsiService;
 
   @MockitoBean private CompanyNameAutofillGenerator companyNameAutofillGenerator;
+
+  @MockitoBean private UserService userService;
+
+  @MockitoBean private JwtProvider jwtProvider;
 
   private static final String REQUEST_URL = "/admin";
 
