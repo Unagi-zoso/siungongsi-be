@@ -1,13 +1,20 @@
 package org.bob.siungongsi.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.bob.siungongsi.controller.dto.UserRequest.UserNotificationRequest;
 import org.bob.siungongsi.controller.dto.UserResponse.NotificationStatusResponse;
+import org.bob.siungongsi.controller.dto.UserSubscriptionsResponse;
+import org.bob.siungongsi.controller.dto.UserSubscriptionsResponse.SubscribedCompany;
+import org.bob.siungongsi.domain.CompanyEntity;
 import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
+import org.bob.siungongsi.repository.CompanyRepository;
+import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -17,9 +24,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final NotificationRepository notificationRepository;
+  private final CompanyRepository companyRepository;
 
-  public UserService(UserRepository userRepository) {
+  public UserService(
+      UserRepository userRepository,
+      NotificationRepository notificationRepository,
+      CompanyRepository companyRepository) {
     this.userRepository = userRepository;
+    this.notificationRepository = notificationRepository;
+    this.companyRepository = companyRepository;
   }
 
   public NotificationStatusResponse getNotificationStatus() {
@@ -84,5 +98,33 @@ public class UserService {
 
   public List<UserEntity> getUser() {
     return userRepository.findAll();
+  }
+
+  @Transactional(readOnly = true)
+  public UserSubscriptionsResponse getUserSubscriptions() {
+    Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    Optional<UserEntity> userOpt = userRepository.findById(userId);
+
+    List<Long> companyIds = notificationRepository.findCompanyIdsByUserId(userId);
+
+    if (companyIds.isEmpty()) {
+      return UserSubscriptionsResponse.of(userId, new ArrayList<>());
+    }
+
+    List<CompanyEntity> companies = companyRepository.findByIdIn(companyIds);
+
+    List<SubscribedCompany> subscribedCompanies =
+        companies.stream()
+            .map(
+                company ->
+                    SubscribedCompany.of(
+                        company.getId(),
+                        company.getCompanyName(),
+                        company.getCompanyCode(),
+                        company.getStockCode()))
+            .collect(Collectors.toList());
+
+    return UserSubscriptionsResponse.of(userId, subscribedCompanies);
   }
 }

@@ -25,4 +25,7 @@ public interface NotificationRepository extends JpaRepository<NotiHistoryEntity,
   @Modifying
   @Query("DELETE FROM NotiHistoryEntity n WHERE n.userId = :userId")
   void deleteAllByUserId(@Param("userId") Long userId);
+
+  @Query("SELECT n.companyId FROM NotiHistoryEntity n WHERE n.userId = :userId")
+  List<Long> findCompanyIdsByUserId(@Param("userId") Long userId);
 }

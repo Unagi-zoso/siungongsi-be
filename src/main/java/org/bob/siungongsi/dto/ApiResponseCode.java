@@ -29,10 +29,11 @@ public enum ApiResponseCode {
   // 유저 관련 응답 코드 (3)
   USER_GET_STATUS(3200, "get_notification_status"),
   USER_UPDATE_STATUS_SUCCESS(3201, "update_notification_status_success"),
+  USER_NOTI_WITHDRAWAL_SUCCESS(3201, "user_noti_withdrawal_success"),
+  USER_SUBSCRIPTIONS_SUCCESS(3205, "get_user_subscriptions"),
   USER_REQUIRED_AUTHORIZATION(3400, "required_authorization"),
   USER_STATUS_ALREADY_EXIST(3401, "notification_status_already_exist"),
   USER_INTERNAL_SERVER_ERROR(3500, "internal_server_error"),
-  USER_NOTI_WITHDRAWAL_SUCCESS(3201, "user_noti_withdrawal_success"),
 
   // 회사 관련 응답 코드 (4)
   COMPANY_GET_NAME_LIST_SUCCESS(4200, "get_company_name_list_success"),
