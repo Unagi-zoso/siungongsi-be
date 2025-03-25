@@ -32,7 +32,7 @@ public class KakaoAuthFilter extends OncePerRequestFilter {
     String accessToken = authHeader.substring(7); // "Bearer "를 제거한 토큰
 
     // 토큰 검증
-    String socialId = kakaoAuthService.validateAccessToken(accessToken);
+    String socialId = kakaoAuthService.getSocialIdFromAccessToken(accessToken);
     if (socialId != null) {
       // 토큰이 유효하면 인증 처리 (SecurityContext에 인증 객체 저장)
       KakaoAuthenticationToken authenticationToken = new KakaoAuthenticationToken(socialId);

@@ -42,20 +42,23 @@ public class AuthService {
   }
 
   @Transactional
-  public void register(AuthRequest.RegisterRequest authRequest, String accessToken) {
-    String socialId = kakaoAuthService.validateAccessToken(accessToken);
+  public String register(AuthRequest.RegisterRequest authRequest, String accessToken) {
+    String socialId = kakaoAuthService.getSocialIdFromAccessToken(accessToken);
 
     if (userRepository.existsBySocialId(socialId)) {
       throw new CustomException(ApiResponseCode.AUTH_USER_ALREADY_EXISTS, "이미 가입된 사용자입니다.");
     }
 
-    UserEntity newUserEntity = userRepository.save(new UserEntity(socialId, accessToken));
+    UserEntity newUserEntity =
+        userRepository.save(new UserEntity(socialId, accessToken.substring(7)));
 
     List<UserAgreedTermEntity> userAgreedTerms =
         validateAndCreateUserAgreedTerms(authRequest.agreedTermIds(), newUserEntity.getId());
     if (!userAgreedTerms.isEmpty()) {
       userAgreedTermRepository.saveAll(userAgreedTerms);
     }
+
+    return kakaoAuthService.loginWithKakao(newUserEntity.getId().toString());
   }
 
   private List<UserAgreedTermEntity> validateAndCreateUserAgreedTerms(
@@ -113,7 +116,7 @@ public class AuthService {
           ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION.getMessage());
     }
 
-    String socialId = kakaoAuthService.validateAccessToken(accessToken);
+    String socialId = kakaoAuthService.getSocialIdFromAccessToken(accessToken);
 
     Optional<UserEntity> userOpt = userRepository.findBySocialId(socialId);
 
