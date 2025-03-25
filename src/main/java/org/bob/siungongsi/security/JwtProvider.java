@@ -6,6 +6,7 @@ import javax.crypto.SecretKey;
 
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
@@ -15,18 +16,21 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtProvider {
 
-  private static final String SECRET_KEY = "dflknlsdfjlskfncdsjlkmxnfjsklcxmvnfddddddddc";
-  private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 7;
+  @Value("${jwt.secret-key}")
+  private String secretKey;
+
+  @Value("${jwt.expiration-time}")
+  private long expirationTime;
 
   private SecretKey getKey() {
-    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY)); // 최신 방식
+    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)); // 최신 방식
   }
 
   public String createJwtToken(String userId) {
     return Jwts.builder()
         .subject(userId)
         .issuedAt(new Date())
-        .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+        .expiration(new Date(System.currentTimeMillis() + expirationTime))
         .signWith(getKey())
         .compact();
   }
