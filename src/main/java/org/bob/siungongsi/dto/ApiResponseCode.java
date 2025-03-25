@@ -54,6 +54,9 @@ public enum ApiResponseCode {
   // 외부 API 관련 응답 코드 (6)
   EXTERNAL_API_ERROR(6400, "external_api_error"),
 
+  // API KEY STORE 관련 응답코드 (27)
+  KEY_NOT_FOUND(2700, "key_not_found"),
+
   // 처리 실패 공시 관련 응답 코드 (123)
   FAILED_GONGSI_NOT_FOUND(123400, "failed_gongsi_not_found");
 
