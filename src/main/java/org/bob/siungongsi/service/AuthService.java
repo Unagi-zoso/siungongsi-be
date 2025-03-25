@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bob.siungongsi.controller.dto.AuthRequest;
+import org.bob.siungongsi.controller.dto.AuthResponse;
 import org.bob.siungongsi.controller.dto.TermsResponse;
 import org.bob.siungongsi.domain.TermEntity;
 import org.bob.siungongsi.domain.UserAgreedTermEntity;
@@ -15,6 +16,7 @@ import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.repository.TermRepository;
 import org.bob.siungongsi.repository.UserAgreedTermRepository;
 import org.bob.siungongsi.repository.UserRepository;
+import org.bob.siungongsi.security.JwtProvider;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -27,18 +29,21 @@ public class AuthService {
   private final UserAgreedTermRepository userAgreedTermRepository;
   private final KakaoAuthService kakaoAuthService;
   private final NotificationRepository notificationRepository;
+  private final JwtProvider jwtProvider;
 
   public AuthService(
       TermRepository termRepository,
       UserRepository userRepository,
       UserAgreedTermRepository userAgreedTermRepository,
       KakaoAuthService kakaoAuthService,
-      NotificationRepository notificationRepository) {
+      NotificationRepository notificationRepository,
+      JwtProvider jwtProvider) {
     this.userRepository = userRepository;
     this.termRepository = termRepository;
     this.userAgreedTermRepository = userAgreedTermRepository;
     this.kakaoAuthService = kakaoAuthService;
     this.notificationRepository = notificationRepository;
+    this.jwtProvider = jwtProvider;
   }
 
   @Transactional
@@ -58,7 +63,7 @@ public class AuthService {
       userAgreedTermRepository.saveAll(userAgreedTerms);
     }
 
-    return kakaoAuthService.loginWithKakao(newUserEntity.getId().toString());
+    return createJwt(newUserEntity.getId().toString());
   }
 
   private List<UserAgreedTermEntity> validateAndCreateUserAgreedTerms(
@@ -92,19 +97,23 @@ public class AuthService {
     }
   }
 
-  public Boolean login(String accessToken, String socialId) {
+  public AuthResponse.LoginSuccessResponse login(String accessToken) {
+    String socialId = kakaoAuthService.getSocialIdFromAccessToken(accessToken);
 
-    Optional<UserEntity> user = userRepository.findBySocialId(socialId);
+    UserEntity user = userRepository.findBySocialId(socialId).orElse(null);
 
-    if (!user.isPresent()) {
-      return false;
+    if (user == null) {
+      return AuthResponse.LoginSuccessResponse.of(null, false);
     }
 
-    // 기존 사용자일 경우 액세스 토큰 갱신
-    UserEntity userEntity = user.get();
-    userEntity.updateAccessToken(accessToken);
-    userRepository.save(userEntity);
-    return true;
+    user.updateAccessToken(accessToken.substring(7));
+    userRepository.save(user);
+    String jwt = jwtProvider.createJwtToken(user.getId().toString());
+    return AuthResponse.LoginSuccessResponse.of(jwt, true);
+  }
+
+  public String createJwt(String userId) {
+    return jwtProvider.createJwtToken(userId);
   }
 
   @Transactional

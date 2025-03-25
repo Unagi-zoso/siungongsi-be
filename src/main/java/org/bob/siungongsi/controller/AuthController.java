@@ -41,19 +41,10 @@ public class AuthController implements AuthControllerSpec {
   public ResponseEntity<ApiResponseWrapper<LoginSuccessResponse>> loginUser(
       @RequestHeader("Authorization") String accessToken) {
 
-    String socialId = kakaoAuthService.getSocialIdFromAccessToken(accessToken);
-
-    boolean isUser = authService.login(accessToken.substring(7), socialId);
-
-    String jwt = "";
-
-    if (isUser) {
-      jwt = kakaoAuthService.loginWithKakao(accessToken);
-    }
+    LoginSuccessResponse response = authService.login(accessToken);
 
     return ResponseEntity.ok(
-        ApiResponseWrapper.success(
-            ApiResponseCode.AUTH_LOGIN_SUCCESS, LoginSuccessResponse.of(jwt, isUser)));
+        ApiResponseWrapper.success(ApiResponseCode.AUTH_LOGIN_SUCCESS, response));
   }
 
   @Override

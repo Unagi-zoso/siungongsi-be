@@ -46,11 +46,6 @@ public class KakaoAuthService {
         .toString();
   }
 
-  public String loginWithKakao(String userId) {
-
-    return jwtProvider.createJwtToken(userId);
-  }
-
   public Long getUserId(String socialId) {
     Optional<UserEntity> user = userRepository.findBySocialId(socialId);
     return user.map(UserEntity::getId).orElse(null);
