@@ -12,6 +12,7 @@ import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.repository.CompanyRepository;
 import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -38,7 +39,7 @@ public class NotificationService {
   public NotiHistoryEntity createNotification(
       NotificationRequest.NotificationCompanyRequest notificationRequest) {
     // 인증된 유저의 ID 가져오기
-    Long userId = userService.getAuthenticatedUserId();
+    Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (notificationRepository.existsByUserIdAndCompanyId(
         userId, notificationRequest.companyId())) {
