@@ -63,7 +63,8 @@ public class GongsiController implements GongsiControllerSpec {
     boolean isSubscribed = false;
 
     try {
-      Long userId = userService.getAuthenticatedUserId();
+      Long userId = 1L;
+      //              userService.getAuthenticatedUserId();
 
       if (userId != null) {
         Long companyId = gongsiService.getCompanyIdByGongsiId(gongsiId);

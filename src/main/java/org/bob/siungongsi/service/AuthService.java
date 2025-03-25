@@ -1,7 +1,6 @@
 package org.bob.siungongsi.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bob.siungongsi.controller.dto.AuthRequest;
@@ -17,6 +16,7 @@ import org.bob.siungongsi.repository.TermRepository;
 import org.bob.siungongsi.repository.UserAgreedTermRepository;
 import org.bob.siungongsi.repository.UserRepository;
 import org.bob.siungongsi.security.JwtProvider;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -117,26 +117,9 @@ public class AuthService {
   }
 
   @Transactional
-  public void withdrawUser(String accessToken) {
-    // 액세스 토큰이 없으면 예외 처리
-    if (accessToken == null || accessToken.isEmpty()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION,
-          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION.getMessage());
-    }
+  public void withdrawUser() {
 
-    String socialId = kakaoAuthService.getSocialIdFromAccessToken(accessToken);
-
-    Optional<UserEntity> userOpt = userRepository.findBySocialId(socialId);
-
-    // 유효하지 않은 소셜 ID인 경우 예외 처리
-    if (!userOpt.isPresent()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
-    }
-
-    UserEntity user = userOpt.get();
-    Long userId = user.getId();
+    Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     // 회원의 알림 구독 정보 삭제
     notificationRepository.deleteAllByUserId(userId);
@@ -144,8 +127,12 @@ public class AuthService {
     // 회원의 약관 동의 정보 삭제
     userAgreedTermRepository.deleteAllByUserId(userId);
 
+    if (!userRepository.existsById(userId)) {
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND, "사용자가 존재하지 않습니다.");
+    }
+
     // 회원 정보 삭제
-    userRepository.delete(user);
+    userRepository.deleteById(userId);
   }
 
   // 약관 정보 조회 로직

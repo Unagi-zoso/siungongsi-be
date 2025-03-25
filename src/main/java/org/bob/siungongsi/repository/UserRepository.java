@@ -12,8 +12,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
   Boolean existsBySocialId(String socialId);
 
-  Optional<UserEntity> findByAccessToken(String accessToken);
-
   @Query("SELECT n.notiFlag FROM UserEntity n WHERE n.id = :id")
   Short findNotiFlagById(@Param("id") Long id);
 }

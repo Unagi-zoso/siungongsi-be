@@ -61,16 +61,9 @@ public class AuthController implements AuthControllerSpec {
   @Override
   @DeleteMapping("/withdraw")
   public ResponseEntity<ApiResponseWrapper<?>> withdrawUser(
-      @RequestHeader("Authorization") String authorization) {
+      @RequestHeader("Authorization") String accessToken) {
 
-    if (authorization == null || authorization.isBlank() || !authorization.startsWith("Bearer ")) {
-      return ResponseEntity.status(401)
-          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION));
-    }
-
-    String accessToken = authorization.substring(7); // Remove "Bearer " prefix
-
-    authService.withdrawUser(accessToken);
+    authService.withdrawUser();
 
     return ResponseEntity.ok(
         ApiResponseWrapper.success(ApiResponseCode.AUTH_WITHDRAW_USER_SUCCESS, null));
