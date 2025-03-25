@@ -1,7 +1,10 @@
 package org.bob.siungongsi.security;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.bob.siungongsi.dto.ApiResponseCode;
+import org.bob.siungongsi.exception.CustomException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -13,6 +16,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthFilter extends OncePerRequestFilter {
   private final JwtProvider jwtProvider;
 
+  private static final List<String> REQUIRED_AUTH_APIS =
+      List.of("/v1/auth/withdraw", "/v1/notifications/**", "/v1/users/**");
+
   public JwtAuthFilter(JwtProvider jwtProvider) {
     this.jwtProvider = jwtProvider;
   }
@@ -22,26 +28,34 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    if (request.getRequestURI().equals("/v1/auth/login")
-        || request.getRequestURI().equals("/v1/auth/register")) {
-      filterChain.doFilter(request, response); // 필터링을 건너뛰고 요청을 그대로 처리
+    if (isPublicUri(request.getRequestURI())) {
+      filterChain.doFilter(request, response);
       return;
     }
 
     String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      filterChain.doFilter(request, response);
-      return;
+      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION, "엑세스 토큰을 넣어주세요");
     }
 
     authHeader = authHeader.replace("Bearer ", "");
     Long userId = jwtProvider.validateJwtToken(authHeader);
 
-    if (userId != null) {
-      JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(userId);
-      SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-    }
+    JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(userId);
+    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
     filterChain.doFilter(request, response);
+  }
+
+  private boolean isPublicUri(String uri) {
+    return uri.equals("/v1/auth/login")
+        || uri.equals("/v1/auth/register")
+        || uri.equals("/v1/auth/terms")
+        || uri.matches("/swagger-ui.*")
+        || uri.matches("/admin.*")
+        || uri.matches("/v1/companies.*")
+        || uri.matches("/v1/gongsi.*")
+        || uri.matches("/v3/api-docs.*")
+        || uri.matches("/swagger-resources.*");
   }
 }

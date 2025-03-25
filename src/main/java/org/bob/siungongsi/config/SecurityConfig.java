@@ -1,5 +1,6 @@
 package org.bob.siungongsi.config;
 
+import org.bob.siungongsi.security.ExceptionHandlerFilter;
 import org.bob.siungongsi.security.JwtAuthFilter;
 import org.bob.siungongsi.security.JwtProvider;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +15,6 @@ public class SecurityConfig {
 
   private final JwtProvider jwtProvider;
 
-  // 생성자 주입을 통해 KakaoAuthService 주입
   public SecurityConfig(JwtProvider jwtProvider) {
     this.jwtProvider = jwtProvider;
   }
@@ -32,6 +32,7 @@ public class SecurityConfig {
 
     http.addFilterBefore(
         new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(new ExceptionHandlerFilter(), JwtAuthFilter.class);
     return http.build();
   }
 }
