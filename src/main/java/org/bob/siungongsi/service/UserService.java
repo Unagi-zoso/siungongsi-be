@@ -104,8 +104,6 @@ public class UserService {
   public UserSubscriptionsResponse getUserSubscriptions() {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    Optional<UserEntity> userOpt = userRepository.findById(userId);
-
     List<Long> companyIds = notificationRepository.findCompanyIdsByUserId(userId);
 
     if (companyIds.isEmpty()) {
