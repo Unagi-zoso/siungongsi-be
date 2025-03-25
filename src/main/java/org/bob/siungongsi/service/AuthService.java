@@ -48,6 +48,11 @@ public class AuthService {
 
   @Transactional
   public String register(AuthRequest.RegisterRequest authRequest, String accessToken) {
+
+    if (accessToken == null || accessToken.isEmpty()) {
+      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION, "토큰이 필요합니다.");
+    }
+
     String socialId = kakaoAuthService.getSocialIdFromAccessToken(accessToken);
 
     if (userRepository.existsBySocialId(socialId)) {
