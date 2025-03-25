@@ -1,5 +1,6 @@
 package org.bob.siungongsi.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.bob.siungongsi.controller.dto.UserRequest.UserNotificationRequest;
@@ -79,5 +80,9 @@ public class UserService {
     userRepository.save(user);
 
     return NotificationStatusResponse.of(user.getId(), request.notificationFlag());
+  }
+
+  public List<UserEntity> getUser() {
+    return userRepository.findAll();
   }
 }
