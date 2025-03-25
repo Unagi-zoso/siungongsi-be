@@ -1,12 +1,15 @@
 package org.bob.siungongsi.domain;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "company_name_autofill")
-public class CompanyNameAutofillEntity {
+public class CompanyNameAutofillEntity extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +25,13 @@ public class CompanyNameAutofillEntity {
   @Column(name = "company_name", nullable = false)
   private String companyName;
 
-  @Column(name = "created_dt", nullable = false)
-  private LocalDateTime createdDate;
-
   public CompanyNameAutofillEntity() {}
+
+  public CompanyNameAutofillEntity(String keyword, Long companyId, String companyName) {
+    this.keyword = keyword;
+    this.companyId = companyId;
+    this.companyName = companyName;
+  }
 
   public Long getCompanyId() {
     return companyId;
@@ -33,5 +39,9 @@ public class CompanyNameAutofillEntity {
 
   public String getCompanyName() {
     return companyName;
+  }
+
+  public String getKeyword() {
+    return keyword;
   }
 }
