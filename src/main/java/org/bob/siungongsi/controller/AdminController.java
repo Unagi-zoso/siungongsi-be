@@ -3,6 +3,7 @@ package org.bob.siungongsi.controller;
 import java.util.List;
 
 import org.bob.siungongsi.controller.spec.AdminControllerSpec;
+import org.bob.siungongsi.service.CompanyNameAutofillGenerator;
 import org.bob.siungongsi.service.ProcessingFailedGongsiService;
 import org.bob.siungongsi.service.TodayProcessedGongsiService;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,12 +23,15 @@ public class AdminController implements AdminControllerSpec {
 
   private final TodayProcessedGongsiService todayProcessedGongsiService;
   private final ProcessingFailedGongsiService processingFailedGongsiService;
+  private final CompanyNameAutofillGenerator companyNameAutofillGenerator;
 
   public AdminController(
       TodayProcessedGongsiService todayProcessedGongsiService,
-      ProcessingFailedGongsiService processingFailedGongsiService) {
+      ProcessingFailedGongsiService processingFailedGongsiService,
+      CompanyNameAutofillGenerator companyNameAutofillGenerator) {
     this.todayProcessedGongsiService = todayProcessedGongsiService;
     this.processingFailedGongsiService = processingFailedGongsiService;
+    this.companyNameAutofillGenerator = companyNameAutofillGenerator;
   }
 
   @PostMapping("/remove-processed-gongsi")
@@ -48,5 +52,17 @@ public class AdminController implements AdminControllerSpec {
       throw new RuntimeException("Invalid admin key");
     }
     processingFailedGongsiService.retryGongsiMessageList(gongsiCodes);
+  }
+
+  @PostMapping("/company-name-autofill")
+  @Override
+  public void autofillCompanyName(
+      @RequestParam("api-key") String apiKey,
+      @RequestParam(value = "startDt") String startDt,
+      @RequestParam(value = "endDt", required = false) String endDt) {
+    if (!adminKey.equals(apiKey)) {
+      throw new RuntimeException("Invalid admin key");
+    }
+    companyNameAutofillGenerator.generate(startDt, endDt);
   }
 }
