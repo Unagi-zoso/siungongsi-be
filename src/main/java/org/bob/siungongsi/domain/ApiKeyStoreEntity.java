@@ -10,7 +10,7 @@ import jakarta.persistence.UniqueConstraint;
 @Entity
 @Table(
     name = "api_key_store",
-    uniqueConstraints = {@UniqueConstraint(columnNames = {"api_key"})})
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"key_name"})})
 public class ApiKeyStoreEntity extends ModifiableEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
