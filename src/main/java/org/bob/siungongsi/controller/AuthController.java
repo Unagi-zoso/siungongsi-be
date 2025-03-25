@@ -30,10 +30,10 @@ public class AuthController implements AuthControllerSpec {
       @RequestBody AuthRequest.RegisterRequest authRequest,
       @RequestHeader("Authorization") String accessToken) {
 
-    authService.register(authRequest, accessToken.substring(7));
+    String jwt = authService.register(authRequest, accessToken);
 
-    return ResponseEntity.status(201)
-        .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_REGISTER_SUCCESS));
+    return ResponseEntity.ok(
+        ApiResponseWrapper.success(ApiResponseCode.AUTH_REGISTER_SUCCESS, jwt));
   }
 
   @Override
@@ -41,13 +41,10 @@ public class AuthController implements AuthControllerSpec {
   public ResponseEntity<ApiResponseWrapper<LoginSuccessResponse>> loginUser(
       @RequestHeader("Authorization") String accessToken) {
 
-    String socialId = kakaoAuthService.validateAccessToken(accessToken.substring(7));
-
-    boolean isUser = authService.login(accessToken.substring(7), socialId);
+    LoginSuccessResponse response = authService.login(accessToken);
 
     return ResponseEntity.ok(
-        ApiResponseWrapper.success(
-            ApiResponseCode.AUTH_LOGIN_SUCCESS, LoginSuccessResponse.of(accessToken, isUser)));
+        ApiResponseWrapper.success(ApiResponseCode.AUTH_LOGIN_SUCCESS, response));
   }
 
   @Override
@@ -64,16 +61,9 @@ public class AuthController implements AuthControllerSpec {
   @Override
   @DeleteMapping("/withdraw")
   public ResponseEntity<ApiResponseWrapper<?>> withdrawUser(
-      @RequestHeader("Authorization") String authorization) {
+      @RequestHeader("Authorization") String accessToken) {
 
-    if (authorization == null || authorization.isBlank() || !authorization.startsWith("Bearer ")) {
-      return ResponseEntity.status(401)
-          .body(ApiResponseWrapper.error(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION));
-    }
-
-    String accessToken = authorization.substring(7); // Remove "Bearer " prefix
-
-    authService.withdrawUser(accessToken);
+    authService.withdrawUser();
 
     return ResponseEntity.ok(
         ApiResponseWrapper.success(ApiResponseCode.AUTH_WITHDRAW_USER_SUCCESS, null));

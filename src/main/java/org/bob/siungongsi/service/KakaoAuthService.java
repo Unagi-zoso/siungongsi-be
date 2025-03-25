@@ -7,6 +7,7 @@ import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.repository.UserRepository;
+import org.bob.siungongsi.security.JwtProvider;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -15,18 +16,20 @@ import org.springframework.web.client.RestClient;
 public class KakaoAuthService {
 
   private final UserRepository userRepository;
+  private final JwtProvider jwtProvider;
 
-  public KakaoAuthService(UserRepository userRepository) {
+  public KakaoAuthService(UserRepository userRepository, JwtProvider jwtProvider) {
     this.userRepository = userRepository;
+    this.jwtProvider = jwtProvider;
   }
 
-  public String validateAccessToken(String accessToken) {
+  public String getSocialIdFromAccessToken(String accessToken) {
     String url = "https://kapi.kakao.com/v1/user/access_token_info";
     RestClient restClient = RestClient.create();
     return restClient
         .get()
         .uri(url)
-        .header("Authorization", "Bearer " + accessToken)
+        .header("Authorization", accessToken)
         .retrieve()
         .onStatus(
             HttpStatusCode::is4xxClientError,

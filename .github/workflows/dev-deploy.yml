@@ -104,4 +104,6 @@ jobs:
                     -e KOREAN_INVESTMENT_APPKEY=${{ secrets.KOREAN_INVESTMENT_APPKEY }} \
                     -e KOREAN_INVESTMENT_SECRETKEY=${{ secrets.KOREAN_INVESTMENT_SECRETKEY }} \
                     -e ADMIN_KEY=${{ secrets.ADMIN_KEY }} \
+                    -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+                    -e JWT_EXPIRATION_TIME=${{ secrets.JWT_EXPIRATION_TIME }} \
                     ${{ secrets.ECR_REGISTRY }}/siungongsi:latest-backend
