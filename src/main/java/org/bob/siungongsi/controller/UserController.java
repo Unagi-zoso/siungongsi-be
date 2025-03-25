@@ -4,6 +4,7 @@ import static org.bob.siungongsi.dto.ApiResponseCode.*;
 
 import org.bob.siungongsi.controller.dto.UserRequest.UserNotificationRequest;
 import org.bob.siungongsi.controller.dto.UserResponse.NotificationStatusResponse;
+import org.bob.siungongsi.controller.dto.UserSubscriptionsResponse;
 import org.bob.siungongsi.controller.spec.UserControllerSpec;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.bob.siungongsi.service.UserService;
@@ -36,5 +37,12 @@ public class UserController implements UserControllerSpec {
     NotificationStatusResponse response = userService.updateNotificationStatus(request);
     return ResponseEntity.status(201)
         .body(ApiResponseWrapper.success(USER_UPDATE_STATUS_SUCCESS, response));
+  }
+
+  @GetMapping("/subscriptions")
+  public ResponseEntity<ApiResponseWrapper<?>> getUserSubscriptions(
+      @RequestHeader("Authorization") String authorization) {
+    UserSubscriptionsResponse response = userService.getUserSubscriptions();
+    return ResponseEntity.ok(ApiResponseWrapper.success(USER_SUBSCRIPTIONS_SUCCESS, response));
   }
 }
