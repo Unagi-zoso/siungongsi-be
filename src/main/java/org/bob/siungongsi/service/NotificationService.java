@@ -20,17 +20,14 @@ import jakarta.transaction.Transactional;
 @Service
 public class NotificationService {
 
-  private final UserService userService;
   private final NotificationRepository notificationRepository;
   private final CompanyRepository companyRepository;
   private final UserRepository userRepository;
 
   public NotificationService(
-      UserService userService,
       NotificationRepository notificationRepository,
       CompanyRepository companyRepository,
       UserRepository userRepository) {
-    this.userService = userService;
     this.notificationRepository = notificationRepository;
     this.companyRepository = companyRepository;
     this.userRepository = userRepository;
@@ -38,7 +35,6 @@ public class NotificationService {
 
   public NotiHistoryEntity createNotification(
       NotificationRequest.NotificationCompanyRequest notificationRequest) {
-    // 인증된 유저의 ID 가져오기
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (notificationRepository.existsByUserIdAndCompanyId(
@@ -61,7 +57,7 @@ public class NotificationService {
 
   @Transactional
   public void deleteNotification(Long companyId) {
-    Long userId = userService.getAuthenticatedUserId();
+    Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (!notificationRepository.existsByUserIdAndCompanyId(userId, companyId)) {
       throw new CustomException(ApiResponseCode.NOTIFICATION_NOT_FOUND, "존재하지 않는 알림 내역입니다.");
@@ -94,7 +90,7 @@ public class NotificationService {
 
     List<CompanyEntity> companies = companyRepository.findByIdIn(topCompanies);
 
-    Long userId = userService.getAuthenticatedUserId();
+    Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     NotificationResponse.NotificationRecommendedCompanyList recommendedCompanies =
         NotificationResponse.NotificationRecommendedCompanyList.of(
