@@ -9,7 +9,6 @@ import org.bob.siungongsi.controller.spec.AuthControllerSpec;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.bob.siungongsi.service.AuthService;
-import org.bob.siungongsi.service.KakaoAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/auth") // 회원 관련 API의 기본 경로
 public class AuthController implements AuthControllerSpec {
   private final AuthService authService;
-  private final KakaoAuthService kakaoAuthService;
 
-  public AuthController(AuthService authService, KakaoAuthService kakaoAuthService) {
+  public AuthController(AuthService authService) {
     this.authService = authService;
-    this.kakaoAuthService = kakaoAuthService;
   }
 
   @Override
