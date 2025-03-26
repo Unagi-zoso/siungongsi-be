@@ -1,11 +1,8 @@
 package org.bob.siungongsi.config;
 
-import java.util.List;
-
 import org.bob.siungongsi.security.ExceptionHandlerFilter;
 import org.bob.siungongsi.security.JwtAuthFilter;
 import org.bob.siungongsi.security.JwtProvider;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -22,13 +19,11 @@ public class SecurityConfig {
 
   private final JwtProvider jwtProvider;
 
-  private final List<String> allowedOrigins;
+  private final CorsProperties corsProperties;
 
-  // 생성자 주입을 통해 KakaoAuthService 주입
-  public SecurityConfig(
-      JwtProvider jwtProvider, @Value("${cors.allowed-origins}") List<String> allowedOrigins) {
+  public SecurityConfig(JwtProvider jwtProvider, CorsProperties corsProperties) {
     this.jwtProvider = jwtProvider;
-    this.allowedOrigins = allowedOrigins;
+    this.corsProperties = corsProperties;
   }
 
   @Bean
@@ -51,8 +46,7 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-
-    configuration.setAllowedOrigins(allowedOrigins);
+    configuration.setAllowedOrigins(corsProperties.allowedOrigins());
     configuration.addAllowedMethod("*");
     configuration.addAllowedHeader("*");
     configuration.setAllowCredentials(true);

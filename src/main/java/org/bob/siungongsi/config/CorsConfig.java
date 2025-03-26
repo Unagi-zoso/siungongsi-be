@@ -1,8 +1,5 @@
 package org.bob.siungongsi.config;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -13,10 +10,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig {
 
-  private final List<String> allowedOrigins;
+  private final CorsProperties corsProperties;
 
-  public CorsConfig(@Value("${cors.allowed-origins}") List<String> allowedOrigins) {
-    this.allowedOrigins = allowedOrigins;
+  public CorsConfig(CorsProperties corsProperties) {
+    this.corsProperties = corsProperties;
   }
 
   @Bean
@@ -26,7 +23,7 @@ public class CorsConfig {
       public void addCorsMappings(CorsRegistry registry) {
         registry
             .addMapping("/**") // 모든 엔드포인트에 대해 CORS 허용
-            .allowedOrigins(allowedOrigins.toArray(new String[0])) // allowedOrigins 프로퍼티 값으로 설정
+            .allowedOrigins(corsProperties.allowedOrigins().toArray(new String[0])) // 허용할 도메인
             .allowedMethods("*") // 모든 HTTP 메서드 허용 (GET, POST, PUT, DELETE 등)
             .allowedHeaders("*") // 모든 요청 헤더 허용
             .allowCredentials(false); // 쿠키 포함 허용 (true 시 allowedOrigins에 * 사용 불가)
