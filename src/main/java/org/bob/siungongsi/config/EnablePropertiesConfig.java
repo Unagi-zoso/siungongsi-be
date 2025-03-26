@@ -6,7 +6,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties({
   AwsCredentialsProperties.class,
   S3Properties.class,
-  SqsProperties.class
+  SqsProperties.class,
+  CorsProperties.class
 })
 @Configuration
 public class EnablePropertiesConfig {}
