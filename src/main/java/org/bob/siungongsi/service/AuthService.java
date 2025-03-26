@@ -1,80 +1,138 @@
 package org.bob.siungongsi.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bob.siungongsi.controller.dto.AuthRequest;
+import org.bob.siungongsi.controller.dto.AuthResponse;
 import org.bob.siungongsi.controller.dto.TermsResponse;
 import org.bob.siungongsi.domain.TermEntity;
+import org.bob.siungongsi.domain.UserAgreedTermEntity;
 import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
+import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.repository.TermRepository;
+import org.bob.siungongsi.repository.UserAgreedTermRepository;
 import org.bob.siungongsi.repository.UserRepository;
+import org.bob.siungongsi.security.JwtProvider;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AuthService {
 
   private final TermRepository termRepository;
   private final UserRepository userRepository;
+  private final UserAgreedTermRepository userAgreedTermRepository;
+  private final KakaoAuthService kakaoAuthService;
+  private final NotificationRepository notificationRepository;
+  private final JwtProvider jwtProvider;
 
-  public AuthService(TermRepository termRepository, UserRepository userRepository) {
+  public AuthService(
+      TermRepository termRepository,
+      UserRepository userRepository,
+      UserAgreedTermRepository userAgreedTermRepository,
+      KakaoAuthService kakaoAuthService,
+      NotificationRepository notificationRepository,
+      JwtProvider jwtProvider) {
     this.userRepository = userRepository;
     this.termRepository = termRepository;
+    this.userAgreedTermRepository = userAgreedTermRepository;
+    this.kakaoAuthService = kakaoAuthService;
+    this.notificationRepository = notificationRepository;
+    this.jwtProvider = jwtProvider;
   }
 
-  // 회원가입 로직: 사용자가 처음으로 로그인 시 회원을 등록
-  public UserEntity authRequest(AuthRequest.RegisterRequest authRequest) {
-    Optional<UserEntity> existingUser = userRepository.findBySocialId(authRequest.socialId());
+  @Transactional
+  public String register(AuthRequest.RegisterRequest authRequest, String accessToken) {
+    String socialId = kakaoAuthService.getSocialIdFromAccessToken(accessToken);
 
-    // 이미 존재하는 사용자가 있다면 예외 처리
-    if (existingUser.isPresent()) {
-      return null;
+    if (userRepository.existsBySocialId(socialId)) {
+      throw new CustomException(ApiResponseCode.AUTH_USER_ALREADY_EXISTS, "이미 가입된 사용자입니다.");
     }
 
-    // 새로운 사용자 등록
-    UserEntity newUserEntity = new UserEntity(authRequest.socialId(), authRequest.accessToken());
-    return userRepository.save(newUserEntity);
+    UserEntity newUserEntity =
+        userRepository.save(new UserEntity(socialId, accessToken.substring(7)));
+
+    List<UserAgreedTermEntity> userAgreedTerms =
+        validateAndCreateUserAgreedTerms(authRequest.agreedTermIds(), newUserEntity.getId());
+    if (!userAgreedTerms.isEmpty()) {
+      userAgreedTermRepository.saveAll(userAgreedTerms);
+    }
+
+    return createJwt(newUserEntity.getId().toString());
   }
 
-  // 로그인 로직: 이미 가입된 사용자가 로그인 시 액세스 토큰 갱신
-  public UserEntity login(AuthRequest.LoginRequest authRequest, String socialId) {
-    String accessToken = authRequest.accessToken();
+  private List<UserAgreedTermEntity> validateAndCreateUserAgreedTerms(
+      List<Long> agreedTermIds, Long userId) {
 
-    Optional<UserEntity> user = userRepository.findBySocialId(socialId);
+    validateRequiredTerms(agreedTermIds);
 
-    // 가입되지 않은 사용자의 경우
-    if (!user.isPresent()) {
-      return null;
-    }
+    validateTermIds(agreedTermIds, userId);
 
-    // 기존 사용자일 경우 액세스 토큰 갱신
-    UserEntity userEntity = user.get();
-    userEntity.updateAccessToken(accessToken);
-    return userRepository.save(userEntity);
+    return agreedTermIds.stream().map(termId -> new UserAgreedTermEntity(userId, termId)).toList();
   }
 
-  // 회원탈퇴 로직: 인증된 사용자의 계정을 삭제
-  public void withdrawUser(String accessToken) {
-    // 액세스 토큰이 없으면 예외 처리
-    if (accessToken == null || accessToken.isEmpty()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION,
-          ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION.getMessage());
+  private void validateRequiredTerms(List<Long> agreedTermIds) {
+    List<Long> requiredTermIds = termRepository.findIdsByRequiredFlag();
+
+    if (!agreedTermIds.containsAll(requiredTermIds)) {
+      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_TERMS_NOT_AGREED, "필수 약관에 동의해야 합니다.");
+    }
+  }
+
+  private void validateTermIds(List<Long> agreedTermIds, Long userId) {
+    for (Long termId : agreedTermIds) {
+      if (!termRepository.existsById(termId)) {
+        throw new CustomException(ApiResponseCode.AUTH_TERMS_ID_NOT_FOUND, "찾을 수 없는 term_id 입니다.");
+      }
+
+      if (userAgreedTermRepository.existsByUserIdAndTermId(userId, termId)) {
+        throw new CustomException(
+            ApiResponseCode.AUTH_USER_AGREED_TERMS_ID_ALREADY_EXISTS, "이미 존재하는 회원 동의 약관 id 입니다.");
+      }
+    }
+  }
+
+  public AuthResponse.LoginSuccessResponse login(String accessToken) {
+    String socialId = kakaoAuthService.getSocialIdFromAccessToken(accessToken);
+
+    UserEntity user = userRepository.findBySocialId(socialId).orElse(null);
+
+    if (user == null) {
+      return AuthResponse.LoginSuccessResponse.of(null, false);
     }
 
-    Optional<UserEntity> user = userRepository.findByAccessToken(accessToken);
+    user.updateAccessToken(accessToken.substring(7));
+    userRepository.save(user);
+    String jwt = jwtProvider.createJwtToken(user.getId().toString());
+    return AuthResponse.LoginSuccessResponse.of(jwt, true);
+  }
 
-    // 유효하지 않은 액세스 토큰인 경우 예외 처리
-    if (!user.isPresent()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
+  public String createJwt(String userId) {
+    return jwtProvider.createJwtToken(userId);
+  }
+
+  @Transactional
+  public void withdrawUser() {
+
+    Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    // 회원의 알림 구독 정보 삭제
+    notificationRepository.deleteAllByUserId(userId);
+
+    // 회원의 약관 동의 정보 삭제
+    userAgreedTermRepository.deleteAllByUserId(userId);
+
+    if (!userRepository.existsById(userId)) {
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND, "사용자가 존재하지 않습니다.");
     }
 
-    // 사용자 계정 삭제
-    userRepository.delete(user.get());
+    // 회원 정보 삭제
+    userRepository.deleteById(userId);
   }
 
   // 약관 정보 조회 로직

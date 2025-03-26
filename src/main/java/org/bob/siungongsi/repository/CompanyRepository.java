@@ -1,5 +1,6 @@
 package org.bob.siungongsi.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.bob.siungongsi.domain.CompanyEntity;
@@ -11,4 +12,9 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, String> 
   List<CompanyEntity> findByIdIn(List<Long> companyIds);
 
   List<CompanyEntity> findTop5ByOrderByCompanyNameAsc();
+
+  boolean existsById(Long Id);
+
+  List<CompanyEntity> findByCreatedDtBetween(
+      LocalDateTime createdDtAfter, LocalDateTime createdDtBefore);
 }

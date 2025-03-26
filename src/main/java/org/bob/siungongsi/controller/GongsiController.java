@@ -12,6 +12,7 @@ import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.service.GongsiService;
 import org.bob.siungongsi.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -63,7 +64,7 @@ public class GongsiController implements GongsiControllerSpec {
     boolean isSubscribed = false;
 
     try {
-      Long userId = userService.getAuthenticatedUserId();
+      Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
       if (userId != null) {
         Long companyId = gongsiService.getCompanyIdByGongsiId(gongsiId);

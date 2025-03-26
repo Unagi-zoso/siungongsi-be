@@ -126,4 +126,65 @@ public interface UserControllerSpec {
               example = "Bearer your_token_here")
           String authorization,
       UserNotificationRequest request);
+
+  @Operation(
+      summary = "구독 중인 기업 목록 조회",
+      description = "회원이 현재 구독 중인 기업 목록을 반환하는 API",
+      responses = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "구독 목록 조회 성공",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiResponseWrapper.class),
+                    examples = {
+                      @ExampleObject(
+                          name = "구독 목록 조회 성공",
+                          value =
+                              "{ \"code\": 1000, \"message\": \"SUCCESS\", \"data\": { \"userId\": 1, \"subscribedCompanies\": [{ \"companyId\": 1, \"companyName\": \"삼성전자\", \"companyCode\": \"00593\", \"stockCode\": \"005930\" }, { \"companyId\": 2, \"companyName\": \"카카오\", \"companyCode\": \"03569\", \"stockCode\": \"035720\" }] } }")
+                    })),
+        @ApiResponse(
+            responseCode = "401",
+            description = "JWT 토큰이 필요함",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiResponseWrapper.class),
+                    examples = {
+                      @ExampleObject(
+                          name = "JWT 토큰 필요",
+                          value = "{ \"code\": 3400, \"message\": \"required_authorization\" }")
+                    })),
+        @ApiResponse(
+            responseCode = "404",
+            description = "사용자를 찾을 수 없음",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiResponseWrapper.class),
+                    examples = {
+                      @ExampleObject(
+                          name = "사용자 없음",
+                          value = "{ \"code\": 2400, \"message\": \"user_not_found\" }")
+                    })),
+        @ApiResponse(
+            responseCode = "500",
+            description = "서버 내부 오류",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ApiResponseWrapper.class),
+                    examples = {
+                      @ExampleObject(
+                          name = "서버 오류",
+                          value = "{ \"code\": 3500, \"message\": \"internal_server_error\" }")
+                    }))
+      })
+  ResponseEntity<ApiResponseWrapper<?>> getUserSubscriptions(
+      @Parameter(
+              description = "JWT 토큰 (Bearer 포함)",
+              required = true,
+              example = "Bearer your_token_here")
+          String authorization);
 }

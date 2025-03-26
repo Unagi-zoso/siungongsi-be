@@ -34,6 +34,12 @@ public class CompanyEntity extends ModifiableEntity {
 
   public CompanyEntity() {}
 
+  public CompanyEntity(String companyName, String companyCode, String stockCode) {
+    this.companyName = companyName;
+    this.companyCode = companyCode;
+    this.stockCode = stockCode;
+  }
+
   public Long getId() {
     return id;
   }

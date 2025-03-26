@@ -21,11 +21,16 @@ public enum ApiResponseCode {
   AUTH_USER_NOT_FOUND(2402, "user_not_found"),
   AUTH_TERMS_NOT_FOUND(2403, "terms_not_found"),
   AUTH_USER_ALREADY_EXISTS(2404, "user_already_exists"),
+  AUTH_TERMS_ID_NOT_FOUND(2405, "terms_id_not_found"),
+  AUTH_USER_AGREED_TERMS_ID_ALREADY_EXISTS(2406, "user_agreed_terms_id_already_exists"),
+  AUTH_REQUIRED_TERMS_NOT_AGREED(2407, "required_terms_not_agreed"),
   AUTH_INTERNAL_SERVER_ERROR(2500, "internal_server_error"),
 
   // 유저 관련 응답 코드 (3)
   USER_GET_STATUS(3200, "get_notification_status"),
   USER_UPDATE_STATUS_SUCCESS(3201, "update_notification_status_success"),
+  USER_NOTI_WITHDRAWAL_SUCCESS(3201, "user_noti_withdrawal_success"),
+  USER_SUBSCRIPTIONS_SUCCESS(3205, "get_user_subscriptions"),
   USER_REQUIRED_AUTHORIZATION(3400, "required_authorization"),
   USER_STATUS_ALREADY_EXIST(3401, "notification_status_already_exist"),
   USER_INTERNAL_SERVER_ERROR(3500, "internal_server_error"),
@@ -48,6 +53,9 @@ public enum ApiResponseCode {
 
   // 외부 API 관련 응답 코드 (6)
   EXTERNAL_API_ERROR(6400, "external_api_error"),
+
+  // API KEY STORE 관련 응답코드 (27)
+  KEY_NOT_FOUND(2700, "key_not_found"),
 
   // 처리 실패 공시 관련 응답 코드 (123) 클라이언트가 받지 않는 응답은 123부터 시작합니다.
   FAILED_GONGSI_NOT_FOUND(123400, "failed_gongsi_not_found"),

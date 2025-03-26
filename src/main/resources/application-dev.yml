@@ -77,6 +77,10 @@ korean:
     stock:
       url: https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price
 
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  expiration-time: ${JWT_EXPIRATION_TIME}
+
 fcm:
   key: ${FCM_KEY}
 
