@@ -1,7 +1,8 @@
 package org.bob.siungongsi.config;
 
-import org.bob.siungongsi.security.KakaoAuthFilter;
-import org.bob.siungongsi.service.KakaoAuthService;
+import org.bob.siungongsi.security.ExceptionHandlerFilter;
+import org.bob.siungongsi.security.JwtAuthFilter;
+import org.bob.siungongsi.security.JwtProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,17 +13,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-  private final KakaoAuthService kakaoAuthService;
+  private final JwtProvider jwtProvider;
 
-  // 생성자 주입을 통해 KakaoAuthService 주입
-  public SecurityConfig(KakaoAuthService kakaoAuthService) {
-    this.kakaoAuthService = kakaoAuthService;
+  public SecurityConfig(JwtProvider jwtProvider) {
+    this.jwtProvider = jwtProvider;
   }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    KakaoAuthFilter kakaoAuthFilter =
-        new KakaoAuthFilter(kakaoAuthService); // 의존성 주입된 kakaoAuthService 사용
 
     http.authorizeHttpRequests(
         (authorizeRequests) -> {
@@ -33,9 +31,8 @@ public class SecurityConfig {
     http.csrf(AbstractHttpConfigurer::disable);
 
     http.addFilterBefore(
-        kakaoAuthFilter,
-        UsernamePasswordAuthenticationFilter
-            .class); // UsernamePasswordAuthenticationFilter 앞에 카카오 인증 필터를 추가
+        new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(new ExceptionHandlerFilter(), JwtAuthFilter.class);
     return http.build();
   }
 }
