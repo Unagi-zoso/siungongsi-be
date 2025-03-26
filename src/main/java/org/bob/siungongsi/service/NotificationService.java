@@ -37,6 +37,10 @@ public class NotificationService {
       NotificationRequest.NotificationCompanyRequest notificationRequest) {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+    if (!userRepository.findById(userId).isPresent()) {
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND, "존재하지 않은 유저입니다.");
+    }
+
     if (notificationRepository.existsByUserIdAndCompanyId(
         userId, notificationRequest.companyId())) {
       throw new CustomException(ApiResponseCode.NOTIFICATION_ALREADY_EXISTS, "이미 존재하는 알림입니다.");

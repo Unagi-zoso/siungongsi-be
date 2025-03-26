@@ -2,6 +2,7 @@ package org.bob.siungongsi.config;
 
 import java.util.List;
 
+import org.bob.siungongsi.security.ExceptionHandlerFilter;
 import org.bob.siungongsi.security.JwtAuthFilter;
 import org.bob.siungongsi.security.JwtProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,7 @@ public class SecurityConfig {
 
     http.addFilterBefore(
         new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(new ExceptionHandlerFilter(), JwtAuthFilter.class);
     return http.build();
   }
 
