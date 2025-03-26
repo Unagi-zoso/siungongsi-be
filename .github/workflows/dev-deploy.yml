@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy-to-eb:
-    name: Build → Push ECR → Deploy to EB
+    name: Build → Push ECR → Deploy to Elastic Beanstalk
     runs-on: ubuntu-latest
 
     env:
@@ -18,19 +18,14 @@ jobs:
       AWS_REGION: ${{ secrets.AWS_REGION }}
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Java
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '21'
-
-      - name: Build Spring Boot JAR
-        run: |
-          chmod +x gradlew
-          ./gradlew clean build -x test
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -39,17 +34,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Login to ECR
+      - name: Login to Amazon ECR
         run: |
-          aws ecr get-login-password --region $AWS_REGION \
-            | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+          aws ecr get-login-password --region $AWS_REGION | \
+            docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
 
       - name: Generate Version Tag
         run: echo "VERSION_TAG=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t $ECR_IMAGE:latest-backend .
+          docker build --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \
+            -t $ECR_IMAGE:latest-backend .
           docker tag $ECR_IMAGE:latest-backend $ECR_IMAGE:${{ env.VERSION_TAG }}-backend
           docker push $ECR_IMAGE:latest-backend
           docker push $ECR_IMAGE:${{ env.VERSION_TAG }}-backend
@@ -69,7 +65,7 @@ jobs:
             ]
           }' > Dockerrun.aws.json
 
-      - name: Zip Dockerrun.aws.json
+      - name: Zip for Beanstalk
         run: zip deploy.zip Dockerrun.aws.json
 
       - name: Upload to S3
@@ -83,7 +79,7 @@ jobs:
             --version-label ${{ env.VERSION_TAG }} \
             --source-bundle S3Bucket=$S3_BUCKET,S3Key=deploy-${{ env.VERSION_TAG }}.zip
 
-      - name: Update EB Environment
+      - name: Deploy to Elastic Beanstalk
         run: |
           aws elasticbeanstalk update-environment \
             --environment-name $EB_ENV_NAME \
