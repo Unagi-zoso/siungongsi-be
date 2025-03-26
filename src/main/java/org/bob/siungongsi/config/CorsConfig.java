@@ -10,6 +10,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig {
 
+  private final CorsProperties corsProperties;
+
+  public CorsConfig(CorsProperties corsProperties) {
+    this.corsProperties = corsProperties;
+  }
+
   @Bean
   public WebMvcConfigurer corsConfigurer() {
     return new WebMvcConfigurer() {
@@ -17,7 +23,7 @@ public class CorsConfig {
       public void addCorsMappings(CorsRegistry registry) {
         registry
             .addMapping("/**") // 모든 엔드포인트에 대해 CORS 허용
-            .allowedOrigins("*") // 모든 Origin 허용
+            .allowedOrigins(corsProperties.allowedOrigins().toArray(new String[0])) // 허용할 도메인
             .allowedMethods("*") // 모든 HTTP 메서드 허용 (GET, POST, PUT, DELETE 등)
             .allowedHeaders("*") // 모든 요청 헤더 허용
             .allowCredentials(false); // 쿠키 포함 허용 (true 시 allowedOrigins에 * 사용 불가)
