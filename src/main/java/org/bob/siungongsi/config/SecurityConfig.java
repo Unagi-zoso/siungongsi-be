@@ -46,10 +46,12 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(corsProperties.allowedOrigins());
+    // configuration.setAllowedOrigins(corsProperties.allowedOrigins());
+    configuration.addAllowedOrigin(
+        "*"); // front 가 로컬에서도 접근하고 싶다 요구해서 개발환경에선 전부 열어둡니다. CorsConfig 도 마찬가지
     configuration.addAllowedMethod("*");
     configuration.addAllowedHeader("*");
-    configuration.setAllowCredentials(true);
+    configuration.setAllowCredentials(false);
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
