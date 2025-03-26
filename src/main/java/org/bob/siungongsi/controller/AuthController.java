@@ -10,7 +10,13 @@ import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.bob.siungongsi.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/auth") // 회원 관련 API의 기본 경로
@@ -47,12 +53,9 @@ public class AuthController implements AuthControllerSpec {
   @Override
   @GetMapping("/terms")
   public ResponseEntity<ApiResponseWrapper<?>> getTerms() {
+    List<TermsResponse> terms = authService.getTerms();
     return ResponseEntity.ok(
-        ApiResponseWrapper.success(
-            ApiResponseCode.AUTH_GET_TERMS_SUCCESS,
-            List.of(
-                TermsResponse.of(1, "이용약관 (필수)", "약관 내용"),
-                TermsResponse.of(2, "개인정보 수집 및 이용 (필수)", "약관 내용"))));
+        ApiResponseWrapper.success(ApiResponseCode.AUTH_GET_TERMS_SUCCESS, terms));
   }
 
   @Override
