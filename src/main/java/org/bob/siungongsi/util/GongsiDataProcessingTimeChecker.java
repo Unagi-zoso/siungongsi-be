@@ -8,7 +8,7 @@ import java.time.ZoneId;
 public class GongsiDataProcessingTimeChecker {
   public static final ZoneId KOREA_ZONE = ZoneId.of("Asia/Seoul"); // 한국 시간
   private static final ZoneId zoneId = KOREA_ZONE;
-  private static final LocalTime processingStartTime = LocalTime.of(11, 0);
+  private static final LocalTime processingStartTime = LocalTime.of(8, 0);
   private static final LocalTime processingEndTime = LocalTime.of(22, 0);
   private static final boolean excludeWeekends = true;
 
