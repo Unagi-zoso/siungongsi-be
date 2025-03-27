@@ -50,7 +50,7 @@ public class NotificationService {
       throw new CustomException(ApiResponseCode.NOTIFICATION_INVALID_COMPANY_ID, "존재하지 않는 기업입니다.");
     }
 
-    if (userRepository.findNotiFlagById(userId) == 0) {
+    if (!userRepository.findNotiFlagById(userId)) {
       throw new CustomException(
           ApiResponseCode.NOTIFICATION_REQUIRED_STATUS, "유저가 알림을 동의하지 않았습니다. ");
     }
@@ -71,7 +71,7 @@ public class NotificationService {
       throw new CustomException(ApiResponseCode.NOTIFICATION_INVALID_COMPANY_ID, "존재하지 않는 기업입니다.");
     }
 
-    if (userRepository.findNotiFlagById(userId) == 0) {
+    if (!userRepository.findNotiFlagById(userId)) {
       throw new CustomException(
           ApiResponseCode.NOTIFICATION_REQUIRED_STATUS, "유저가 알림을 동의하지 않았습니다. ");
     }
