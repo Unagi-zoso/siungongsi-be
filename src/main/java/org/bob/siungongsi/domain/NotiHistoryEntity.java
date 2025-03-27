@@ -1,12 +1,15 @@
 package org.bob.siungongsi.domain;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "noti_histories")
-public class NotiHistoryEntity {
+public class NotiHistoryEntity extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,13 +22,9 @@ public class NotiHistoryEntity {
   @Column(name = "user_id", nullable = false)
   private Long userId;
 
-  @Column(name = "created_dt", nullable = false)
-  private LocalDateTime createdDt;
-
   public NotiHistoryEntity(Long userId, Long companyId) {
     this.userId = userId;
     this.companyId = companyId;
-    this.createdDt = LocalDateTime.now(); // 현재 시간으로 설정
   }
 
   public NotiHistoryEntity() {}
@@ -44,5 +43,9 @@ public class NotiHistoryEntity {
 
   public void setCompanyId(Long companyId) {
     this.companyId = companyId;
+  }
+
+  public Long getUserId() {
+    return userId;
   }
 }

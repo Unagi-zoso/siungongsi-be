@@ -28,4 +28,6 @@ public interface NotificationRepository extends JpaRepository<NotiHistoryEntity,
 
   @Query("SELECT n.companyId FROM NotiHistoryEntity n WHERE n.userId = :userId")
   List<Long> findCompanyIdsByUserId(@Param("userId") Long userId);
+
+  List<NotiHistoryEntity> findByCompanyId(Long companyId);
 }
