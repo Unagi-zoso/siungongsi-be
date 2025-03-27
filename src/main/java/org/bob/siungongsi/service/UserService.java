@@ -53,7 +53,7 @@ public class UserService {
 
     UserEntity user = userOpt.get();
     // notiFlag 값을 Boolean으로 변환 (0이면 false, 1이면 true)
-    boolean notificationEnabled = user.getNotiFlag() > 0;
+    boolean notificationEnabled = user.getNotiFlag();
 
     return NotificationStatusResponse.of(user.getId(), notificationEnabled);
   }
@@ -83,11 +83,11 @@ public class UserService {
     UserEntity user = userOpt.get();
 
     // 알림 허용 여부 업데이트 (true -> 1, false -> 0)
-    Short notiFlag = request.notificationFlag() ? (short) 1 : (short) 0;
+    boolean notiFlag = request.notificationFlag();
     user.updateNotiFlag(notiFlag);
 
     // FCM 토큰 업데이트 (null이 아닌 경우에만)
-    if (request.pushToken() != null && !request.pushToken().isEmpty()) {
+    if (request.pushToken() != null && !request.pushToken().isBlank()) {
       user.updatePushTokenId(request.pushToken());
     }
 

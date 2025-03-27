@@ -80,3 +80,9 @@ korean:
 jwt:
   secret-key: ${JWT_SECRET_KEY}
   expiration-time: ${JWT_EXPIRATION_TIME}
+
+fcm:
+  key: ${FCM_KEY}
+
+site:
+  url: ${SITE_URL}
