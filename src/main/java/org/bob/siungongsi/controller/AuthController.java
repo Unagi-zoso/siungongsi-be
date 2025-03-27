@@ -35,8 +35,8 @@ public class AuthController implements AuthControllerSpec {
 
     String jwt = authService.register(authRequest, accessToken);
 
-    return ResponseEntity.ok(
-        ApiResponseWrapper.success(ApiResponseCode.AUTH_REGISTER_SUCCESS, jwt));
+    return ResponseEntity.status(201)
+        .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_REGISTER_SUCCESS, jwt));
   }
 
   @Override
