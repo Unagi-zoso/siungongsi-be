@@ -34,4 +34,13 @@ public class ApiKeyStoreManager {
     }
     return tokenMap.get(keyName);
   }
+
+  public void loadFromDB() {
+    apiKeyStoreRepository
+        .findAll()
+        .forEach(
+            apiKeyStore -> {
+              tokenMap.put(apiKeyStore.getKeyName(), apiKeyStore.getApiKey());
+            });
+  }
 }

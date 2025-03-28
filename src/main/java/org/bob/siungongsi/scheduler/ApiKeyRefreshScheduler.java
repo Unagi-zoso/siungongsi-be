@@ -5,6 +5,7 @@ import static org.bob.siungongsi.service.ApiKeyStoreManager.KI_API_KEY_NAME;
 import org.bob.siungongsi.client.clientinterface.KoreanInvestmentClient;
 import org.bob.siungongsi.domain.ApiKeyStoreEntity;
 import org.bob.siungongsi.repository.ApiKeyStoreRepository;
+import org.bob.siungongsi.service.ApiKeyStoreManager;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -20,10 +21,15 @@ public class ApiKeyRefreshScheduler {
 
   private final KoreanInvestmentClient koreanInvestmentClient;
 
+  private final ApiKeyStoreManager apiKeyStoreManager;
+
   public ApiKeyRefreshScheduler(
-      ApiKeyStoreRepository apiKeyStoreRepository, KoreanInvestmentClient koreanInvestmentClient) {
+      ApiKeyStoreRepository apiKeyStoreRepository,
+      KoreanInvestmentClient koreanInvestmentClient,
+      ApiKeyStoreManager apiKeyStoreManager) {
     this.apiKeyStoreRepository = apiKeyStoreRepository;
     this.koreanInvestmentClient = koreanInvestmentClient;
+    this.apiKeyStoreManager = apiKeyStoreManager;
   }
 
   @Transactional
@@ -40,6 +46,7 @@ public class ApiKeyRefreshScheduler {
                           new ApiKeyStoreEntity(KI_API_KEY_NAME, newKiApiKey)));
 
       apiKeyStore.updateApiKey(newKiApiKey);
+      apiKeyStoreManager.loadFromDB();
     } catch (Exception e) {
       Sentry.captureException(e);
       System.err.println(
