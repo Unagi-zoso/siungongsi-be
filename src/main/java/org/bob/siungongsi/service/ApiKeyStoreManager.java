@@ -5,7 +5,6 @@ import static org.bob.siungongsi.dto.ApiResponseCode.KEY_NOT_FOUND;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bob.siungongsi.client.clientinterface.KoreanInvestmentClient;
 import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.repository.ApiKeyStoreRepository;
 import org.springframework.stereotype.Service;
@@ -19,12 +18,8 @@ public class ApiKeyStoreManager {
 
   private final ApiKeyStoreRepository apiKeyStoreRepository;
 
-  private final KoreanInvestmentClient koreanInvestmentClient;
-
-  public ApiKeyStoreManager(
-      ApiKeyStoreRepository apiKeyStoreRepository, KoreanInvestmentClient koreanInvestmentClient) {
+  public ApiKeyStoreManager(ApiKeyStoreRepository apiKeyStoreRepository) {
     this.apiKeyStoreRepository = apiKeyStoreRepository;
-    this.koreanInvestmentClient = koreanInvestmentClient;
     loadFromDB();
   }
 
