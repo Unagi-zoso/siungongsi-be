@@ -1,6 +1,9 @@
 package org.bob.siungongsi.scheduler;
 
+import static java.time.LocalDate.now;
 import static org.bob.siungongsi.service.ApiKeyStoreManager.KI_API_KEY_NAME;
+
+import java.time.ZoneId;
 
 import org.bob.siungongsi.client.clientinterface.KoreanInvestmentClient;
 import org.bob.siungongsi.domain.ApiKeyStoreEntity;
@@ -23,6 +26,8 @@ public class ApiKeyRefreshScheduler {
 
   private final ApiKeyStoreManager apiKeyStoreManager;
 
+  private static final ZoneId KOREA_ZONE = ZoneId.of("Asia/Seoul");
+
   public ApiKeyRefreshScheduler(
       ApiKeyStoreRepository apiKeyStoreRepository,
       KoreanInvestmentClient koreanInvestmentClient,
@@ -33,26 +38,29 @@ public class ApiKeyRefreshScheduler {
   }
 
   @Transactional
-  @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+  @Scheduled(fixedDelay = 300000) // 5분 (300,000ms)
   public void fetchAndRefreshAccessToken() {
     try {
-      String newKiApiKey = koreanInvestmentClient.fetchApprovalKeyWithDelayedRetry(3, 65);
-      ApiKeyStoreEntity apiKeyStore =
-          apiKeyStoreRepository
-              .findByKeyName(KI_API_KEY_NAME)
-              .orElseGet(
-                  () ->
-                      apiKeyStoreRepository.save(
-                          new ApiKeyStoreEntity(KI_API_KEY_NAME, newKiApiKey)));
+      ApiKeyStoreEntity apiKeyStore = apiKeyStoreRepository.findByKeyName(KI_API_KEY_NAME);
 
-      apiKeyStore.updateApiKey(newKiApiKey);
+      if (apiKeyStore != null
+          && apiKeyStore.getUpdatedDt().toLocalDate().isEqual(now(KOREA_ZONE))) {
+        return;
+      }
+
+      String apiKey = koreanInvestmentClient.fetchApprovalKeyWithDelayedRetry(3, 65);
+
+      if (apiKeyStore == null) {
+        apiKeyStore = new ApiKeyStoreEntity(KI_API_KEY_NAME, apiKey);
+        apiKeyStoreRepository.save(apiKeyStore);
+      } else {
+        apiKeyStore.updateApiKey(apiKey);
+      }
       apiKeyStoreManager.loadFromDB();
     } catch (Exception e) {
       Sentry.captureException(e);
       System.err.println(
           "Error fetching and refreshing Korean Investment API key: " + e.getMessage());
-      throw new RuntimeException(
-          "Failed to fetch and refresh Korean Investment API key: " + e.getMessage());
     }
   }
 }
