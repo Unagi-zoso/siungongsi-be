@@ -55,6 +55,11 @@ public class NotificationService {
           ApiResponseCode.NOTIFICATION_REQUIRED_STATUS, "유저가 알림을 동의하지 않았습니다. ");
     }
 
+    if (notificationRepository.countCompanyIdsByUserId(userId) >= 10) {
+      throw new CustomException(
+          ApiResponseCode.NOTIFICATION_LIMIT_EXCEEDED, "최대 알림 기업 구독 수를 초과했습니다.");
+    }
+
     return notificationRepository.save(
         new NotiHistoryEntity(userId, notificationRequest.companyId()));
   }
