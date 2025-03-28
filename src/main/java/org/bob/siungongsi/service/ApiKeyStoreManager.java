@@ -25,6 +25,7 @@ public class ApiKeyStoreManager {
       ApiKeyStoreRepository apiKeyStoreRepository, KoreanInvestmentClient koreanInvestmentClient) {
     this.apiKeyStoreRepository = apiKeyStoreRepository;
     this.koreanInvestmentClient = koreanInvestmentClient;
+    loadFromDB();
   }
 
   public String getAccessToken(String keyName) {
