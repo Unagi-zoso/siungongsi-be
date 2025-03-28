@@ -5,7 +5,6 @@ import static org.bob.siungongsi.dto.ApiResponseCode.KEY_NOT_FOUND;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bob.siungongsi.domain.ApiKeyStoreEntity;
 import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.repository.ApiKeyStoreRepository;
 import org.springframework.stereotype.Service;
@@ -21,17 +20,22 @@ public class ApiKeyStoreManager {
 
   public ApiKeyStoreManager(ApiKeyStoreRepository apiKeyStoreRepository) {
     this.apiKeyStoreRepository = apiKeyStoreRepository;
+    loadFromDB();
   }
 
   public String getAccessToken(String keyName) {
     if (!tokenMap.containsKey(keyName)) {
-      ApiKeyStoreEntity apiKeyStore = apiKeyStoreRepository.findByKeyName(keyName).get();
-      String apiKey = apiKeyStore.getApiKey();
-      if (apiKey == null) {
-        throw new CustomException(KEY_NOT_FOUND, KEY_NOT_FOUND.getMessage());
-      }
-      tokenMap.put(keyName, apiKey);
+      throw new CustomException(KEY_NOT_FOUND, "API key not found: " + keyName);
     }
     return tokenMap.get(keyName);
+  }
+
+  public void loadFromDB() {
+    apiKeyStoreRepository
+        .findAll()
+        .forEach(
+            apiKeyStore -> {
+              tokenMap.put(apiKeyStore.getKeyName(), apiKeyStore.getApiKey());
+            });
   }
 }
