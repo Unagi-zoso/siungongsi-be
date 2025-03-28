@@ -46,8 +46,8 @@ public class AuthController implements AuthControllerSpec {
 
     LoginSuccessResponse response = authService.login(accessToken);
 
-    return ResponseEntity.ok(
-        ApiResponseWrapper.success(ApiResponseCode.AUTH_LOGIN_SUCCESS, response));
+    return ResponseEntity.status(200)
+        .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_LOGIN_SUCCESS, response));
   }
 
   @Override
