@@ -21,7 +21,7 @@ import com.google.firebase.messaging.Message;
 import io.sentry.Sentry;
 import jakarta.annotation.PostConstruct;
 
-@Profile("dev")
+@Profile("batch")
 @Service
 public class FcmService {
 
@@ -32,6 +32,7 @@ public class FcmService {
 
   @PostConstruct
   public void initializeFirebase() {
+    System.out.println("??? " + firebaseJsonBase64);
     try {
       if (firebaseJsonBase64 == null || firebaseJsonBase64.isEmpty()) {
         throw new IllegalStateException("no firebase json key");
