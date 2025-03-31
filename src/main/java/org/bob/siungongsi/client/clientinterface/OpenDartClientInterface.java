@@ -1,11 +1,13 @@
 package org.bob.siungongsi.client.clientinterface;
 
 import org.bob.siungongsi.client.dto.OpenDartDtos.GongsiListResponse;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 
+@Profile("batch")
 @Component
 @HttpExchange
 public interface OpenDartClientInterface {

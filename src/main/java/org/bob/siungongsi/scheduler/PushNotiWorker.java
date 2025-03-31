@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-@Profile("dev")
+@Profile("batch")
 @Component
 public class PushNotiWorker {
 
