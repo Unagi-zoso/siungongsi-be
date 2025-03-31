@@ -45,6 +45,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           docker build --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \
+            -f Dockerfile-eb \
             -t $ECR_IMAGE:latest-backend .
           docker tag $ECR_IMAGE:latest-backend $ECR_IMAGE:${{ env.VERSION_TAG }}-backend
           docker push $ECR_IMAGE:latest-backend
