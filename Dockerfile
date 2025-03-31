@@ -10,6 +10,9 @@ RUN ./gradlew clean build -x test -x sentryBundleSourcesJava -x sentryUploadSour
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
+# awscli + jq 설치
+RUN apt-get update && apt-get install -y awscli jq
+
 # 애플리케이션 JAR 복사
 COPY --from=builder /app/build/libs/*.jar app.jar
 
@@ -19,5 +22,4 @@ RUN chmod +x /entrypoint.sh
 
 EXPOSE 8080
 
-# 여기서 entrypoint로 전환!
 ENTRYPOINT ["/entrypoint.sh"]
