@@ -60,7 +60,8 @@ jobs:
             },
             "Ports": [
               {
-                "ContainerPort": 8080
+                "ContainerPort": 8080,
+                "HostPort": 0
               }
             ]
           }' > Dockerrun.aws.json
