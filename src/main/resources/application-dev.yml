@@ -17,23 +17,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
-  cloud:
-    aws:
-      credentials:
-        access-key: ${AWS_ACCESS_KEY_ID}
-        secret-key: ${AWS_SECRET_ACCESS_KEY}
-      s3:
-        bucket: ${AWS_BUCKET_NAME}
-        region: ${AWS_REGION}
-      sqs:
-        queue:
-          name: ${AWS_SQS_QUEUE_NAME}
-          url: ${AWS_SQS_QUEUE_URL}
-          region: ${AWS_REGION}
-          max-number-of-messages: 5
-          wait-time-seconds: 20
-          visibility-timeout: 30
-
 sentry:
   dsn: ${SENTRY_DSN}
   tracesSampleRate: 1.0
@@ -48,26 +31,6 @@ doc:
     enabled: true
     path: /v3/api-docs
 
-scheduler:
-  enabled: true
-sqs:
-  listener:
-    enabled: true
-
-
-opendart:
-  api:
-    key: ${OPENDART_API_KEY}
-  viewer:
-    url: https://dart.fss.or.kr/dsaf001/main.do?rcpNo=
-
-google-ai:
-  api:
-    key: ${GOOGLE_AI_API_KEY}
-
-admin:
-  key: ${ADMIN_KEY}
-
 korean:
   investment:
     appkey: ${KOREAN_INVESTMENT_APPKEY}
@@ -80,9 +43,3 @@ korean:
 jwt:
   secret-key: ${JWT_SECRET_KEY}
   expiration-time: ${JWT_EXPIRATION_TIME}
-
-fcm:
-  key: ${FCM_KEY}
-
-site:
-  url: ${SITE_URL}
