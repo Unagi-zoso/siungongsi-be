@@ -10,14 +10,10 @@ RUN ./gradlew clean build -x test -x sentryBundleSourcesJava -x sentryUploadSour
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-# awscli는 pip로, jq는 apt로 설치
-RUN apt-get update && \
-    apt-get install -y python3-pip jq && \
-    pip install awscli && \
-    apt-get clean
+# 필수 패키지 설치
+RUN apt-get update && apt-get install -y awscli
 
 COPY --from=builder /app/build/libs/*.jar app.jar
-
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
