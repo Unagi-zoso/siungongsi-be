@@ -1,0 +1,81 @@
+spring:
+  config:
+    activate:
+      on-profile: batch
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
+      s3:
+        bucket: ${AWS_BUCKET_NAME}
+        region: ${AWS_REGION}
+      sqs:
+        queue:
+          name: ${AWS_SQS_QUEUE_NAME}
+          url: ${AWS_SQS_QUEUE_URL}
+          region: ${AWS_REGION}
+          max-number-of-messages: 5
+          wait-time-seconds: 20
+          visibility-timeout: 30
+
+sentry:
+  dsn: ${SENTRY_DSN}
+  tracesSampleRate: 1.0
+  environment: batch
+  release: dev-siungongsi-be
+
+doc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+
+opendart:
+  api:
+    key: ${OPENDART_API_KEY}
+  viewer:
+    url: https://dart.fss.or.kr/dsaf001/main.do?rcpNo=
+
+google-ai:
+  api:
+    key: ${GOOGLE_AI_API_KEY}
+
+admin:
+  key: ${ADMIN_KEY}
+
+korean:
+  investment:
+    appkey: ${KOREAN_INVESTMENT_APPKEY}
+    secretkey: ${KOREAN_INVESTMENT_SECRETKEY}
+    token:
+      url: https://openapi.koreainvestment.com:9443/oauth2/tokenP
+    stock:
+      url: https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  expiration-time: ${JWT_EXPIRATION_TIME}
+
+fcm:
+  key: ${FCM_KEY}
+
+site:
+  url: ${SITE_URL}
