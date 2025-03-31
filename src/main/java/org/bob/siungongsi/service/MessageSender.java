@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.bob.siungongsi.config.SqsProperties;
 import org.bob.siungongsi.event.GongsiMessage;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +15,7 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
+@Profile("batch")
 @Service
 public class MessageSender {
 

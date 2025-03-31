@@ -8,6 +8,7 @@ import java.util.zip.ZipInputStream;
 
 import org.bob.siungongsi.config.AwsCredentialsProperties;
 import org.bob.siungongsi.config.S3Properties;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -21,6 +22,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 
+@Profile("batch")
 @Service
 public class FileService {
 
