@@ -11,12 +11,12 @@ import org.bob.siungongsi.client.OpenDartReader;
 import org.bob.siungongsi.client.dto.OpenDartDtos.GongsiData;
 import org.bob.siungongsi.event.GongsiMessage;
 import org.bob.siungongsi.service.MessageSender;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "scheduler.enabled", havingValue = "true", matchIfMissing = false)
+@Profile("batch")
 public class GongsiProcessingScheduler {
 
   private static final ZoneId KOREA_ZONE = ZoneId.of("Asia/Seoul"); // 한국 시간 설정

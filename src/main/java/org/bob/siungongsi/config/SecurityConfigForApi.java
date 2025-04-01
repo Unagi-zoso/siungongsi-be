@@ -5,6 +5,7 @@ import org.bob.siungongsi.security.JwtAuthFilter;
 import org.bob.siungongsi.security.JwtProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -14,14 +15,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+// 이후 시스템 안정화가 이뤄지면 개발, 운영용으로 분리 필요. origin 허용 범위 대상
+@Profile("!batch")
 @Configuration
-public class SecurityConfig {
+public class SecurityConfigForApi {
 
   private final JwtProvider jwtProvider;
 
   private final CorsProperties corsProperties;
 
-  public SecurityConfig(JwtProvider jwtProvider, CorsProperties corsProperties) {
+  public SecurityConfigForApi(JwtProvider jwtProvider, CorsProperties corsProperties) {
     this.jwtProvider = jwtProvider;
     this.corsProperties = corsProperties;
   }

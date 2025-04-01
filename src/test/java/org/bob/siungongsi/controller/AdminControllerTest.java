@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@ActiveProfiles({"test", "dev"})
+@ActiveProfiles({"test", "batch"})
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(AdminController.class)
 @TestPropertySource(properties = "admin.key=test-api-key")

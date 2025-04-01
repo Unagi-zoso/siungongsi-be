@@ -2,9 +2,11 @@ package org.bob.siungongsi.service;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Profile("batch")
 @Service
 public class TodayProcessedGongsiService {
   private final TodayProcessedGongsiManager todayProcessedGongsiManager;

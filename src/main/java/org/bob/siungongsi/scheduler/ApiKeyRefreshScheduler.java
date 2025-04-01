@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import io.sentry.Sentry;
 
-@Profile("dev")
+@Profile("prod")
 @Component
 public class ApiKeyRefreshScheduler {
 

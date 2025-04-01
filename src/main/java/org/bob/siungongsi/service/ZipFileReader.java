@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+@Profile("batch")
 @Service
 public class ZipFileReader {
   public byte[] readZipFile(byte[] zipData) {

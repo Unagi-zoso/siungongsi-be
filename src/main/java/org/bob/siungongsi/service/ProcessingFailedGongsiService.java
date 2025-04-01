@@ -7,8 +7,10 @@ import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.event.GongsiMessage;
 import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.repository.ProcessingFailedGongsiRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+@Profile("batch")
 @Service
 public class ProcessingFailedGongsiService {
   private final ProcessingFailedGongsiRepository processingFailedGongsiRepository;

@@ -7,8 +7,10 @@ import org.bob.siungongsi.client.clientinterface.GoogleAiClientInterface;
 import org.bob.siungongsi.client.dto.GoogleAiDtos.GoogleAiRequest;
 import org.bob.siungongsi.client.dto.GoogleAiDtos.GoogleAiResponse;
 import org.jsoup.Jsoup;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+@Profile("batch")
 @Service
 public class GongsiSummarizer {
 
