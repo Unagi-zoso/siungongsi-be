@@ -50,8 +50,7 @@ public class FcmService {
 
       this.firebaseMessaging = FirebaseMessaging.getInstance();
     } catch (IOException e) {
-      throw new CustomException(
-          ApiResponseCode.FCM_INIT_ERROR, ApiResponseCode.FCM_INIT_ERROR.getMessage());
+      throw new CustomException(ApiResponseCode.FCM_INIT_ERROR);
     }
   }
 

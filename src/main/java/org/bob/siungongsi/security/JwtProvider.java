@@ -45,7 +45,7 @@ public class JwtProvider {
               .getPayload()
               .getSubject());
     } catch (Exception e) {
-      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED, "잘못된 토큰입니다");
+      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED);
     }
   }
 }

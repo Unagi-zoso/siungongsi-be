@@ -50,13 +50,13 @@ public class AuthService {
   public String register(AuthRequest.RegisterRequest authRequest, String accessToken) {
 
     if (accessToken == null || accessToken.isEmpty()) {
-      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION, "토큰이 필요합니다.");
+      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION);
     }
 
     String socialId = kakaoAuthService.getSocialIdFromAccessToken(accessToken);
 
     if (userRepository.existsBySocialId(socialId)) {
-      throw new CustomException(ApiResponseCode.AUTH_USER_ALREADY_EXISTS, "이미 가입된 사용자입니다.");
+      throw new CustomException(ApiResponseCode.AUTH_USER_ALREADY_EXISTS);
     }
 
     UserEntity newUserEntity =
@@ -85,19 +85,18 @@ public class AuthService {
     List<Long> requiredTermIds = termRepository.findIdsByRequiredFlag();
 
     if (!agreedTermIds.containsAll(requiredTermIds)) {
-      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_TERMS_NOT_AGREED, "필수 약관에 동의해야 합니다.");
+      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_TERMS_NOT_AGREED);
     }
   }
 
   private void validateTermIds(List<Long> agreedTermIds, Long userId) {
     for (Long termId : agreedTermIds) {
       if (!termRepository.existsById(termId)) {
-        throw new CustomException(ApiResponseCode.AUTH_TERMS_ID_NOT_FOUND, "찾을 수 없는 term_id 입니다.");
+        throw new CustomException(ApiResponseCode.AUTH_TERMS_ID_NOT_FOUND);
       }
 
       if (userAgreedTermRepository.existsByUserIdAndTermId(userId, termId)) {
-        throw new CustomException(
-            ApiResponseCode.AUTH_USER_AGREED_TERMS_ID_ALREADY_EXISTS, "이미 존재하는 회원 동의 약관 id 입니다.");
+        throw new CustomException(ApiResponseCode.AUTH_USER_AGREED_TERMS_ID_ALREADY_EXISTS);
       }
     }
   }
@@ -133,7 +132,7 @@ public class AuthService {
     userAgreedTermRepository.deleteAllByUserId(userId);
 
     if (!userRepository.existsById(userId)) {
-      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND, "사용자가 존재하지 않습니다.");
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
     }
 
     // 회원 정보 삭제
@@ -145,8 +144,7 @@ public class AuthService {
     List<TermEntity> terms = termRepository.findAll();
 
     if (terms.isEmpty()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_TERMS_NOT_FOUND, ApiResponseCode.AUTH_TERMS_NOT_FOUND.getMessage());
+      throw new CustomException(ApiResponseCode.AUTH_TERMS_NOT_FOUND);
     }
 
     return terms.stream()

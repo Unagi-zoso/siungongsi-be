@@ -39,7 +39,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION, "엑세스 토큰을 넣어주세요");
+      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION);
     }
 
     authHeader = authHeader.replace("Bearer ", "");
