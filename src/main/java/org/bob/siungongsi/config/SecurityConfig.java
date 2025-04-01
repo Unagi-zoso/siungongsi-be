@@ -59,4 +59,25 @@ public class SecurityConfig {
     source.registerCorsConfiguration("/**", configuration);
     return source;
   }
+
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+      // 헬스체크는 인증 없이 허용
+      http.authorizeHttpRequests(
+          authorizeRequests -> authorizeRequests
+              .requestMatchers("/health").permitAll()
+              // 그 외 요청은 인증 필요
+              .anyRequest().authenticated()
+      );
+      // CORS 기본 설정 적용
+      http.cors(Customizer.withDefaults());
+      // CSRF 보호 비활성화 (JWT 기반이니까?)
+      http.csrf(AbstractHttpConfigurer::disable);
+
+      http.addFilterBefore(
+          new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+      http.addFilterBefore(new ExceptionHandlerFilter(), JwtAuthFilter.class);
+
+      return http.build();
+  }
 }
