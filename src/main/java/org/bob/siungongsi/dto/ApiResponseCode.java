@@ -52,6 +52,8 @@ public enum ApiResponseCode {
   NOTIFICATION_ALREADY_EXISTS(HttpStatus.CONFLICT, 5402, "notifications_already_exist"),
   NOTIFICATION_REQUIRED_STATUS(HttpStatus.CONFLICT, 5403, "required_notification_status"),
   NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, 5404, "notification_not_found"),
+  NOTIFICATION_LIMIT_EXCEEDED(
+      HttpStatus.TOO_MANY_REQUESTS, 5405, "maximum_number_of_notifications_exceeded."),
   NOTIFICATION_INTERNAL_SERVER_ERROR(
       HttpStatus.INTERNAL_SERVER_ERROR, 5500, "internal_server_error"),
 

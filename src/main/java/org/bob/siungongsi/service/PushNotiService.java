@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-@Profile("dev")
+@Profile("batch")
 @Service
 public class PushNotiService {
 
@@ -56,7 +56,7 @@ public class PushNotiService {
   private boolean sendMessage(String token, GongsiEntity gongsi) {
     CompanyEntity company =
         companyRepository
-            .findById(gongsi.getCompany().getId().toString())
+            .findById(gongsi.getCompany().getId())
             .orElseThrow(() -> new RuntimeException("Company not found"));
 
     String title = company.getCompanyName() + " 기업의 새로운 공시가 나왔습니다.";

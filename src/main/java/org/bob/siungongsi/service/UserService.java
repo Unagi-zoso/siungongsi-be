@@ -10,6 +10,7 @@ import org.bob.siungongsi.controller.dto.UserResponse.NotificationStatusResponse
 import org.bob.siungongsi.controller.dto.UserSubscriptionsResponse;
 import org.bob.siungongsi.controller.dto.UserSubscriptionsResponse.SubscribedCompany;
 import org.bob.siungongsi.domain.CompanyEntity;
+import org.bob.siungongsi.domain.NotiHistoryEntity;
 import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
@@ -96,7 +97,10 @@ public class UserService {
   public UserSubscriptionsResponse getUserSubscriptions() {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    List<Long> companyIds = notificationRepository.findCompanyIdsByUserId(userId);
+    List<Long> companyIds =
+        notificationRepository.findByUserId(userId).stream()
+            .map(NotiHistoryEntity::getCompanyId)
+            .collect(Collectors.toList());
 
     if (companyIds.isEmpty()) {
       return UserSubscriptionsResponse.of(userId, new ArrayList<>());

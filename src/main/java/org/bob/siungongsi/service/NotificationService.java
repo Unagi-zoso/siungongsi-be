@@ -54,6 +54,10 @@ public class NotificationService {
       throw new CustomException(ApiResponseCode.NOTIFICATION_REQUIRED_STATUS);
     }
 
+    if (notificationRepository.countByUserId(userId) >= 10) {
+      throw new CustomException(ApiResponseCode.NOTIFICATION_LIMIT_EXCEEDED);
+    }
+
     return notificationRepository.save(
         new NotiHistoryEntity(userId, notificationRequest.companyId()));
   }

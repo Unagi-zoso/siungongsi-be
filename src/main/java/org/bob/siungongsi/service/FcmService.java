@@ -21,7 +21,7 @@ import com.google.firebase.messaging.Message;
 import io.sentry.Sentry;
 import jakarta.annotation.PostConstruct;
 
-@Profile("dev")
+@Profile("batch")
 @Service
 public class FcmService {
 
