@@ -37,6 +37,10 @@ public class NotificationService {
       NotificationRequest.NotificationCompanyRequest notificationRequest) {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+    if (notificationRequest.companyId() == null) {
+      throw new CustomException(ApiResponseCode.NOTIFICATION_COMPANYID_NOT_NULL);
+    }
+
     if (!userRepository.findById(userId).isPresent()) {
       throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
     }

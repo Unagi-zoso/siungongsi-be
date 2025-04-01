@@ -54,11 +54,15 @@ public enum ApiResponseCode {
   NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, 5404, "notification_not_found"),
   NOTIFICATION_LIMIT_EXCEEDED(
       HttpStatus.TOO_MANY_REQUESTS, 5405, "maximum_number_of_notifications_exceeded."),
+  NOTIFICATION_COMPANYID_NOT_NULL(HttpStatus.BAD_REQUEST, 5406, "company_id_not_null"),
   NOTIFICATION_INTERNAL_SERVER_ERROR(
       HttpStatus.INTERNAL_SERVER_ERROR, 5500, "internal_server_error"),
 
   // 외부 API 관련 응답 코드 (6)
   EXTERNAL_API_ERROR(HttpStatus.BAD_GATEWAY, 6400, "external_api_error"),
+
+  // BODY값 없을 때
+  API_BAD_REQUEST(HttpStatus.BAD_REQUEST, 700, "api_bad_request"),
 
   // API KEY STORE 관련 응답코드 (27)
   KEY_NOT_FOUND(HttpStatus.NOT_FOUND, 2700, "key_not_found"),

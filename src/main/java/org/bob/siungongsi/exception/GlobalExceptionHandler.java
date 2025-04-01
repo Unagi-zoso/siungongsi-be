@@ -4,6 +4,7 @@ import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -43,5 +44,13 @@ public class GlobalExceptionHandler {
   public ApiResponseWrapper handleException(Exception ex) {
     Sentry.captureException(ex); // Sentry에 예외 전송
     return ApiResponseWrapper.error(ApiResponseCode.GONGSI_INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ApiResponseWrapper> handleHttpMessageNotReadable(
+      HttpMessageNotReadableException ex) {
+    Sentry.captureException(ex); // Sentry에 예외 전송
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
   }
 }
