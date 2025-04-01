@@ -3,7 +3,7 @@ name: Deploy Backend to Elastic Beanstalk
 on:
   push:
     branches:
-      - develop
+      - AhnSunday-dev-deploy
 
 jobs:
   deploy-to-eb:
@@ -12,8 +12,8 @@ jobs:
 
     env:
       ECR_IMAGE: ${{ secrets.ECR_REGISTRY }}/siungongsi
-      EB_APP_NAME: dev-siungongsi-env
-      EB_ENV_NAME: Dev-siungongsi-env-env
+      EB_APP_NAME: dev-siungongsi
+      EB_ENV_NAME: Dev-siungongsi-env
       S3_BUCKET: ${{ secrets.EB_S3_BUCKET }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
 
