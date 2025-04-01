@@ -49,6 +49,7 @@ public enum ApiResponseCode {
   NOTIFICATION_ALREADY_EXISTS(5402, "notifications_already_exist"),
   NOTIFICATION_REQUIRED_STATUS(5403, "required_notification_status"),
   NOTIFICATION_NOT_FOUND(5404, "notification_not_found"),
+  NOTIFICATION_LIMIT_EXCEEDED(5405, "maximum_number_of_notifications_exceeded."),
   NOTIFICATION_INTERNAL_SERVER_ERROR(5500, "internal_server_error"),
 
   // 외부 API 관련 응답 코드 (6)
