@@ -22,12 +22,12 @@ public class KakaoAuthService {
         .onStatus(
             HttpStatusCode::is4xxClientError,
             ((req, res) -> {
-              throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED, "토큰 만료입니다.");
+              throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED);
             }))
         .onStatus(
             HttpStatusCode::is5xxServerError,
             ((req, res) -> {
-              throw new CustomException(ApiResponseCode.AUTH_INTERNAL_SERVER_ERROR, "서버 오류입니다.");
+              throw new CustomException(ApiResponseCode.AUTH_INTERNAL_SERVER_ERROR);
             }))
         .body(Map.class)
         .get("id")

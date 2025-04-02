@@ -106,4 +106,6 @@ jobs:
                     -e ADMIN_KEY=${{ secrets.ADMIN_KEY }} \
                     -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
                     -e JWT_EXPIRATION_TIME=${{ secrets.JWT_EXPIRATION_TIME }} \
+                    -e FCM_KEY=${{ secrets.FCM_KEY }} \
+                    -e SITE_URL=${{ secrets.SITE_URL }} \
                     ${{ secrets.ECR_REGISTRY }}/siungongsi:latest-backend

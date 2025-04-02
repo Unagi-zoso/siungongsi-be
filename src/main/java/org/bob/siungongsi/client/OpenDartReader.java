@@ -9,8 +9,10 @@ import org.bob.siungongsi.client.dto.OpenDartDtos.GongsiData;
 import org.bob.siungongsi.client.dto.OpenDartDtos.GongsiListResponse;
 import org.bob.siungongsi.service.RankedCompanyManager;
 import org.bob.siungongsi.service.TodayProcessedGongsiManager;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+@Profile("batch")
 @Component
 public class OpenDartReader {
   private static final int PAGE_SIZE = 100;

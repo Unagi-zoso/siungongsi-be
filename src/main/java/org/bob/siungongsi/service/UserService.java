@@ -10,6 +10,7 @@ import org.bob.siungongsi.controller.dto.UserResponse.NotificationStatusResponse
 import org.bob.siungongsi.controller.dto.UserSubscriptionsResponse;
 import org.bob.siungongsi.controller.dto.UserSubscriptionsResponse.SubscribedCompany;
 import org.bob.siungongsi.domain.CompanyEntity;
+import org.bob.siungongsi.domain.NotiHistoryEntity;
 import org.bob.siungongsi.domain.UserEntity;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.exception.CustomException;
@@ -40,20 +41,17 @@ public class UserService {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (userId == null) {
-      throw new CustomException(
-          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
-          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
+      throw new CustomException(ApiResponseCode.USER_REQUIRED_AUTHORIZATION);
     }
 
     Optional<UserEntity> userOpt = userRepository.findById(userId);
     if (!userOpt.isPresent()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
     }
 
     UserEntity user = userOpt.get();
     // notiFlag 값을 Boolean으로 변환 (0이면 false, 1이면 true)
-    boolean notificationEnabled = user.getNotiFlag() > 0;
+    boolean notificationEnabled = user.getNotiFlag();
 
     return NotificationStatusResponse.of(user.getId(), notificationEnabled);
   }
@@ -61,33 +59,28 @@ public class UserService {
   @Transactional
   public NotificationStatusResponse updateNotificationStatus(UserNotificationRequest request) {
     if (request.notificationFlag() == null) {
-      throw new CustomException(
-          ApiResponseCode.USER_STATUS_ALREADY_EXIST,
-          ApiResponseCode.USER_STATUS_ALREADY_EXIST.getMessage());
+      throw new CustomException(ApiResponseCode.USER_STATUS_ALREADY_EXIST);
     }
 
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (userId == null) {
-      throw new CustomException(
-          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
-          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
+      throw new CustomException(ApiResponseCode.USER_REQUIRED_AUTHORIZATION);
     }
 
     Optional<UserEntity> userOpt = userRepository.findById(userId);
     if (!userOpt.isPresent()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
     }
 
     UserEntity user = userOpt.get();
 
     // 알림 허용 여부 업데이트 (true -> 1, false -> 0)
-    Short notiFlag = request.notificationFlag() ? (short) 1 : (short) 0;
+    boolean notiFlag = request.notificationFlag();
     user.updateNotiFlag(notiFlag);
 
     // FCM 토큰 업데이트 (null이 아닌 경우에만)
-    if (request.pushToken() != null && !request.pushToken().isEmpty()) {
+    if (request.pushToken() != null && !request.pushToken().isBlank()) {
       user.updatePushTokenId(request.pushToken());
     }
 
@@ -104,7 +97,10 @@ public class UserService {
   public UserSubscriptionsResponse getUserSubscriptions() {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    List<Long> companyIds = notificationRepository.findCompanyIdsByUserId(userId);
+    List<Long> companyIds =
+        notificationRepository.findByUserId(userId).stream()
+            .map(NotiHistoryEntity::getCompanyId)
+            .collect(Collectors.toList());
 
     if (companyIds.isEmpty()) {
       return UserSubscriptionsResponse.of(userId, new ArrayList<>());

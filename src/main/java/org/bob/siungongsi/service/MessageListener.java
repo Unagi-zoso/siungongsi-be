@@ -10,14 +10,16 @@ import org.bob.siungongsi.client.OpenDartReader;
 import org.bob.siungongsi.config.SqsProperties;
 import org.bob.siungongsi.domain.CompanyEntity;
 import org.bob.siungongsi.domain.GongsiEntity;
+import org.bob.siungongsi.domain.GongsiSentStatusEntity;
 import org.bob.siungongsi.domain.ProcessingFailedGongsiEntity;
 import org.bob.siungongsi.event.GongsiMessage;
 import org.bob.siungongsi.repository.CompanyRepository;
 import org.bob.siungongsi.repository.GongsiRepository;
+import org.bob.siungongsi.repository.GongsiSentStatusRepository;
 import org.bob.siungongsi.repository.ProcessingFailedGongsiRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -34,8 +36,8 @@ import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
+@Profile("batch")
 @Service
-@ConditionalOnProperty(name = "sqs.listener.enabled", havingValue = "true", matchIfMissing = false)
 public class MessageListener {
 
   private final SqsAsyncClient sqsAsyncClient;
@@ -51,6 +53,7 @@ public class MessageListener {
   private final CompanyRepository companyRepository;
   private final String originalUrl;
   private final ProcessingFailedGongsiRepository processingFailedGongsiRepository;
+  private final GongsiSentStatusRepository gongsiSentStatusRepository;
 
   public MessageListener(
       SqsAsyncClient sqsAsyncClient,
@@ -63,7 +66,8 @@ public class MessageListener {
       GongsiRepository gongsiRepository,
       CompanyRepository companyRepository,
       @Value("${opendart.viewer.url}") String originalUrl,
-      ProcessingFailedGongsiRepository processingFailedGongsiRepository) {
+      ProcessingFailedGongsiRepository processingFailedGongsiRepository,
+      GongsiSentStatusRepository gongsiSentStatusRepository) {
     this.sqsAsyncClient = sqsAsyncClient;
     this.queueUrl = sqsProperties.url();
     this.maxNumberOfMessages = sqsProperties.maxNumberOfMessages();
@@ -77,6 +81,7 @@ public class MessageListener {
     this.companyRepository = companyRepository;
     this.originalUrl = originalUrl;
     this.processingFailedGongsiRepository = processingFailedGongsiRepository;
+    this.gongsiSentStatusRepository = gongsiSentStatusRepository;
   }
 
   @Scheduled(fixedRate = 30000) // 30초 (30,000ms)
@@ -168,14 +173,19 @@ public class MessageListener {
               StandardCharsets.UTF_8);
       String summarized = gongsiSummarizer.summarizeText(text);
       CompanyEntity company = companyRepository.findByCompanyCode(message.companyCode());
-      gongsiRepository.save(
-          new GongsiEntity(
-              company,
-              summarized,
-              message.receiptNo(),
-              message.receiptTitle(),
-              originalUrl + message.receiptNo(),
-              s3Key));
+      GongsiEntity gongsiEntity =
+          gongsiRepository.save(
+              new GongsiEntity(
+                  company,
+                  summarized,
+                  message.receiptNo(),
+                  message.receiptTitle(),
+                  originalUrl + message.receiptNo(),
+                  s3Key));
+      // 내부 호출은 어노테이션이 적용 안되는 것으로 아는데
+      // 그렇다고 최상단 메소드에 트랜잭션을 적용하자니 커넥션을 너무 오래 잡을 것 같아
+      // 트랜잭션 없이 처리함. 불일치가 많이 발생한다면 추후 수정 필요
+      gongsiSentStatusRepository.save(new GongsiSentStatusEntity(gongsiEntity));
     } catch (IOException e) {
       Sentry.captureException(e);
       throw new RuntimeException(e);
@@ -189,7 +199,7 @@ public class MessageListener {
 }
 
 @Component
-@ConditionalOnProperty(name = "sqs.listener.enabled", havingValue = "true", matchIfMissing = false)
+@Profile("batch")
 class SqsShutdownListener implements ApplicationListener<ContextClosedEvent> {
 
   private final SqsAsyncClient sqsAsyncClient;

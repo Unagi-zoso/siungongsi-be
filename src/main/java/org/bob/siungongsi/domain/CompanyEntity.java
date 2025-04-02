@@ -6,16 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(
-    name = "companies",
-    uniqueConstraints = {
-      @UniqueConstraint(columnNames = "company_name"),
-      @UniqueConstraint(columnNames = "company_code"),
-      @UniqueConstraint(columnNames = "stock_code")
-    })
+@Table(name = "companies")
 public class CompanyEntity extends ModifiableEntity {
 
   @Id
@@ -26,7 +19,7 @@ public class CompanyEntity extends ModifiableEntity {
   @Column(name = "company_name", length = 50, nullable = false, unique = true)
   private String companyName; // 한글 기업명
 
-  @Column(name = "company_code", length = 12, nullable = false)
+  @Column(name = "company_code", length = 12, nullable = false, unique = true)
   private String companyCode; // 공시용 식별자 (OpenDart API 식별용)
 
   @Column(name = "stock_code", length = 6, nullable = false, unique = true)

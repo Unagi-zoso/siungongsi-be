@@ -39,7 +39,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION, "엑세스 토큰을 넣어주세요");
+      throw new CustomException(ApiResponseCode.AUTH_REQUIRED_AUTHORIZATION);
     }
 
     authHeader = authHeader.replace("Bearer ", "");
@@ -56,6 +56,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         || uri.equals("/v1/auth/register")
         || uri.equals("/v1/auth/terms")
         || uri.equals("/v1/gongsi")
+        || uri.equals("/health")
         || uri.matches("/swagger-ui.*")
         || uri.matches("/admin.*")
         || uri.matches("/v1/companies.*")

@@ -27,6 +27,10 @@ public class ApiKeyStoreEntity extends ModifiableEntity {
     this.apiKey = apiKey;
   }
 
+  public String getKeyName() {
+    return keyName;
+  }
+
   public String getApiKey() {
     return apiKey;
   }

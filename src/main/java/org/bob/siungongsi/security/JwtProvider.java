@@ -61,7 +61,7 @@ public class JwtProvider {
     } catch (IllegalArgumentException e) {
       throw new CustomException(ApiResponseCode.AUTH_TOKEN_MISSING, "토큰이 없습니다");
     } catch (Exception e) {
-      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED, "잘못된 토큰입니다");
+      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED);
     }
   }
 }

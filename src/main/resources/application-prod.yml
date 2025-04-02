@@ -1,7 +1,7 @@
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: prod
 
   datasource:
     url: ${SPRING_DATASOURCE_URL}
@@ -18,14 +18,17 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
 
 sentry:
-  enabled: false
+  dsn: ${SENTRY_DSN}
+  tracesSampleRate: 1.0
+  environment: production
+  release: dev-siungongsi-be
 
 doc:
   swagger-ui:
-    enabled: true
+    enabled: false
     path: /swagger-ui
   api-docs:
-    enabled: true
+    enabled: false
     path: /v3/api-docs
 
 korean:
@@ -38,5 +41,5 @@ korean:
       url: https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price
 
 jwt:
-  secret-key: dflknlsdfjlskfncdsjlkmxnfjsklcxmvnfddddddddc
-  expiration-time: 604800000
+  secret-key: ${JWT_SECRET_KEY}
+  expiration-time: ${JWT_EXPIRATION_TIME}

@@ -107,7 +107,7 @@ public class GongsiService {
       if (companyId != null) {
         CompanyEntity company =
             companyRepository
-                .findById(companyId.toString())
+                .findById(companyId)
                 .orElseThrow(
                     () ->
                         new CustomException(
@@ -142,7 +142,7 @@ public class GongsiService {
       if (companyId != null) {
         CompanyEntity company =
             companyRepository
-                .findById(companyId.toString())
+                .findById(companyId)
                 .orElseThrow(
                     () ->
                         new CustomException(
@@ -208,9 +208,7 @@ public class GongsiService {
     try {
       Long userId = getCurrentUserId();
       if (userId != null) {
-        isSubscribed =
-            notificationRepository.existsByUserIdAndCompanyId(
-                userId, Long.valueOf(company.getId()));
+        isSubscribed = notificationRepository.existsByUserIdAndCompanyId(userId, company.getId());
       }
     } catch (Exception e) {
       System.err.println("Error checking subscription status: " + e.getMessage());
