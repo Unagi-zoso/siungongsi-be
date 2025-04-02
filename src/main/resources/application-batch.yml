@@ -32,7 +32,7 @@ spring:
           region: ${AWS_REGION}
           max-number-of-messages: 5
           wait-time-seconds: 20
-          visibility-timeout: 3600
+          visibility-timeout: 30
 
 sentry:
   dsn: ${SENTRY_DSN}
