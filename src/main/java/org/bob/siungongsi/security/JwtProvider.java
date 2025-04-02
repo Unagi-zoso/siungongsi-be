@@ -12,8 +12,11 @@ import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 
 @Component
 public class JwtProvider {
@@ -57,11 +60,17 @@ public class JwtProvider {
               .getPayload()
               .getSubject());
     } catch (ExpiredJwtException e) {
-      throw new CustomException(ApiResponseCode.AUTH_TOKEN_EXPIRED);
-    } catch (IllegalArgumentException e) {
-      throw new CustomException(ApiResponseCode.AUTH_TOKEN_MISSING);
-    } catch (Exception e) {
       throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED);
+    } catch (IllegalArgumentException e) {
+      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_MISSING);
+    } catch (SignatureException e) {
+      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_INVALID_SIGNATURE);
+    } catch (MalformedJwtException e) {
+      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_MALFORMED);
+    } catch (UnsupportedJwtException e) {
+      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_UNSUPPORTED);
+    } catch (Exception e) {
+      throw new CustomException(ApiResponseCode.AUTH_INTERNAL_SERVER_ERROR);
     }
   }
 }

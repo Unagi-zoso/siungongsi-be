@@ -22,7 +22,7 @@ public class KakaoAuthService {
         .onStatus(
             HttpStatusCode::is4xxClientError,
             ((req, res) -> {
-              throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED);
+              throw new CustomException(ApiResponseCode.AUTH_KAKAO_ACCESS_TOKEN_EXPIRED);
             }))
         .onStatus(
             HttpStatusCode::is5xxServerError,

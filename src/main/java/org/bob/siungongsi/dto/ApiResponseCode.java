@@ -24,7 +24,7 @@ public enum ApiResponseCode {
   AUTH_LOGIN_SUCCESS(HttpStatus.OK, 2202, "login_success"),
   AUTH_REGISTER_SUCCESS(HttpStatus.CREATED, 2203, "register_success"),
   AUTH_REQUIRED_AUTHORIZATION(HttpStatus.FORBIDDEN, 2400, "required_authorization"),
-  AUTH_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, 2401, "access_token_expired"),
+  AUTH_KAKAO_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, 2401, "kakao_access_token_expired"),
   AUTH_USER_NOT_FOUND(HttpStatus.NOT_FOUND, 2402, "user_not_found"),
   AUTH_TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, 2403, "terms_not_found"),
   AUTH_USER_ALREADY_EXISTS(HttpStatus.CONFLICT, 2404, "user_already_exists"),
@@ -32,8 +32,12 @@ public enum ApiResponseCode {
   AUTH_USER_AGREED_TERMS_ID_ALREADY_EXISTS(
       HttpStatus.CONFLICT, 2406, "user_agreed_terms_id_already_exists"),
   AUTH_REQUIRED_TERMS_NOT_AGREED(HttpStatus.FORBIDDEN, 2407, "required_terms_not_agreed"),
-  AUTH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, 2408, "token_expired"),
-  AUTH_TOKEN_MISSING(HttpStatus.UNAUTHORIZED, 2409, "token_missing"),
+  AUTH_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, 2408, "access_token_expired"),
+  AUTH_ACCESS_TOKEN_MISSING(HttpStatus.BAD_REQUEST, 2409, "access_token_missing"),
+  AUTH_ACCESS_TOKEN_MALFORMED(HttpStatus.BAD_REQUEST, 2410, "access_token_malformed"),
+  AUTH_ACCESS_TOKEN_UNSUPPORTED(HttpStatus.BAD_REQUEST, 2411, "access_token_unsupported"),
+  AUTH_ACCESS_TOKEN_INVALID_SIGNATURE(
+      HttpStatus.UNAUTHORIZED, 2412, "access_token_invalid_signature"),
   AUTH_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 2500, "internal_server_error"),
 
   // 유저 관련 응답 코드 (3)
