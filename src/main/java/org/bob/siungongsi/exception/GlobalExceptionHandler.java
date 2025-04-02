@@ -3,6 +3,7 @@ package org.bob.siungongsi.exception;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,12 +13,12 @@ import io.sentry.Sentry;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  // CustomException을 처리하는 핸들러
   @ExceptionHandler(CustomException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST) // 400 오류 반환
-  public ApiResponseWrapper handleCustomException(CustomException ex) {
+  public ResponseEntity<ApiResponseWrapper> handleCustomException(CustomException ex) {
     Sentry.captureException(ex); // Sentry에 예외 전송
-    return ApiResponseWrapper.error(ex.getErrorCode());
+    ApiResponseCode responseCode = ex.getErrorCode();
+    return ResponseEntity.status(responseCode.getHttpStatus())
+        .body(ApiResponseWrapper.error(responseCode));
   }
 
   // IllegalArgumentException 같은 일반적인 예외 처리

@@ -41,15 +41,12 @@ public class UserService {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (userId == null) {
-      throw new CustomException(
-          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
-          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
+      throw new CustomException(ApiResponseCode.USER_REQUIRED_AUTHORIZATION);
     }
 
     Optional<UserEntity> userOpt = userRepository.findById(userId);
     if (!userOpt.isPresent()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
     }
 
     UserEntity user = userOpt.get();
@@ -62,23 +59,18 @@ public class UserService {
   @Transactional
   public NotificationStatusResponse updateNotificationStatus(UserNotificationRequest request) {
     if (request.notificationFlag() == null) {
-      throw new CustomException(
-          ApiResponseCode.USER_STATUS_ALREADY_EXIST,
-          ApiResponseCode.USER_STATUS_ALREADY_EXIST.getMessage());
+      throw new CustomException(ApiResponseCode.USER_STATUS_ALREADY_EXIST);
     }
 
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (userId == null) {
-      throw new CustomException(
-          ApiResponseCode.USER_REQUIRED_AUTHORIZATION,
-          ApiResponseCode.USER_REQUIRED_AUTHORIZATION.getMessage());
+      throw new CustomException(ApiResponseCode.USER_REQUIRED_AUTHORIZATION);
     }
 
     Optional<UserEntity> userOpt = userRepository.findById(userId);
     if (!userOpt.isPresent()) {
-      throw new CustomException(
-          ApiResponseCode.AUTH_USER_NOT_FOUND, ApiResponseCode.AUTH_USER_NOT_FOUND.getMessage());
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
     }
 
     UserEntity user = userOpt.get();

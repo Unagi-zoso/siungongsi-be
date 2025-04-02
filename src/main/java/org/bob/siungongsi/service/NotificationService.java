@@ -38,26 +38,24 @@ public class NotificationService {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (!userRepository.findById(userId).isPresent()) {
-      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND, "존재하지 않은 유저입니다.");
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
     }
 
     if (notificationRepository.existsByUserIdAndCompanyId(
         userId, notificationRequest.companyId())) {
-      throw new CustomException(ApiResponseCode.NOTIFICATION_ALREADY_EXISTS, "이미 존재하는 알림입니다.");
+      throw new CustomException(ApiResponseCode.NOTIFICATION_ALREADY_EXISTS);
     }
 
     if (!companyRepository.existsById(notificationRequest.companyId())) {
-      throw new CustomException(ApiResponseCode.NOTIFICATION_INVALID_COMPANY_ID, "존재하지 않는 기업입니다.");
+      throw new CustomException(ApiResponseCode.NOTIFICATION_INVALID_COMPANY_ID);
     }
 
     if (!userRepository.findNotiFlagById(userId)) {
-      throw new CustomException(
-          ApiResponseCode.NOTIFICATION_REQUIRED_STATUS, "유저가 알림을 동의하지 않았습니다. ");
+      throw new CustomException(ApiResponseCode.NOTIFICATION_REQUIRED_STATUS);
     }
 
     if (notificationRepository.countByUserId(userId) >= 10) {
-      throw new CustomException(
-          ApiResponseCode.NOTIFICATION_LIMIT_EXCEEDED, "최대 알림 기업 구독 수를 초과했습니다.");
+      throw new CustomException(ApiResponseCode.NOTIFICATION_LIMIT_EXCEEDED);
     }
 
     return notificationRepository.save(
@@ -69,16 +67,15 @@ public class NotificationService {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (!notificationRepository.existsByUserIdAndCompanyId(userId, companyId)) {
-      throw new CustomException(ApiResponseCode.NOTIFICATION_NOT_FOUND, "존재하지 않는 알림 내역입니다.");
+      throw new CustomException(ApiResponseCode.NOTIFICATION_NOT_FOUND);
     }
 
     if (!companyRepository.existsById(companyId)) {
-      throw new CustomException(ApiResponseCode.NOTIFICATION_INVALID_COMPANY_ID, "존재하지 않는 기업입니다.");
+      throw new CustomException(ApiResponseCode.NOTIFICATION_INVALID_COMPANY_ID);
     }
 
     if (!userRepository.findNotiFlagById(userId)) {
-      throw new CustomException(
-          ApiResponseCode.NOTIFICATION_REQUIRED_STATUS, "유저가 알림을 동의하지 않았습니다. ");
+      throw new CustomException(ApiResponseCode.NOTIFICATION_REQUIRED_STATUS);
     }
 
     notificationRepository.deleteByUserIdAndCompanyId(userId, companyId);
