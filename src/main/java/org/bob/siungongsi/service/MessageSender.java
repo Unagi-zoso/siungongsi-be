@@ -21,14 +21,14 @@ public class MessageSender {
 
   private final SqsAsyncClient sqsAsyncClient;
   private final String queueUrl;
-  private final int visibilityTimeout;
+  private final int delaySeconds;
   private final ObjectMapper objectMapper;
 
   public MessageSender(
       SqsAsyncClient sqsAsyncClient, SqsProperties sqsProperties, ObjectMapper objectMapper) {
     this.sqsAsyncClient = sqsAsyncClient;
     this.queueUrl = sqsProperties.url();
-    this.visibilityTimeout = sqsProperties.visibilityTimeout();
+    this.delaySeconds = sqsProperties.delaySeconds();
     this.objectMapper = objectMapper;
   }
 
@@ -40,7 +40,7 @@ public class MessageSender {
           SendMessageRequest.builder()
               .queueUrl(queueUrl)
               .messageBody(messageBody)
-              .delaySeconds(visibilityTimeout)
+              .delaySeconds(delaySeconds)
               .build();
 
       return sqsAsyncClient
