@@ -3,7 +3,7 @@ name: Deploy Backend to Elastic Beanstalk
 on:
   push:
     branches:
-      - develop
+      - AhnSunday-dev-deploy
 
 jobs:
   deploy-to-eb:
@@ -61,8 +61,7 @@ jobs:
             },
             "Ports": [
               {
-                "ContainerPort": 8080,
-                "HostPort": 80
+                "ContainerPort": 8080
               }
             ]
           }' > Dockerrun.aws.json
