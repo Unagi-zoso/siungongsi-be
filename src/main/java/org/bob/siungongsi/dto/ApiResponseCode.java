@@ -15,7 +15,7 @@ public enum ApiResponseCode {
   GONGSI_INVALID_PAGE(HttpStatus.BAD_REQUEST, 1406, "invalid_page"),
   GONGSI_INVALID_SIZE(HttpStatus.BAD_REQUEST, 1407, "invalid_size"),
   GONGSI_INVALID_GONGSI_ID(HttpStatus.BAD_REQUEST, 1408, "invalid_gongsi_id"),
-  GONGSI_INVALID_date_format(HttpStatus.BAD_REQUEST, 1409, "invalid_date_format"),
+  GONGSI_INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, 1409, "invalid_date_format"),
   GONGSI_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 1500, "internal_server_error"),
 
   // 인증 관련 응답 코드 (2)
