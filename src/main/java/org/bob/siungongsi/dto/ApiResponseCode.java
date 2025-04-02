@@ -11,6 +11,11 @@ public enum ApiResponseCode {
   GONGSI_INVALID_DATE_PAIR(HttpStatus.BAD_REQUEST, 1402, "invalid_date_pair"),
   GONGSI_NOT_FOUND(HttpStatus.NOT_FOUND, 1403, "gongsi_not_found"),
   GONGSI_COMPANY_NOT_FOUND(HttpStatus.NOT_FOUND, 1404, "company_not_found"),
+  GONGSI_INVALID_CONTENT(HttpStatus.BAD_REQUEST, 1405, "invalid_content"),
+  GONGSI_INVALID_PAGE(HttpStatus.BAD_REQUEST, 1406, "invalid_page"),
+  GONGSI_INVALID_SIZE(HttpStatus.BAD_REQUEST, 1407, "invalid_size"),
+  GONGSI_INVALID_GONGSI_ID(HttpStatus.BAD_REQUEST, 1408, "invalid_gongsi_id"),
+  GONGSI_INVALID_date_format(HttpStatus.BAD_REQUEST, 1409, "invalid_date_format"),
   GONGSI_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 1500, "internal_server_error"),
 
   // 인증 관련 응답 코드 (2)
@@ -41,6 +46,7 @@ public enum ApiResponseCode {
   // 회사 관련 응답 코드 (4)
   COMPANY_GET_NAME_LIST_SUCCESS(HttpStatus.OK, 4200, "get_company_name_list_success"),
   COMPANY_INVALID_KEYWORD_LENGTH(HttpStatus.BAD_REQUEST, 4400, "invalid_keyword_length"),
+  COMPANY_INVALID_KEYWORD(HttpStatus.BAD_REQUEST, 4401, "invalid_keyword"),
   COMPANY_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 4500, "internal_server_error"),
 
   // 알림 관련 응답 코드 (5)
