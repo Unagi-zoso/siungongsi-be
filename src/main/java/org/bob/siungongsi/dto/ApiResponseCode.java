@@ -44,7 +44,7 @@ public enum ApiResponseCode {
   COMPANY_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 4500, "internal_server_error"),
 
   // 알림 관련 응답 코드 (5)
-  NOTIFICATION_RECOMMENDED_COMPANY_SUCCESS(HttpStatus.OK, 5200, "get_recomended_company_success"),
+  NOTIFICATION_RECOMMENDED_COMPANY_SUCCESS(HttpStatus.OK, 5200, "get_recommended_company_success"),
   NOTIFICATION_SUBSCRIPTION_SUCCESS(HttpStatus.CREATED, 5201, "notification_subscription_success"),
   NOTIFICATION_UNSUBSCRIBE_SUCCESS(HttpStatus.OK, 5202, "unsubscribe_notification_success"),
   NOTIFICATION_REQUIRED_AUTHORIZATION(HttpStatus.FORBIDDEN, 5400, "required_authorization"),
@@ -54,7 +54,8 @@ public enum ApiResponseCode {
   NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, 5404, "notification_not_found"),
   NOTIFICATION_LIMIT_EXCEEDED(
       HttpStatus.TOO_MANY_REQUESTS, 5405, "maximum_number_of_notifications_exceeded."),
-  NOTIFICATION_COMPANYID_NOT_NULL(HttpStatus.BAD_REQUEST, 5406, "company_id_not_null"),
+  NOTIFICATION_COMPANY_ID_NOT_NULL(HttpStatus.BAD_REQUEST, 5406, "company_id_not_null"),
+  NOTIFICATION_USER_NOT_FOUND(HttpStatus.NOT_FOUND, 5407, "user_not_found"),
   NOTIFICATION_INTERNAL_SERVER_ERROR(
       HttpStatus.INTERNAL_SERVER_ERROR, 5500, "internal_server_error"),
 

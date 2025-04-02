@@ -37,8 +37,12 @@ public class NotificationService {
       NotificationRequest.NotificationCompanyRequest notificationRequest) {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+    if (!userRepository.existsById(userId)) {
+      throw new CustomException(ApiResponseCode.NOTIFICATION_COMPANY_ID_NOT_NULL);
+    }
+
     if (notificationRequest.companyId() == null) {
-      throw new CustomException(ApiResponseCode.NOTIFICATION_COMPANYID_NOT_NULL);
+      throw new CustomException(ApiResponseCode.NOTIFICATION_COMPANY_ID_NOT_NULL);
     }
 
     if (!userRepository.findById(userId).isPresent()) {
@@ -70,6 +74,10 @@ public class NotificationService {
   public void deleteNotification(Long companyId) {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+    if (!userRepository.existsById(userId)) {
+      throw new CustomException(ApiResponseCode.NOTIFICATION_COMPANY_ID_NOT_NULL);
+    }
+
     if (!notificationRepository.existsByUserIdAndCompanyId(userId, companyId)) {
       throw new CustomException(ApiResponseCode.NOTIFICATION_NOT_FOUND);
     }
@@ -98,9 +106,17 @@ public class NotificationService {
       topCompanies.addAll(additionalCompanies);
     }
 
+    if (topCompanies.isEmpty()) {
+      throw new CustomException(ApiResponseCode.NOTIFICATION_INTERNAL_SERVER_ERROR);
+    }
+
     List<CompanyEntity> companies = companyRepository.findByIdIn(topCompanies);
 
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    if (!userRepository.existsById(userId)) {
+      throw new CustomException(ApiResponseCode.NOTIFICATION_COMPANY_ID_NOT_NULL);
+    }
 
     NotificationResponse.NotificationRecommendedCompanyList recommendedCompanies =
         NotificationResponse.NotificationRecommendedCompanyList.of(
