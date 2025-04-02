@@ -35,7 +35,7 @@ public class AuthController implements AuthControllerSpec {
 
     String jwt = authService.register(authRequest, accessToken);
 
-    return ResponseEntity.status(201)
+    return ResponseEntity.status(ApiResponseCode.AUTH_REGISTER_SUCCESS.getHttpStatus())
         .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_REGISTER_SUCCESS, jwt));
   }
 
@@ -46,7 +46,7 @@ public class AuthController implements AuthControllerSpec {
 
     LoginSuccessResponse response = authService.login(accessToken);
 
-    return ResponseEntity.status(200)
+    return ResponseEntity.status(ApiResponseCode.AUTH_LOGIN_SUCCESS.getHttpStatus())
         .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_LOGIN_SUCCESS, response));
   }
 
@@ -54,8 +54,8 @@ public class AuthController implements AuthControllerSpec {
   @GetMapping("/terms")
   public ResponseEntity<ApiResponseWrapper<?>> getTerms() {
     List<TermsResponse> terms = authService.getTerms();
-    return ResponseEntity.ok(
-        ApiResponseWrapper.success(ApiResponseCode.AUTH_GET_TERMS_SUCCESS, terms));
+    return ResponseEntity.status(ApiResponseCode.AUTH_GET_TERMS_SUCCESS.getHttpStatus())
+        .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_GET_TERMS_SUCCESS, terms));
   }
 
   @Override
@@ -65,7 +65,7 @@ public class AuthController implements AuthControllerSpec {
 
     authService.withdrawUser();
 
-    return ResponseEntity.ok(
-        ApiResponseWrapper.success(ApiResponseCode.AUTH_WITHDRAW_USER_SUCCESS, null));
+    return ResponseEntity.status(ApiResponseCode.AUTH_WITHDRAW_USER_SUCCESS.getHttpStatus())
+        .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_WITHDRAW_USER_SUCCESS, null));
   }
 }

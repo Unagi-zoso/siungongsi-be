@@ -35,7 +35,7 @@ public class JwtProvider {
   }
 
   private SecretKey getKey() {
-    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)); // 최신 방식
+    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
   }
 
   public String createJwtToken(String userId) {
@@ -57,9 +57,9 @@ public class JwtProvider {
               .getPayload()
               .getSubject());
     } catch (ExpiredJwtException e) {
-      throw new CustomException(ApiResponseCode.AUTH_TOKEN_EXPIRED, "만료된 토큰입니다");
+      throw new CustomException(ApiResponseCode.AUTH_TOKEN_EXPIRED);
     } catch (IllegalArgumentException e) {
-      throw new CustomException(ApiResponseCode.AUTH_TOKEN_MISSING, "토큰이 없습니다");
+      throw new CustomException(ApiResponseCode.AUTH_TOKEN_MISSING);
     } catch (Exception e) {
       throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED);
     }

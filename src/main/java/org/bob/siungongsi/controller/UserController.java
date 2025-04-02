@@ -6,6 +6,7 @@ import org.bob.siungongsi.controller.dto.UserRequest.UserNotificationRequest;
 import org.bob.siungongsi.controller.dto.UserResponse.NotificationStatusResponse;
 import org.bob.siungongsi.controller.dto.UserSubscriptionsResponse;
 import org.bob.siungongsi.controller.spec.UserControllerSpec;
+import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.bob.siungongsi.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,8 @@ public class UserController implements UserControllerSpec {
   public ResponseEntity<ApiResponseWrapper<?>> getNotificationStatus(
       @RequestHeader("Authorization") String authorization) {
     NotificationStatusResponse response = userService.getNotificationStatus();
-    return ResponseEntity.ok(ApiResponseWrapper.success(USER_GET_STATUS, response));
+    return ResponseEntity.status(ApiResponseCode.USER_GET_STATUS.getHttpStatus())
+        .body(ApiResponseWrapper.success(USER_GET_STATUS, response));
   }
 
   @Override
@@ -35,7 +37,7 @@ public class UserController implements UserControllerSpec {
       @RequestHeader("Authorization") String authorization,
       @RequestBody UserNotificationRequest request) {
     NotificationStatusResponse response = userService.updateNotificationStatus(request);
-    return ResponseEntity.status(201)
+    return ResponseEntity.status(ApiResponseCode.USER_UPDATE_STATUS_SUCCESS.getHttpStatus())
         .body(ApiResponseWrapper.success(USER_UPDATE_STATUS_SUCCESS, response));
   }
 
@@ -43,6 +45,7 @@ public class UserController implements UserControllerSpec {
   public ResponseEntity<ApiResponseWrapper<?>> getUserSubscriptions(
       @RequestHeader("Authorization") String authorization) {
     UserSubscriptionsResponse response = userService.getUserSubscriptions();
-    return ResponseEntity.ok(ApiResponseWrapper.success(USER_SUBSCRIPTIONS_SUCCESS, response));
+    return ResponseEntity.status(ApiResponseCode.USER_SUBSCRIPTIONS_SUCCESS.getHttpStatus())
+        .body(ApiResponseWrapper.success(USER_SUBSCRIPTIONS_SUCCESS, response));
   }
 }

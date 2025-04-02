@@ -7,6 +7,7 @@ import org.bob.siungongsi.controller.dto.CompanyResponse;
 import org.bob.siungongsi.controller.dto.GongsiResponse.GongsiDetailResponse;
 import org.bob.siungongsi.controller.dto.GongsiResponse.GongsiListResponse;
 import org.bob.siungongsi.controller.spec.GongsiControllerSpec;
+import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.service.GongsiService;
@@ -49,7 +50,8 @@ public class GongsiController implements GongsiControllerSpec {
     GongsiListResponse response =
         gongsiService.getGongsiList(companyId, sort, content, page, size, startDate, endDate);
 
-    return ResponseEntity.ok(ApiResponseWrapper.success(GONGSI_LIST_SUCCESS, response));
+    return ResponseEntity.status(ApiResponseCode.GONGSI_LIST_SUCCESS.getHttpStatus())
+        .body(ApiResponseWrapper.success(GONGSI_LIST_SUCCESS, response));
   }
 
   @Override
@@ -85,7 +87,8 @@ public class GongsiController implements GongsiControllerSpec {
       response = GongsiDetailResponse.of(response.gongsi(), updatedCompanyInfo);
     }
 
-    return ResponseEntity.ok(ApiResponseWrapper.success(GONGSI_DETAIL_SUCCESS, response));
+    return ResponseEntity.status(ApiResponseCode.GONGSI_DETAIL_SUCCESS.getHttpStatus())
+        .body(ApiResponseWrapper.success(GONGSI_DETAIL_SUCCESS, response));
   }
 
   private String getClientIpAddress(HttpServletRequest request) {
