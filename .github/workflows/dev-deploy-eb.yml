@@ -12,8 +12,8 @@ jobs:
 
     env:
       ECR_IMAGE: ${{ secrets.ECR_REGISTRY }}/siungongsi
-      EB_APP_NAME: dev-siungongsi-2
-      EB_ENV_NAME: Dev-siungongsi-2-env
+      EB_APP_NAME: dev-siungongsi
+      EB_ENV_NAME: Dev-siungongsi-env
       S3_BUCKET: ${{ secrets.EB_S3_BUCKET }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
 
@@ -54,21 +54,22 @@ jobs:
       - name: Create Dockerrun.aws.json
         run: |
           echo '{
-            "AWSEBDockerrunVersion": "1",
+            "AWSEBDockerrunVersion": "2",
             "Image": {
               "Name": "'$ECR_IMAGE':latest-backend",
               "Update": "true"
             },
             "Ports": [
               {
-                "ContainerPort": "8080"
+                "hostPort": 8080,
+                "containerPort": 8080
               }
             ]
           }' > Dockerrun.aws.json
 
       - name: Zip for Beanstalk
-        run: zip deploy.zip Dockerrun.aws.json
-
+        run: zip -r deploy.zip Dockerrun.aws.json .platform
+        
       - name: Upload to S3
         run: |
           aws s3 cp deploy.zip s3://$S3_BUCKET/deploy-${{ env.VERSION_TAG }}.zip
