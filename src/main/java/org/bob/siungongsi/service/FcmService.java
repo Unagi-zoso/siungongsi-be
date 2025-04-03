@@ -17,6 +17,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 
 import io.sentry.Sentry;
 import jakarta.annotation.PostConstruct;
@@ -64,7 +65,12 @@ public class FcmService {
     data.put("body", body);
     data.put("url", url);
 
-    Message message = Message.builder().setToken(token).putAllData(data).build();
+    Message message =
+        Message.builder()
+            .setToken(token)
+            .putAllData(data)
+            .setNotification(Notification.builder().setTitle(title).setBody(body).build())
+            .build();
 
     try {
       firebaseMessaging.send(message);
