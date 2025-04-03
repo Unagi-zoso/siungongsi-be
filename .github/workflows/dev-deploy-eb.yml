@@ -13,7 +13,7 @@ jobs:
     env:
       ECR_IMAGE: ${{ secrets.ECR_REGISTRY }}/siungongsi
       EB_APP_NAME: dev-siungongsi
-      EB_ENV_NAME: Dev-siungongsi-env-2
+      EB_ENV_NAME: Dev-siungongsi-env
       S3_BUCKET: ${{ secrets.EB_S3_BUCKET }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
 
