@@ -66,8 +66,11 @@ jobs:
             ]
           }' > Dockerrun.aws.json
 
+      - name: Make postdeploy scripts executable
+        run: chmod +x .platform/hooks/postdeploy/*.sh
+
       - name: Zip for Beanstalk
-        run: zip -r deploy.zip Dockerrun.aws.json
+        run: zip -r deploy.zip Dockerrun.aws.json .platform
         
       - name: Upload to S3
         run: |
