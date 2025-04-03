@@ -53,19 +53,18 @@ jobs:
 
       - name: Create Dockerrun.aws.json
         run: |
-          echo "{
-            \"AWSEBDockerrunVersion\": \"1\",
-            \"Image\": {
-              \"Name\": \"${ECR_IMAGE}:latest-backend\",
-              \"Update\": \"true\"
+          echo '{
+            "AWSEBDockerrunVersion": "1",
+            "Image": {
+              "Name": "'$ECR_IMAGE':latest-backend",
+              "Update": "true"
             },
-            \"Ports\": [
+            "Ports": [
               {
-                \"ContainerPort\": 8080
+                "ContainerPort": "8080"
               }
             ]
-          }" > Dockerrun.aws.json
-        
+          }' > Dockerrun.aws.json
 
       - name: Zip for Beanstalk
         run: zip -r deploy.zip Dockerrun.aws.json .platform
