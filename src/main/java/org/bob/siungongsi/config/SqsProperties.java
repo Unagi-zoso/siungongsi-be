@@ -11,4 +11,4 @@ public record SqsProperties(
     String region,
     int maxNumberOfMessages,
     int waitTimeSeconds,
-    int visibilityTimeout) {}
+    int delaySeconds) {}

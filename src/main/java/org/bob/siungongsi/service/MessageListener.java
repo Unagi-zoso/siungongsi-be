@@ -118,13 +118,8 @@ public class MessageListener {
   private boolean handleMessage(Message message) {
     try {
       GongsiMessage gongsiMessage = objectMapper.readValue(message.body(), GongsiMessage.class);
-
-      processGongsi(gongsiMessage);
-
-      return true;
-
+      return processGongsi(gongsiMessage);
     } catch (Exception e) {
-      e.printStackTrace();
       return false;
     }
   }
@@ -138,7 +133,7 @@ public class MessageListener {
     sqsAsyncClient.deleteMessage(deleteRequest);
   }
 
-  public void processGongsi(GongsiMessage message) {
+  public boolean processGongsi(GongsiMessage message) {
 
     try {
       String gongsiId = message.receiptNo();
@@ -152,14 +147,15 @@ public class MessageListener {
               new ProcessingFailedGongsiEntity(
                   message.receiptNo(), message.companyCode(), message.receiptTitle());
           processingFailedGongsiRepository.save(processingFailedGongsi);
-          return;
+          return false;
         }
         fileService.uploadFile(s3Key, new ByteArrayInputStream(file), file.length);
       }
       uploadGongsi(message);
+      return true;
     } catch (Exception e) {
-      Sentry.captureException(e);
       e.printStackTrace();
+      return false;
     }
   }
 
