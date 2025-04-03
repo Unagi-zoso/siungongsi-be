@@ -16,4 +16,4 @@ else
     exit 1
 fi
 
-exec java -jar app.jar --spring.profiles.active=$ENV
+exec java -jar app.jar --server.port=80 --spring.profiles.active=$ENV

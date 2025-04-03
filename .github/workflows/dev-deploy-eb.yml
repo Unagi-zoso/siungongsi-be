@@ -61,11 +61,11 @@ jobs:
             },
             "Ports": [
               {
-                "ContainerPort": "8080"
+                "ContainerPort": "80"
               }
             ]
           }' > Dockerrun.aws.json
-          
+
       - name: Make postdeploy scripts executable
         run: chmod +x .platform/hooks/postdeploy/*.sh
   
