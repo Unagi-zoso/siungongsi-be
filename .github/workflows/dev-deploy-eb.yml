@@ -80,6 +80,7 @@ jobs:
             --version-label ${{ env.VERSION_TAG }} \
             --source-bundle S3Bucket=$S3_BUCKET,S3Key=deploy-${{ env.VERSION_TAG }}.zip
 
+            
       - name: Deploy to Elastic Beanstalk
         run: |
           aws elasticbeanstalk update-environment \
