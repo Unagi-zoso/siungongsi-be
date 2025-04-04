@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({
     MissingServletRequestParameterException.class,
   })
-  public ResponseEntity<ApiResponseWrapper> handleMethodArgumentTypeMismatch(
+  public ResponseEntity<ApiResponseWrapper> handleMissingRequestParameter(
       MissingServletRequestParameterException ex) {
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -69,8 +69,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({
     NoResourceFoundException.class,
   })
-  public ResponseEntity<ApiResponseWrapper> handleMethodArgumentTypeMismatch(
-      NoResourceFoundException ex) {
+  public ResponseEntity<ApiResponseWrapper> handleNoResourceFound(NoResourceFoundException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
   }
