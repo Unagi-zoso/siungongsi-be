@@ -33,7 +33,6 @@ public class CompanyController implements CompanyControllerSpec {
 
     CompanyNameListResponse companies = companyService.getCompanyNames(keyword);
 
-    // 구현 없음 (Swagger 문서화만 유지)
     return ResponseEntity.status(ApiResponseCode.COMPANY_GET_NAME_LIST_SUCCESS.getHttpStatus())
         .body(
             ApiResponseWrapper.success(
