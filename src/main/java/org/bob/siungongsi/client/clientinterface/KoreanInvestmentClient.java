@@ -11,11 +11,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 @Component
 public class KoreanInvestmentClient {
@@ -42,6 +45,7 @@ public class KoreanInvestmentClient {
     this.restTemplate = new RestTemplate();
   }
 
+  @CircuitBreaker(name = "stockPriceService", fallbackMethod = "fallbackGetPrdyCtr")
   public double getPrdyCtr(String stockCode) {
     try {
       String accessToken = tokenManager.getAccessToken(ApiKeyStoreManager.KI_API_KEY_NAME);
@@ -50,6 +54,11 @@ public class KoreanInvestmentClient {
       System.err.println("Error fetching prdyCtr from Korean Investment API: " + e.getMessage());
       throw new RuntimeException("Failed to fetch prdyCtr: " + e.getMessage());
     }
+  }
+
+  public double fallbackGetPrdyCtr(String stockCode, Throwable t) {
+    System.err.println("Error fetching prdyCtr from Korean Investment API: " + t);
+    return -101;
   }
 
   private double fetchStockData(String accessToken, String stockCode) {
@@ -64,13 +73,16 @@ public class KoreanInvestmentClient {
 
       String url = stockUrl + "?FID_COND_MRKT_DIV_CODE=J&FID_INPUT_ISCD=" + stockCode;
 
-      HttpEntity<String> entity = new HttpEntity<>(headers);
+      RestClient restClient = RestClient.create();
+      String responseBody =
+          restClient
+              .get()
+              .uri(url)
+              .headers(httpHeaders -> httpHeaders.addAll(headers))
+              .retrieve()
+              .body(String.class);
 
-      ResponseEntity<String> response =
-          restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-
-      JsonNode root = objectMapper.readTree(response.getBody());
-
+      JsonNode root = objectMapper.readTree(responseBody);
       JsonNode outputData = root.path("output");
       String prdyCtrt = outputData.path("prdy_ctrt").asText();
 
