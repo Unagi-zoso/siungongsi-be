@@ -43,7 +43,7 @@ public class NotificationController implements NotificationControllerSpec {
         .body(ApiResponseWrapper.success(ApiResponseCode.NOTIFICATION_SUBSCRIPTION_SUCCESS, null));
   }
 
-  @DeleteMapping("/{companyId}")
+  @DeleteMapping("/{companyId:[0-9]+}")
   public ResponseEntity<ApiResponseWrapper<?>> removeNotification(
       @RequestHeader("Authorization") String authorization,
       @PathVariable("companyId") Long companyId) {
