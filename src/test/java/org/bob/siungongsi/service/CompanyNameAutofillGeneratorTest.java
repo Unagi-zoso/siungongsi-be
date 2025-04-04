@@ -10,10 +10,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.bob.siungongsi.domain.CompanyEntity;
-import org.bob.siungongsi.domain.CompanyNameAutofillEntity;
-import org.bob.siungongsi.repository.CompanyNameAutofillRepository;
-import org.bob.siungongsi.repository.CompanyRepository;
+import org.bob.siungongsi.batch.service.CompanyNameAutofillGenerator;
+import org.bob.siungongsi.common.domain.CompanyEntity;
+import org.bob.siungongsi.common.domain.CompanyNameAutofillEntity;
+import org.bob.siungongsi.common.repository.CompanyNameAutofillRepository;
+import org.bob.siungongsi.common.repository.CompanyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
