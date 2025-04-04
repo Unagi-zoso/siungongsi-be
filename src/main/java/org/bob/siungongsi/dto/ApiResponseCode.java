@@ -70,8 +70,6 @@ public enum ApiResponseCode {
   NOTIFICATION_USER_NOT_FOUND(HttpStatus.NOT_FOUND, 5407, "user_not_found"),
   NOTIFICATION_CREATION_INCONSISTENCY(
       HttpStatus.INTERNAL_SERVER_ERROR, 5408, "notification_creation_inconsistency"),
-  NOTIFICATION_INTERNAL_SERVER_ERROR(
-      HttpStatus.INTERNAL_SERVER_ERROR, 5500, "internal_server_error"),
 
   // 외부 API 관련 응답 코드 (6)
   EXTERNAL_API_ERROR(HttpStatus.BAD_GATEWAY, 6400, "external_api_error"),

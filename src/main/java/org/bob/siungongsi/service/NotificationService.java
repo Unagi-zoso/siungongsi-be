@@ -111,10 +111,6 @@ public class NotificationService {
       topCompanies.addAll(additionalCompanies);
     }
 
-    if (topCompanies.isEmpty()) {
-      throw new CustomException(ApiResponseCode.NOTIFICATION_INTERNAL_SERVER_ERROR);
-    }
-
     List<CompanyEntity> companies = companyRepository.findByIdIn(topCompanies);
 
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
