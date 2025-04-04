@@ -3,7 +3,7 @@ name: Deploy Backend to Elastic Beanstalk
 on:
   push:
     branches:
-      - deploy
+      - develop
 
 jobs:
   deploy-to-eb:
