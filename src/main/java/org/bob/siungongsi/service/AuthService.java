@@ -59,16 +59,15 @@ public class AuthService {
       throw new CustomException(ApiResponseCode.AUTH_USER_ALREADY_EXISTS);
     }
 
-    UserEntity newUserEntity =
-        userRepository.save(new UserEntity(socialId, accessToken.substring(7)));
+    Long userId = userRepository.save(new UserEntity(socialId, accessToken.substring(7))).getId();
 
     List<UserAgreedTermEntity> userAgreedTerms =
-        validateAndCreateUserAgreedTerms(authRequest.agreedTermIds(), newUserEntity.getId());
+        validateAndCreateUserAgreedTerms(authRequest.agreedTermIds(), userId);
     if (!userAgreedTerms.isEmpty()) {
       userAgreedTermRepository.saveAll(userAgreedTerms);
     }
 
-    return createJwt(newUserEntity.getId().toString());
+    return createJwt(userId.toString());
   }
 
   private List<UserAgreedTermEntity> validateAndCreateUserAgreedTerms(
@@ -125,15 +124,15 @@ public class AuthService {
 
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+    if (!userRepository.existsById(userId)) {
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
+    }
+
     // 회원의 알림 구독 정보 삭제
     notificationRepository.deleteAllByUserId(userId);
 
     // 회원의 약관 동의 정보 삭제
     userAgreedTermRepository.deleteAllByUserId(userId);
-
-    if (!userRepository.existsById(userId)) {
-      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
-    }
 
     // 회원 정보 삭제
     userRepository.deleteById(userId);
