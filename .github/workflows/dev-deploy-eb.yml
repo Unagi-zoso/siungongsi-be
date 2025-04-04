@@ -61,14 +61,17 @@ jobs:
             },
             "Ports": [
               {
-                "ContainerPort": 8080
+                "ContainerPort": "8080"
               }
             ]
           }' > Dockerrun.aws.json
 
-      - name: Zip for Beanstalk
-        run: zip deploy.zip Dockerrun.aws.json
+      - name: Make postdeploy scripts executable
+        run: chmod +x .platform/hooks/postdeploy/*.sh
 
+      - name: Zip for Beanstalk
+        run: zip -r deploy.zip Dockerrun.aws.json .platform
+        
       - name: Upload to S3
         run: |
           aws s3 cp deploy.zip s3://$S3_BUCKET/deploy-${{ env.VERSION_TAG }}.zip
@@ -79,6 +82,7 @@ jobs:
             --application-name $EB_APP_NAME \
             --version-label ${{ env.VERSION_TAG }} \
             --source-bundle S3Bucket=$S3_BUCKET,S3Key=deploy-${{ env.VERSION_TAG }}.zip
+
 
       - name: Deploy to Elastic Beanstalk
         run: |
