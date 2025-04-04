@@ -1,6 +1,7 @@
 package org.bob.siungongsi.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bob.siungongsi.controller.dto.NotificationRequest;
@@ -14,8 +15,7 @@ import org.bob.siungongsi.repository.NotificationRepository;
 import org.bob.siungongsi.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class NotificationService {
@@ -33,17 +33,14 @@ public class NotificationService {
     this.userRepository = userRepository;
   }
 
+  @Transactional
   public NotiHistoryEntity createNotification(
       NotificationRequest.NotificationCompanyRequest notificationRequest) {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+    // 기본 검증
     if (!userRepository.findById(userId).isPresent()) {
       throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
-    }
-
-    if (notificationRepository.existsByUserIdAndCompanyId(
-        userId, notificationRequest.companyId())) {
-      throw new CustomException(ApiResponseCode.NOTIFICATION_ALREADY_EXISTS);
     }
 
     if (!companyRepository.existsById(notificationRequest.companyId())) {
@@ -54,12 +51,25 @@ public class NotificationService {
       throw new CustomException(ApiResponseCode.NOTIFICATION_REQUIRED_STATUS);
     }
 
-    if (notificationRepository.countByUserId(userId) >= 10) {
-      throw new CustomException(ApiResponseCode.NOTIFICATION_LIMIT_EXCEEDED);
+    // 원자적 쿼리 실행 - 제한 체크와 삽입을 하나의 쿼리로 수행
+    int inserted =
+        notificationRepository.insertIfUnderLimit(userId, notificationRequest.companyId());
+
+    if (inserted == 0) {
+      // 삽입 실패: 제한 초과 또는 이미 존재함
+      if (notificationRepository.existsByUserIdAndCompanyId(
+          userId, notificationRequest.companyId())) {
+        throw new CustomException(ApiResponseCode.NOTIFICATION_ALREADY_EXISTS);
+      } else {
+        throw new CustomException(ApiResponseCode.NOTIFICATION_LIMIT_EXCEEDED);
+      }
     }
 
-    return notificationRepository.save(
-        new NotiHistoryEntity(userId, notificationRequest.companyId()));
+    Optional<NotiHistoryEntity> entity =
+        notificationRepository.findByUserIdAndCompanyId(userId, notificationRequest.companyId());
+
+    return entity.orElseThrow(
+        () -> new RuntimeException("Failed to retrieve created notification"));
   }
 
   @Transactional
