@@ -25,9 +25,11 @@ public class NotificationController implements NotificationControllerSpec {
     NotificationResponse.NotificationRecommendedCompanyList companies =
         notificationService.recommendedCompanyNotification();
 
-    return ResponseEntity.ok(
-        ApiResponseWrapper.success(
-            ApiResponseCode.NOTIFICATION_RECOMMENDED_COMPANY_SUCCESS, companies));
+    return ResponseEntity.status(
+            ApiResponseCode.NOTIFICATION_RECOMMENDED_COMPANY_SUCCESS.getHttpStatus())
+        .body(
+            ApiResponseWrapper.success(
+                ApiResponseCode.NOTIFICATION_RECOMMENDED_COMPANY_SUCCESS, companies));
   }
 
   @PostMapping
@@ -37,8 +39,8 @@ public class NotificationController implements NotificationControllerSpec {
 
     notificationService.createNotification(request);
 
-    return ResponseEntity.ok(
-        ApiResponseWrapper.success(ApiResponseCode.NOTIFICATION_SUBSCRIPTION_SUCCESS, null));
+    return ResponseEntity.status(ApiResponseCode.NOTIFICATION_SUBSCRIPTION_SUCCESS.getHttpStatus())
+        .body(ApiResponseWrapper.success(ApiResponseCode.NOTIFICATION_SUBSCRIPTION_SUCCESS, null));
   }
 
   @DeleteMapping("/{companyId}")
@@ -48,7 +50,7 @@ public class NotificationController implements NotificationControllerSpec {
 
     notificationService.deleteNotification(companyId);
 
-    return ResponseEntity.ok(
-        ApiResponseWrapper.success(ApiResponseCode.NOTIFICATION_UNSUBSCRIBE_SUCCESS, null));
+    return ResponseEntity.status(ApiResponseCode.NOTIFICATION_UNSUBSCRIBE_SUCCESS.getHttpStatus())
+        .body(ApiResponseWrapper.success(ApiResponseCode.NOTIFICATION_UNSUBSCRIBE_SUCCESS, null));
   }
 }

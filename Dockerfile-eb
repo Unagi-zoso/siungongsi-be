@@ -10,7 +10,12 @@ RUN ./gradlew clean build -x test -x sentryBundleSourcesJava -x sentryUploadSour
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y curl unzip jq && \
+# 타임존 설정
+RUN apt-get update && \
+    apt-get install -y curl unzip jq tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    echo "Asia/Seoul" > /etc/timezone && \
+    dpkg-reconfigure -f noninteractive tzdata && \
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
     ./aws/install && \

@@ -6,6 +6,7 @@ import org.bob.siungongsi.controller.dto.CompanyResponse.CompanyNameListResponse
 import org.bob.siungongsi.controller.spec.CompanyControllerSpec;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
+import org.bob.siungongsi.exception.CustomException;
 import org.bob.siungongsi.service.CompanyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,17 +28,16 @@ public class CompanyController implements CompanyControllerSpec {
       @RequestParam String keyword) {
 
     if (keyword.length() > 18 || keyword.length() < 1) {
-      return ResponseEntity.status(400)
-          .body(ApiResponseWrapper.success(ApiResponseCode.COMPANY_INVALID_KEYWORD_LENGTH));
+      throw new CustomException(ApiResponseCode.COMPANY_INVALID_KEYWORD_LENGTH);
     }
 
     CompanyNameListResponse companies = companyService.getCompanyNames(keyword);
 
-    // 구현 없음 (Swagger 문서화만 유지)
-    return ResponseEntity.ok(
-        ApiResponseWrapper.success(
-            COMPANY_GET_NAME_LIST_SUCCESS,
-            CompanyNameListResponse.of(
-                companies.companyNameListSize(), companies.companyNameList())));
+    return ResponseEntity.status(ApiResponseCode.COMPANY_GET_NAME_LIST_SUCCESS.getHttpStatus())
+        .body(
+            ApiResponseWrapper.success(
+                COMPANY_GET_NAME_LIST_SUCCESS,
+                CompanyNameListResponse.of(
+                    companies.companyNameListSize(), companies.companyNameList())));
   }
 }
