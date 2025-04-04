@@ -41,14 +41,3 @@ jwt:
   secret-key: dflknlsdfjlskfncdsjlkmxnfjsklcxmvnfddddddddc
   expiration-time: 604800000
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-    health:
-        showDetails: always
-  health:
-    circuitbreakers:
-      enabled: true
-
