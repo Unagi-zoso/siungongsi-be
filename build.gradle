@@ -30,6 +30,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     // swagger
@@ -63,6 +64,11 @@ dependencies {
 
     // sentry
     implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.4.0'
+
+    //circuit breaker
+    implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
+    implementation("io.github.resilience4j:resilience4j-circuitbreaker:2.2.0")
+
 }
 
 jar {

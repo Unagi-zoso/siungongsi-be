@@ -56,7 +56,7 @@ public enum ApiResponseCode {
   COMPANY_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 4500, "internal_server_error"),
 
   // 알림 관련 응답 코드 (5)
-  NOTIFICATION_RECOMMENDED_COMPANY_SUCCESS(HttpStatus.OK, 5200, "get_recomended_company_success"),
+  NOTIFICATION_RECOMMENDED_COMPANY_SUCCESS(HttpStatus.OK, 5200, "get_recommended_company_success"),
   NOTIFICATION_SUBSCRIPTION_SUCCESS(HttpStatus.CREATED, 5201, "notification_subscription_success"),
   NOTIFICATION_UNSUBSCRIBE_SUCCESS(HttpStatus.OK, 5202, "unsubscribe_notification_success"),
   NOTIFICATION_REQUIRED_AUTHORIZATION(HttpStatus.FORBIDDEN, 5400, "required_authorization"),
@@ -66,13 +66,16 @@ public enum ApiResponseCode {
   NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, 5404, "notification_not_found"),
   NOTIFICATION_LIMIT_EXCEEDED(
       HttpStatus.TOO_MANY_REQUESTS, 5405, "maximum_number_of_notifications_exceeded."),
+  NOTIFICATION_COMPANY_ID_IS_NULL(HttpStatus.BAD_REQUEST, 5406, "company_id_not_null"),
+  NOTIFICATION_USER_NOT_FOUND(HttpStatus.NOT_FOUND, 5407, "user_not_found"),
   NOTIFICATION_CREATION_INCONSISTENCY(
-      HttpStatus.INTERNAL_SERVER_ERROR, 5406, "notification_creation_inconsistency"),
-  NOTIFICATION_INTERNAL_SERVER_ERROR(
-      HttpStatus.INTERNAL_SERVER_ERROR, 5500, "internal_server_error"),
+      HttpStatus.INTERNAL_SERVER_ERROR, 5408, "notification_creation_inconsistency"),
 
   // 외부 API 관련 응답 코드 (6)
   EXTERNAL_API_ERROR(HttpStatus.BAD_GATEWAY, 6400, "external_api_error"),
+
+  // BODY값 없을 때
+  API_BAD_REQUEST(HttpStatus.BAD_REQUEST, 700, "api_bad_request"),
 
   // API KEY STORE 관련 응답코드 (27)
   KEY_NOT_FOUND(HttpStatus.NOT_FOUND, 2700, "key_not_found"),

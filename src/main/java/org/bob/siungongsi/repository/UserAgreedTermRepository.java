@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserAgreedTermRepository extends JpaRepository<UserAgreedTermEntity, Long> {
-  Boolean existsByUserIdAndTermId(Long userId, Long termId);
+  boolean existsByUserIdAndTermId(Long userId, Long termId);
 
   @Modifying
   @Query("DELETE FROM UserAgreedTermEntity u WHERE u.userId = :userId")

@@ -38,9 +38,12 @@ public class NotificationService {
       NotificationRequest.NotificationCompanyRequest notificationRequest) {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    // 기본 검증
-    if (!userRepository.findById(userId).isPresent()) {
+    if (!userRepository.existsById(userId)) {
       throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
+    }
+
+    if (notificationRequest.companyId() == null) {
+      throw new CustomException(ApiResponseCode.NOTIFICATION_COMPANY_ID_IS_NULL);
     }
 
     if (!companyRepository.existsById(notificationRequest.companyId())) {
@@ -76,6 +79,10 @@ public class NotificationService {
   public void deleteNotification(Long companyId) {
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+    if (!userRepository.existsById(userId)) {
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
+    }
+
     if (!notificationRepository.existsByUserIdAndCompanyId(userId, companyId)) {
       throw new CustomException(ApiResponseCode.NOTIFICATION_NOT_FOUND);
     }
@@ -107,6 +114,10 @@ public class NotificationService {
     List<CompanyEntity> companies = companyRepository.findByIdIn(topCompanies);
 
     Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    if (!userRepository.existsById(userId)) {
+      throw new CustomException(ApiResponseCode.AUTH_USER_NOT_FOUND);
+    }
 
     NotificationResponse.NotificationRecommendedCompanyList recommendedCompanies =
         NotificationResponse.NotificationRecommendedCompanyList.of(
