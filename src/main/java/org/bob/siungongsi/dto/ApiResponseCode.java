@@ -66,8 +66,10 @@ public enum ApiResponseCode {
   NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, 5404, "notification_not_found"),
   NOTIFICATION_LIMIT_EXCEEDED(
       HttpStatus.TOO_MANY_REQUESTS, 5405, "maximum_number_of_notifications_exceeded."),
-  NOTIFICATION_COMPANY_ID_NOT_NULL(HttpStatus.BAD_REQUEST, 5406, "company_id_not_null"),
+  NOTIFICATION_COMPANY_ID_IS_NULL(HttpStatus.BAD_REQUEST, 5406, "company_id_not_null"),
   NOTIFICATION_USER_NOT_FOUND(HttpStatus.NOT_FOUND, 5407, "user_not_found"),
+  NOTIFICATION_CREATION_INCONSISTENCY(
+      HttpStatus.INTERNAL_SERVER_ERROR, 5408, "notification_creation_inconsistency"),
   NOTIFICATION_INTERNAL_SERVER_ERROR(
       HttpStatus.INTERNAL_SERVER_ERROR, 5500, "internal_server_error"),
 
