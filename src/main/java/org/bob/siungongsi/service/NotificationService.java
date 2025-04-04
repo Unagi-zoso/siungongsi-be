@@ -69,7 +69,7 @@ public class NotificationService {
         notificationRepository.findByUserIdAndCompanyId(userId, notificationRequest.companyId());
 
     return entity.orElseThrow(
-        () -> new RuntimeException("Failed to retrieve created notification"));
+        () -> new CustomException(ApiResponseCode.NOTIFICATION_CREATION_INCONSISTENCY));
   }
 
   @Transactional
