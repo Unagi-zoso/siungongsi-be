@@ -58,7 +58,7 @@ public class GongsiController implements GongsiControllerSpec {
   @GetMapping("/{gongsiId}")
   public ResponseEntity<ApiResponseWrapper<GongsiDetailResponse>> getGongsiDetail(
       @Parameter(description = "공시 ID", example = "101", required = true) @PathVariable("gongsiId")
-          Long gongsiId,
+          String gongsiId,
       HttpServletRequest request) {
 
     String ipAddress = getClientIpAddress(request);

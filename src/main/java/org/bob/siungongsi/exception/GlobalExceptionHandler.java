@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import io.sentry.Sentry;
 
@@ -52,5 +53,12 @@ public class GlobalExceptionHandler {
     Sentry.captureException(ex); // Sentry에 예외 전송
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
+  }
+
+  @ExceptionHandler(NoHandlerFoundException.class)
+  public ResponseEntity<ApiResponseWrapper<Void>> handleNoHandlerFoundException(
+      NoHandlerFoundException ex) {
+    return ResponseEntity.status(ApiResponseCode.RESOURCE_NOT_FOUND.getHttpStatus())
+        .body(ApiResponseWrapper.error(ApiResponseCode.RESOURCE_NOT_FOUND));
   }
 }

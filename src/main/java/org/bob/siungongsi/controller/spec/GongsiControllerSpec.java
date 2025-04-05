@@ -152,6 +152,6 @@ public interface GongsiControllerSpec {
             })
       })
   ResponseEntity<ApiResponseWrapper<GongsiDetailResponse>> getGongsiDetail(
-      @Parameter(description = "공시 ID", example = "101", required = true) Long gongsiId,
+      @Parameter(description = "공시 ID", example = "101", required = true) String gongsiId,
       HttpServletRequest request);
 }

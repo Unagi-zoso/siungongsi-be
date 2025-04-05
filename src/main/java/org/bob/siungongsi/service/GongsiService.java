@@ -63,10 +63,27 @@ public class GongsiService {
     return null; // 익명의 유저면 null 반환
   }
 
-  public Long getCompanyIdByGongsiId(Long gongsiId) {
+  private Long parseGongsiId(String gongsiId) {
+    try {
+      Long id = Long.parseLong(gongsiId);
+      if (id <= 0) {
+        throw new CustomException(
+            ApiResponseCode.GONGSI_INVALID_GONGSI_ID,
+            "Invalid gongsiId: must be a positive number");
+      }
+      return id;
+    } catch (NumberFormatException e) {
+      throw new CustomException(
+          ApiResponseCode.GONGSI_INVALID_GONGSI_ID, "Invalid gongsiId format: " + gongsiId);
+    }
+  }
+
+  public Long getCompanyIdByGongsiId(String gongsiId) {
+    Long parsedGongsiId = parseGongsiId(gongsiId);
+
     GongsiEntity gongsi =
         gongsiRepository
-            .findById(gongsiId)
+            .findById(parsedGongsiId)
             .orElseThrow(
                 () ->
                     new CustomException(
@@ -174,21 +191,23 @@ public class GongsiService {
   }
 
   @Transactional
-  public GongsiResponse.GongsiDetailResponse getGongsiDetail(Long gongsiId, String ipAddress) {
+  public GongsiResponse.GongsiDetailResponse getGongsiDetail(String gongsiId, String ipAddress) {
+    Long parsedGongsiId = parseGongsiId(gongsiId);
+
     GongsiEntity gongsi =
         gongsiRepository
-            .findById(gongsiId)
+            .findById(parsedGongsiId)
             .orElseThrow(
                 () ->
                     new CustomException(
                         ApiResponseCode.GONGSI_NOT_FOUND, "Gongsi not found with ID: " + gongsiId));
 
-    if (!gongsiViewHistoryRepository.existsByGongsiIdAndIpAddress(gongsiId, ipAddress)) {
-      GongsiViewHistoryEntity viewHistory = new GongsiViewHistoryEntity(gongsiId, ipAddress);
+    if (!gongsiViewHistoryRepository.existsByGongsiIdAndIpAddress(parsedGongsiId, ipAddress)) {
+      GongsiViewHistoryEntity viewHistory = new GongsiViewHistoryEntity(parsedGongsiId, ipAddress);
       gongsiViewHistoryRepository.save(viewHistory);
     }
 
-    int viewCount = gongsiViewHistoryRepository.countUniqueViewsByGongsiId(gongsiId);
+    int viewCount = gongsiViewHistoryRepository.countUniqueViewsByGongsiId(parsedGongsiId);
 
     String formattedDate =
         gongsi.getCreatedDt().format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm"));
