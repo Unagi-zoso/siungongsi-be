@@ -9,6 +9,8 @@ import org.bob.siungongsi.client.clientinterface.KoreanInvestmentClient;
 import org.bob.siungongsi.domain.ApiKeyStoreEntity;
 import org.bob.siungongsi.repository.ApiKeyStoreRepository;
 import org.bob.siungongsi.service.ApiKeyStoreManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,8 @@ import io.sentry.Sentry;
 @Profile("prod")
 @Component
 public class ApiKeyRefreshScheduler {
+
+  private final Logger logger = LoggerFactory.getLogger(ApiKeyRefreshScheduler.class);
 
   private final ApiKeyStoreRepository apiKeyStoreRepository;
 
@@ -59,8 +63,7 @@ public class ApiKeyRefreshScheduler {
       apiKeyStoreManager.loadFromDB();
     } catch (Exception e) {
       Sentry.captureException(e);
-      System.err.println(
-          "Error fetching and refreshing Korean Investment API key: " + e.getMessage());
+      logger.error("Error fetching and refreshing Korean Investment API key: {}", e.getMessage());
     }
   }
 }

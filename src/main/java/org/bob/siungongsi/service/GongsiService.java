@@ -19,6 +19,8 @@ import org.bob.siungongsi.repository.CompanyRepository;
 import org.bob.siungongsi.repository.GongsiRepository;
 import org.bob.siungongsi.repository.GongsiViewHistoryRepository;
 import org.bob.siungongsi.repository.NotificationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class GongsiService {
+
+  private final Logger logger = LoggerFactory.getLogger(GongsiService.class);
+
   private final GongsiRepository gongsiRepository;
   private final CompanyRepository companyRepository;
   private final GongsiViewHistoryRepository gongsiViewHistoryRepository;
@@ -57,7 +62,7 @@ public class GongsiService {
       try {
         return Long.valueOf(authentication.getName());
       } catch (Exception e) {
-        System.err.println("Error extracting user ID: " + e.getMessage());
+        logger.error("Error extracting user ID: {}", e.getMessage());
       }
     }
     return null; // 익명의 유저면 null 반환
@@ -211,7 +216,7 @@ public class GongsiService {
         isSubscribed = notificationRepository.existsByUserIdAndCompanyId(userId, company.getId());
       }
     } catch (Exception e) {
-      System.err.println("Error checking subscription status: " + e.getMessage());
+      logger.error("Error checking subscription status: {}", e.getMessage());
     }
 
     double prdyCtr = 0.0;
@@ -222,7 +227,7 @@ public class GongsiService {
         prdyCtr = koreanInvestmentClient.getPrdyCtr(stockCode);
       }
     } catch (Exception e) {
-      System.err.println("Error fetching prdyCtr: " + e.getMessage());
+      logger.error("Error fetching prdyCtr: {}", e.getMessage());
       prdyCtr = 0.0; // Default value
     }
 
