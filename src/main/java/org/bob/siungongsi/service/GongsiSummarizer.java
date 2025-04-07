@@ -29,10 +29,9 @@ public class GongsiSummarizer {
     this.googleAiClientInterface = googleAiClientInterface;
   }
 
-  public String summarizeText(String text) {
+  public String summarizeText(String text, String prompt) {
 
-    GoogleAiRequest request =
-        GoogleAiRequest.fromText(DEFAULT_SUMMARY_PROMPT, Jsoup.parse(text).text());
+    GoogleAiRequest request = GoogleAiRequest.fromText(prompt, Jsoup.parse(text).text());
 
     try {
       // 🔥 1. 기본 모델 (`gemini-2.0-flash`) 요청
@@ -48,5 +47,9 @@ public class GongsiSummarizer {
         throw new RuntimeException("모든 모델 요청 실패", ex);
       }
     }
+  }
+
+  public String summarizeText(String text) {
+    return summarizeText(text, DEFAULT_SUMMARY_PROMPT);
   }
 }
