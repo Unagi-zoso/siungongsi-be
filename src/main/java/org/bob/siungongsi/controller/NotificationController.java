@@ -1,5 +1,6 @@
 package org.bob.siungongsi.controller;
 
+import jakarta.validation.constraints.Positive;
 import org.bob.siungongsi.controller.dto.NotificationRequest.NotificationCompanyRequest;
 import org.bob.siungongsi.controller.dto.NotificationResponse;
 import org.bob.siungongsi.controller.spec.NotificationControllerSpec;
@@ -7,7 +8,15 @@ import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.bob.siungongsi.service.NotificationService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @RequestMapping("/v1/notifications")
@@ -46,7 +55,7 @@ public class NotificationController implements NotificationControllerSpec {
   @DeleteMapping("/{companyId}")
   public ResponseEntity<ApiResponseWrapper<?>> removeNotification(
       @RequestHeader("Authorization") String authorization,
-      @PathVariable("companyId") Long companyId) {
+      @PathVariable("companyId") @Positive Long companyId) {
 
     notificationService.deleteNotification(companyId);
 
