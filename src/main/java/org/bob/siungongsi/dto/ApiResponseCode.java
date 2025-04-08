@@ -71,7 +71,7 @@ public enum ApiResponseCode {
   NOTIFICATION_CREATION_INCONSISTENCY(
       HttpStatus.INTERNAL_SERVER_ERROR, 5408, "notification_creation_inconsistency"),
 
-  RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, 8404, "cannot_find_resource"),
+  RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, 8404, "resource_not_found"),
 
   // 외부 API 관련 응답 코드 (6)
   EXTERNAL_API_ERROR(HttpStatus.BAD_GATEWAY, 6400, "external_api_error"),

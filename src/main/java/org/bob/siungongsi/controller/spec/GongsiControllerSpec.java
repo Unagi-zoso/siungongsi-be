@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Positive;
 
 @Tag(name = "공시 API", description = "공시 정보를 조회하는 API")
 public interface GongsiControllerSpec {
@@ -152,6 +153,8 @@ public interface GongsiControllerSpec {
             })
       })
   ResponseEntity<ApiResponseWrapper<GongsiDetailResponse>> getGongsiDetail(
-      @Parameter(description = "공시 ID", example = "101", required = true) String gongsiId,
+      @Parameter(description = "공시 ID", example = "101", required = true)
+          @Positive(message = "공시 ID는 양수여야 합니다")
+          Long gongsiId,
       HttpServletRequest request);
 }
