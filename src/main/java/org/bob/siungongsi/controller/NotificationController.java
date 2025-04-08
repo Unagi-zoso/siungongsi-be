@@ -7,6 +7,7 @@ import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.bob.siungongsi.service.NotificationService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import jakarta.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/v1/notifications")
+@Validated
 public class NotificationController implements NotificationControllerSpec {
   private final NotificationService notificationService;
 
