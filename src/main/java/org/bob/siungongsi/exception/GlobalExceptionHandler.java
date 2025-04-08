@@ -43,23 +43,20 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<ApiResponseWrapper> handleHttpMessageNotReadable(
       HttpMessageNotReadableException ex) {
-    Sentry.captureException(ex); // Sentry에 예외 전송
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+    return ResponseEntity.status(ApiResponseCode.API_BAD_REQUEST.getHttpStatus())
         .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
   }
 
   @ExceptionHandler(NoResourceFoundException.class)
   public ResponseEntity<ApiResponseWrapper> handleNoResourceFoundException(
       NoResourceFoundException ex) {
-
-    return ResponseEntity.status(ApiResponseCode.API_BAD_REQUEST.getHttpStatus())
-        .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
+    return ResponseEntity.status(ApiResponseCode.API_NOT_FOUND.getHttpStatus())
+        .body(ApiResponseWrapper.error(ApiResponseCode.API_NOT_FOUND));
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ApiResponseWrapper> methodArgumentTypeMismatchException(
       MethodArgumentTypeMismatchException ex) {
-
     return ResponseEntity.status(ApiResponseCode.API_WRONG_TYPE_REQUEST.getHttpStatus())
         .body(ApiResponseWrapper.error(ApiResponseCode.API_WRONG_TYPE_REQUEST));
   }

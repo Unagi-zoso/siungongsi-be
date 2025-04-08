@@ -75,8 +75,9 @@ public enum ApiResponseCode {
   EXTERNAL_API_ERROR(HttpStatus.BAD_GATEWAY, 6400, "external_api_error"),
 
   // 잘못된 요청 시
-  API_BAD_REQUEST(HttpStatus.NOT_FOUND, 7400, "api_bad_request"),
-  API_WRONG_TYPE_REQUEST(HttpStatus.BAD_REQUEST, 7401, "api_wrong_type_request"),
+  API_BAD_REQUEST(HttpStatus.BAD_REQUEST, 7400, "api_bad_request"),
+  API_NOT_FOUND(HttpStatus.NOT_FOUND, 7401, "api_not_found"),
+  API_WRONG_TYPE_REQUEST(HttpStatus.BAD_REQUEST, 7402, "api_wrong_type_request"),
 
   // API KEY STORE 관련 응답코드 (27)
   KEY_NOT_FOUND(HttpStatus.NOT_FOUND, 2700, "key_not_found"),
