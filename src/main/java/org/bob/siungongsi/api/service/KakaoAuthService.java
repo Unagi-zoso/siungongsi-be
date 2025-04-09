@@ -1,0 +1,36 @@
+package org.bob.siungongsi.api.service;
+
+import java.util.Map;
+
+import org.bob.siungongsi.common.dto.ApiResponseCode;
+import org.bob.siungongsi.common.exception.CustomException;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+
+@Service
+public class KakaoAuthService {
+
+  public String getSocialIdFromAccessToken(String accessToken) {
+    String url = "https://kapi.kakao.com/v1/user/access_token_info";
+    RestClient restClient = RestClient.create();
+    return restClient
+        .get()
+        .uri(url)
+        .header("Authorization", accessToken)
+        .retrieve()
+        .onStatus(
+            HttpStatusCode::is4xxClientError,
+            ((req, res) -> {
+              throw new CustomException(ApiResponseCode.AUTH_KAKAO_ACCESS_TOKEN_EXPIRED);
+            }))
+        .onStatus(
+            HttpStatusCode::is5xxServerError,
+            ((req, res) -> {
+              throw new CustomException(ApiResponseCode.AUTH_INTERNAL_SERVER_ERROR);
+            }))
+        .body(Map.class)
+        .get("id")
+        .toString();
+  }
+}

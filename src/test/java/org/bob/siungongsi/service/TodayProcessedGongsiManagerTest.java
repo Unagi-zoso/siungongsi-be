@@ -9,8 +9,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.bob.siungongsi.domain.TodayProcessedGongsiEntity;
-import org.bob.siungongsi.repository.TodayProcessedGongsiRepository;
+import org.bob.siungongsi.batch.service.TodayProcessedGongsiManager;
+import org.bob.siungongsi.common.domain.TodayProcessedGongsiEntity;
+import org.bob.siungongsi.common.repository.TodayProcessedGongsiRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
