@@ -1,5 +1,7 @@
 package org.bob.siungongsi.exception;
 
+import java.util.Map;
+
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.springframework.http.HttpStatus;
@@ -16,10 +18,20 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import io.sentry.Sentry;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+  // 필드명에 따른 응답 코드 매핑
+  // 주의: 컨트롤러 파라미터명이 변경될 경우 해당 맵도 함께 수정해야 합니다
+  private static final Map<String, ApiResponseCode> fieldToCodeMap =
+      Map.of(
+          "gongsiId", ApiResponseCode.GONGSI_INVALID_GONGSI_ID,
+          "sortType", ApiResponseCode.GONGSI_INVALID_SORT_TYPE
+          // 필요한 필드 추가
+          );
 
   @ExceptionHandler(CustomException.class)
   public ResponseEntity<ApiResponseWrapper> handleCustomException(CustomException ex) {
@@ -68,10 +80,15 @@ public class GlobalExceptionHandler {
       ConstraintViolationException ex) {
     Sentry.captureException(ex); // Sentry에 예외 전송
 
-    // gongsiId 관련 위반인 경우 특별 처리
-    if (ex.getMessage() != null && ex.getMessage().contains("gongsiId")) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body(ApiResponseWrapper.error(ApiResponseCode.GONGSI_INVALID_GONGSI_ID));
+    for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+      String fullPath = violation.getPropertyPath().toString();
+      String[] parts = fullPath.split("\\.");
+      String fieldName = parts[parts.length - 1];
+
+      ApiResponseCode code = fieldToCodeMap.get(fieldName);
+      if (code != null) {
+        return ResponseEntity.status(code.getHttpStatus()).body(ApiResponseWrapper.error(code));
+      }
     }
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
