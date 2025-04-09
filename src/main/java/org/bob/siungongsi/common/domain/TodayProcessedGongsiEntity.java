@@ -1,8 +1,6 @@
-package org.bob.siungongsi.batch.domain;
+package org.bob.siungongsi.common.domain;
 
 import java.time.LocalDateTime;
-
-import org.bob.siungongsi.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

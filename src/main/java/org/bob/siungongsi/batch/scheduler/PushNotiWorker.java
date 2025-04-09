@@ -2,10 +2,10 @@ package org.bob.siungongsi.batch.scheduler;
 
 import java.util.List;
 
-import org.bob.siungongsi.batch.domain.GongsiSentStatusEntity;
-import org.bob.siungongsi.batch.domain.PushStatus;
-import org.bob.siungongsi.batch.repository.GongsiSentStatusRepository;
 import org.bob.siungongsi.batch.service.PushNotiService;
+import org.bob.siungongsi.common.domain.GongsiSentStatusEntity;
+import org.bob.siungongsi.common.domain.PushStatus;
+import org.bob.siungongsi.common.repository.GongsiSentStatusRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

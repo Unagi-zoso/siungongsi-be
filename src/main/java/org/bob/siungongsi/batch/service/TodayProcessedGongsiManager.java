@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.bob.siungongsi.batch.domain.TodayProcessedGongsiEntity;
-import org.bob.siungongsi.batch.repository.TodayProcessedGongsiRepository;
+import org.bob.siungongsi.common.domain.TodayProcessedGongsiEntity;
+import org.bob.siungongsi.common.repository.TodayProcessedGongsiRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

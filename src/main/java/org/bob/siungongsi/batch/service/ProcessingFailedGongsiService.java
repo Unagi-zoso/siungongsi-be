@@ -2,11 +2,11 @@ package org.bob.siungongsi.batch.service;
 
 import java.util.List;
 
-import org.bob.siungongsi.batch.domain.ProcessingFailedGongsiEntity;
 import org.bob.siungongsi.batch.event.GongsiMessage;
-import org.bob.siungongsi.batch.repository.ProcessingFailedGongsiRepository;
+import org.bob.siungongsi.common.domain.ProcessingFailedGongsiEntity;
 import org.bob.siungongsi.common.dto.ApiResponseCode;
 import org.bob.siungongsi.common.exception.CustomException;
+import org.bob.siungongsi.common.repository.ProcessingFailedGongsiRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 

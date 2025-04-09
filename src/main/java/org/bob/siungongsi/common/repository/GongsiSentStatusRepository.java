@@ -1,9 +1,9 @@
-package org.bob.siungongsi.batch.repository;
+package org.bob.siungongsi.common.repository;
 
 import java.util.List;
 
-import org.bob.siungongsi.batch.domain.GongsiSentStatusEntity;
-import org.bob.siungongsi.batch.domain.PushStatus;
+import org.bob.siungongsi.common.domain.GongsiSentStatusEntity;
+import org.bob.siungongsi.common.domain.PushStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 

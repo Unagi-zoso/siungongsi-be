@@ -1,4 +1,4 @@
-package org.bob.siungongsi.batch.domain;
+package org.bob.siungongsi.common.domain;
 
 public enum PushStatus {
   PENDING, // 아직 푸시 요청을 생성하지 않음

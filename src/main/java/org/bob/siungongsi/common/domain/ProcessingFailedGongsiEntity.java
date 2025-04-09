@@ -1,6 +1,4 @@
-package org.bob.siungongsi.batch.domain;
-
-import org.bob.siungongsi.common.domain.BaseTimeEntity;
+package org.bob.siungongsi.common.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

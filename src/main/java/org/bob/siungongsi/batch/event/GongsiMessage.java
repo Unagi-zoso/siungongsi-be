@@ -1,7 +1,7 @@
 package org.bob.siungongsi.batch.event;
 
 import org.bob.siungongsi.batch.client.dto.OpenDartDtos.GongsiData;
-import org.bob.siungongsi.batch.domain.ProcessingFailedGongsiEntity;
+import org.bob.siungongsi.common.domain.ProcessingFailedGongsiEntity;
 
 public record GongsiMessage(String receiptNo, String receiptTitle, String companyCode) {
 

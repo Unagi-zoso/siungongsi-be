@@ -1,6 +1,6 @@
-package org.bob.siungongsi.batch.repository;
+package org.bob.siungongsi.common.repository;
 
-import org.bob.siungongsi.batch.domain.TodayProcessedGongsiEntity;
+import org.bob.siungongsi.common.domain.TodayProcessedGongsiEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TodayProcessedGongsiRepository
