@@ -35,9 +35,18 @@ public class DevSupportController implements DevSupportControllerSpec {
 
   @PostMapping("/token")
   @Override
-  public ResponseEntity<ApiResponseWrapper<?>> getToken(@RequestParam("userId") String userId) {
-    ApiResponseWrapper<?> response =
-        new ApiResponseWrapper<>(12341243, "토큰 획득", jwtProvider.createJwtToken(userId));
+  public ResponseEntity<ApiResponseWrapper<?>> getToken(
+      @RequestParam("userId") String userId,
+      @RequestParam(value = "expirationTime", required = false) Long expirationTime) {
+
+    String jwtToken;
+    if (expirationTime != null) {
+      jwtToken = jwtProvider.createJwtToken(userId, expirationTime);
+    } else {
+      jwtToken = jwtProvider.createJwtToken(userId);
+    }
+
+    ApiResponseWrapper<?> response = new ApiResponseWrapper<>(12341243, "토큰 획득", jwtToken);
     return ResponseEntity.ok(response);
   }
 }

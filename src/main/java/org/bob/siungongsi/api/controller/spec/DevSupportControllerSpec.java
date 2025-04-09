@@ -14,5 +14,7 @@ public interface DevSupportControllerSpec {
   ResponseEntity<ApiResponseWrapper<?>> getUser();
 
   @Operation(summary = "토큰 발급")
-  public ResponseEntity<ApiResponseWrapper<?>> getToken(@RequestParam("userId") String userId);
+  ResponseEntity<ApiResponseWrapper<?>> getToken(
+      @RequestParam("userId") String userId,
+      @RequestParam(value = "expirationTime", required = false) Long expirationTime);
 }
