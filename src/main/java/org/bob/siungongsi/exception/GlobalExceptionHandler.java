@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -138,6 +139,14 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MissingServletRequestParameterException.class)
   public ResponseEntity<ApiResponseWrapper> handleMissingRequestParameter(
       MissingServletRequestParameterException ex) {
+    return ResponseEntity.status(ApiResponseCode.API_BAD_REQUEST.getHttpStatus())
+        .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
+  }
+
+  // PathVariable 누락 예외 처리 (예: gongsi/공백)
+  @ExceptionHandler(MissingPathVariableException.class)
+  public ResponseEntity<ApiResponseWrapper> handleMissingPathVariable(
+      MissingPathVariableException ex) {
     return ResponseEntity.status(ApiResponseCode.API_BAD_REQUEST.getHttpStatus())
         .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
   }
