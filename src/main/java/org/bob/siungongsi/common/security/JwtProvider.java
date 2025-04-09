@@ -42,6 +42,10 @@ public class JwtProvider {
   }
 
   public String createJwtToken(String userId) {
+    return createJwtToken(userId, expirationTime);
+  }
+
+  public String createJwtToken(String userId, long expirationTime) {
     return Jwts.builder()
         .subject(userId)
         .issuedAt(new Date())
