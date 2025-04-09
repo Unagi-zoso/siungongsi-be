@@ -6,8 +6,9 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
-import org.bob.siungongsi.config.JpaAuditConfig;
-import org.bob.siungongsi.domain.CompanyEntity;
+import org.bob.siungongsi.common.config.JpaAuditConfig;
+import org.bob.siungongsi.common.domain.CompanyEntity;
+import org.bob.siungongsi.common.repository.CompanyRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

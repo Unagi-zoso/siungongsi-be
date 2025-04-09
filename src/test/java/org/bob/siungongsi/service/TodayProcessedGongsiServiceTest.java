@@ -7,6 +7,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.List;
 
+import org.bob.siungongsi.batch.service.TodayProcessedGongsiManager;
+import org.bob.siungongsi.batch.service.TodayProcessedGongsiService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

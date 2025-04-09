@@ -2,8 +2,9 @@ package org.bob.siungongsi.repository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import org.bob.siungongsi.config.JpaAuditConfig;
-import org.bob.siungongsi.domain.TodayProcessedGongsiEntity;
+import org.bob.siungongsi.common.config.JpaAuditConfig;
+import org.bob.siungongsi.common.domain.TodayProcessedGongsiEntity;
+import org.bob.siungongsi.common.repository.TodayProcessedGongsiRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
