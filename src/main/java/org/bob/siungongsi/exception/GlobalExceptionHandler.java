@@ -1,5 +1,6 @@
 package org.bob.siungongsi.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.bob.siungongsi.dto.ApiResponseCode;
 import org.bob.siungongsi.dto.ApiResponseWrapper;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -114,6 +116,20 @@ public class GlobalExceptionHandler {
       NoResourceFoundException ex) {
     return ResponseEntity.status(ApiResponseCode.API_NOT_FOUND.getHttpStatus())
         .body(ApiResponseWrapper.error(ApiResponseCode.API_NOT_FOUND));
+  }
+
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  public ResponseEntity<ApiResponseWrapper> handleMissingRequestParameter(
+      MissingServletRequestParameterException ex) {
+    return ResponseEntity.status(ApiResponseCode.API_BAD_REQUEST.getHttpStatus())
+        .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
+  }
+
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<ApiResponseWrapper> handleWrongTypeRequestParameter(
+          ConstraintViolationException ex) {
+    return ResponseEntity.status(ApiResponseCode.API_WRONG_TYPE_REQUEST.getHttpStatus())
+            .body(ApiResponseWrapper.error(ApiResponseCode.API_WRONG_TYPE_REQUEST));
   }
 
   // 모든 Exception을 처리하는 핸들러 (최종 예외 캐치)

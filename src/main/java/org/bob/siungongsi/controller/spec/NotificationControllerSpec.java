@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Positive;
 
 @Tag(name = "알림 API", description = "알림 관련 API")
 public interface NotificationControllerSpec {
@@ -198,5 +199,5 @@ public interface NotificationControllerSpec {
       })
   ResponseEntity<ApiResponseWrapper<?>> removeNotification(
       String authorization,
-      @Parameter(description = "알림을 해제할 회사 ID", required = true) Long companyId);
+      @Parameter(description = "알림을 해제할 회사 ID", required = true) @Positive Long companyId);
 }
