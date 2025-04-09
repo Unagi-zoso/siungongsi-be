@@ -14,13 +14,16 @@ import org.bob.siungongsi.common.dto.ApiResponseWrapper;
 import org.bob.siungongsi.common.repository.NotificationRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/v1/gongsi") // 공시 API의 기본 경로
+@Validated
 public class GongsiController implements GongsiControllerSpec {
 
   private final GongsiService gongsiService;
@@ -57,7 +60,9 @@ public class GongsiController implements GongsiControllerSpec {
   @Override
   @GetMapping("/{gongsiId}")
   public ResponseEntity<ApiResponseWrapper<GongsiDetailResponse>> getGongsiDetail(
-      @Parameter(description = "공시 ID", example = "101", required = true) @PathVariable("gongsiId")
+      @Parameter(description = "공시 ID", example = "101", required = true)
+          @PathVariable("gongsiId")
+          @Positive(message = "공시 ID는 양수여야 합니다")
           Long gongsiId,
       HttpServletRequest request) {
 

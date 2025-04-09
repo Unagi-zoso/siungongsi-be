@@ -31,7 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     String authHeader = request.getHeader("Authorization");
 
-    if (request.getRequestURI().matches("/v1/gongsi/\\d+")) {
+    if (request.getRequestURI().startsWith("/v1/gongsi/")) {
       if (authHeader == null || !authHeader.startsWith("Bearer ")) {
         filterChain.doFilter(request, response);
         return;
