@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
   private static final Map<String, ApiResponseCode> fieldToCodeMap =
       Map.of(
           "gongsiId", ApiResponseCode.GONGSI_INVALID_GONGSI_ID,
-          "sortType", ApiResponseCode.GONGSI_INVALID_SORT_TYPE
+          "sort", ApiResponseCode.GONGSI_INVALID_SORT_TYPE
           // 필요한 필드 추가
           );
 
@@ -61,15 +61,16 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ApiResponseWrapper> handleTypeMismatch(
       MethodArgumentTypeMismatchException ex) {
-    Sentry.captureException(ex); // Sentry에 예외 전송
+    Sentry.captureException(ex);
 
-    // gongsiId 파라미터에 대한 특별 처리
-    if (ex.getName() != null && ex.getName().equals("gongsiId")) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body(ApiResponseWrapper.error(ApiResponseCode.GONGSI_INVALID_GONGSI_ID));
+    String paramName = ex.getName();
+
+    ApiResponseCode code = fieldToCodeMap.get(paramName);
+    if (code != null) {
+      return ResponseEntity.status(code.getHttpStatus()).body(ApiResponseWrapper.error(code));
     }
 
-    // 다른 타입 변환 오류에 대한 일반적인 처리
+    // 기본 처리
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
   }
