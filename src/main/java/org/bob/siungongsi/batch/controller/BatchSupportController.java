@@ -2,17 +2,12 @@ package org.bob.siungongsi.batch.controller;
 
 import java.util.List;
 
-import org.bob.siungongsi.api.service.UserService;
-import org.bob.siungongsi.batch.controller.spec.AdminControllerSpec;
+import org.bob.siungongsi.batch.controller.spec.BatchSupportControllerSpec;
 import org.bob.siungongsi.batch.service.CompanyNameAutofillGenerator;
 import org.bob.siungongsi.batch.service.ProcessingFailedGongsiService;
 import org.bob.siungongsi.batch.service.TodayProcessedGongsiService;
-import org.bob.siungongsi.common.dto.ApiResponseWrapper;
-import org.bob.siungongsi.common.security.JwtProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,28 +16,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Profile("batch")
 @RestController
-@RequestMapping("/admin")
-public class AdminController implements AdminControllerSpec {
+@RequestMapping("/support")
+public class BatchSupportController implements BatchSupportControllerSpec {
   @Value("${admin.key}")
   private String adminKey;
 
   private final TodayProcessedGongsiService todayProcessedGongsiService;
   private final ProcessingFailedGongsiService processingFailedGongsiService;
   private final CompanyNameAutofillGenerator companyNameAutofillGenerator;
-  private final UserService userService;
-  private final JwtProvider jwtProvider;
 
-  public AdminController(
+  public BatchSupportController(
       TodayProcessedGongsiService todayProcessedGongsiService,
       ProcessingFailedGongsiService processingFailedGongsiService,
-      CompanyNameAutofillGenerator companyNameAutofillGenerator,
-      UserService userService,
-      JwtProvider jwtProvider) {
+      CompanyNameAutofillGenerator companyNameAutofillGenerator) {
     this.todayProcessedGongsiService = todayProcessedGongsiService;
     this.processingFailedGongsiService = processingFailedGongsiService;
     this.companyNameAutofillGenerator = companyNameAutofillGenerator;
-    this.userService = userService;
-    this.jwtProvider = jwtProvider;
   }
 
   @PostMapping("/remove-processed-gongsi")
@@ -75,21 +64,5 @@ public class AdminController implements AdminControllerSpec {
       throw new RuntimeException("Invalid admin key");
     }
     companyNameAutofillGenerator.generate(startDt, endDt);
-  }
-
-  @GetMapping("/user")
-  @Override
-  public ResponseEntity<ApiResponseWrapper<?>> getUser() {
-    ApiResponseWrapper<?> response =
-        new ApiResponseWrapper<>(12341243, "토큰 획득용 유저 정보", userService.getUser());
-    return ResponseEntity.ok(response);
-  }
-
-  @PostMapping("/token")
-  @Override
-  public ResponseEntity<ApiResponseWrapper<?>> getToken(@RequestParam("userId") String userId) {
-    ApiResponseWrapper<?> response =
-        new ApiResponseWrapper<>(12341243, "토큰 획득", jwtProvider.createJwtToken(userId));
-    return ResponseEntity.ok(response);
   }
 }
