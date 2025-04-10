@@ -59,7 +59,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         || uri.equals("/health")
         || uri.equals("/")
         || uri.matches("/swagger-ui.*")
-        || uri.matches("/admin.*")
+        || uri.matches("/support.*")
         || uri.matches("/v1/companies.*")
         || uri.matches("/v3/api-docs.*")
         || uri.matches("/swagger-resources.*");
