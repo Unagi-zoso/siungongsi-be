@@ -59,6 +59,15 @@ public class AuthController implements AuthControllerSpec {
   }
 
   @Override
+  @PostMapping("/logout")
+  public ResponseEntity<ApiResponseWrapper<?>> logoutUser(
+      @RequestHeader("Authorization") String accessToken) {
+    authService.logout(accessToken);
+    return ResponseEntity.status(ApiResponseCode.AUTH_LOGOUT_SUCCESS.getHttpStatus())
+        .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_LOGIN_SUCCESS));
+  }
+
+  @Override
   @DeleteMapping("/withdraw")
   public ResponseEntity<ApiResponseWrapper<?>> withdrawUser(
       @RequestHeader("Authorization") String accessToken) {

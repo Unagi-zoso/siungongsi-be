@@ -23,6 +23,7 @@ public enum ApiResponseCode {
   AUTH_GET_TERMS_SUCCESS(HttpStatus.OK, 2201, "get_terms_success"),
   AUTH_LOGIN_SUCCESS(HttpStatus.OK, 2202, "login_success"),
   AUTH_REGISTER_SUCCESS(HttpStatus.CREATED, 2203, "register_success"),
+  AUTH_LOGOUT_SUCCESS(HttpStatus.OK, 2204, "logout_success"),
   AUTH_REQUIRED_AUTHORIZATION(HttpStatus.FORBIDDEN, 2400, "required_authorization"),
   AUTH_KAKAO_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, 2401, "kakao_access_token_expired"),
   AUTH_USER_NOT_FOUND(HttpStatus.NOT_FOUND, 2402, "user_not_found"),

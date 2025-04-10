@@ -16,6 +16,7 @@ import org.bob.siungongsi.common.repository.TermRepository;
 import org.bob.siungongsi.common.repository.UserAgreedTermRepository;
 import org.bob.siungongsi.common.repository.UserRepository;
 import org.bob.siungongsi.common.security.JwtProvider;
+import org.bob.siungongsi.common.util.RedisUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class AuthService {
   private final KakaoAuthService kakaoAuthService;
   private final NotificationRepository notificationRepository;
   private final JwtProvider jwtProvider;
+  private final RedisUtils redisUtils;
 
   public AuthService(
       TermRepository termRepository,
@@ -37,13 +39,15 @@ public class AuthService {
       UserAgreedTermRepository userAgreedTermRepository,
       KakaoAuthService kakaoAuthService,
       NotificationRepository notificationRepository,
-      JwtProvider jwtProvider) {
+      JwtProvider jwtProvider,
+      RedisUtils redisUtils) {
     this.userRepository = userRepository;
     this.termRepository = termRepository;
     this.userAgreedTermRepository = userAgreedTermRepository;
     this.kakaoAuthService = kakaoAuthService;
     this.notificationRepository = notificationRepository;
     this.jwtProvider = jwtProvider;
+    this.redisUtils = redisUtils;
   }
 
   @Transactional
@@ -117,6 +121,10 @@ public class AuthService {
 
   public String createJwt(String userId) {
     return jwtProvider.createJwtToken(userId);
+  }
+
+  public void logout(String accessToken) {
+    redisUtils.setBlackList("blacklist:" + accessToken, "logout", 1000000);
   }
 
   @Transactional
