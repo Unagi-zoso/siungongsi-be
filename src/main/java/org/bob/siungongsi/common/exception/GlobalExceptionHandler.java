@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.bob.siungongsi.common.dto.ApiResponseCode;
 import org.bob.siungongsi.common.dto.ApiResponseWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -25,6 +27,8 @@ import jakarta.validation.ConstraintViolationException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+  private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
   // 필드명에 따른 응답 코드 매핑
   // 주의: 컨트롤러 파라미터명이 변경될 경우 해당 맵도 함께 수정해야 합니다
   private static final Map<String, ApiResponseCode> fieldToCodeMap =
@@ -36,7 +40,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(CustomException.class)
   public ResponseEntity<ApiResponseWrapper> handleCustomException(CustomException ex) {
-    Sentry.captureException(ex); // Sentry에 예외 전송
+    logger.warn("CustomException occurred: {}", ex.getMessage(), ex);
     ApiResponseCode responseCode = ex.getErrorCode();
     return ResponseEntity.status(responseCode.getHttpStatus())
         .body(ApiResponseWrapper.error(responseCode));
@@ -47,6 +51,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST) // 400 오류 반환
   public ApiResponseWrapper handleIllegalArgumentException(IllegalArgumentException ex) {
     Sentry.captureException(ex); // Sentry에 예외 전송
+    logger.warn("IllegalArgumentException occurred: {}", ex.getMessage(), ex);
     return ApiResponseWrapper.error(ApiResponseCode.GONGSI_INVALID_SORT_TYPE);
   }
 
@@ -55,6 +60,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500 오류 반환
   public ApiResponseWrapper handleNullPointerException(NullPointerException ex) {
     Sentry.captureException(ex); // Sentry에 예외 전송
+    logger.error("NullPointerException occurred", ex);
     return ApiResponseWrapper.error(ApiResponseCode.GONGSI_INTERNAL_SERVER_ERROR);
   }
 
@@ -62,7 +68,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ApiResponseWrapper> handleTypeMismatch(
       MethodArgumentTypeMismatchException ex) {
-    Sentry.captureException(ex);
+    logger.warn("MethodArgumentTypeMismatchException occurred: {}", ex.getMessage(), ex);
 
     String paramName = ex.getName();
 
@@ -80,7 +86,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(ConstraintViolationException.class)
   public ResponseEntity<ApiResponseWrapper> handleConstraintViolation(
       ConstraintViolationException ex) {
-    Sentry.captureException(ex); // Sentry에 예외 전송
+    logger.warn("ConstraintViolationException occurred: {}", ex.getMessage(), ex);
 
     for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
       String fullPath = violation.getPropertyPath().toString();
@@ -101,7 +107,8 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiResponseWrapper> handleValidationExceptions(
       MethodArgumentNotValidException ex) {
-    Sentry.captureException(ex); // Sentry에 예외 전송
+    logger.warn("MethodArgumentNotValidException occurred: {}", ex.getMessage(), ex);
+
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
   }
@@ -109,7 +116,7 @@ public class GlobalExceptionHandler {
   // Form 바인딩 실패 예외 처리
   @ExceptionHandler(BindException.class)
   public ResponseEntity<ApiResponseWrapper> handleBindException(BindException ex) {
-    Sentry.captureException(ex); // Sentry에 예외 전송
+    logger.warn("BindException occurred: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
   }
@@ -117,7 +124,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<ApiResponseWrapper> handleHttpMessageNotReadable(
       HttpMessageNotReadableException ex) {
-    Sentry.captureException(ex); // Sentry에 예외 전송
+    logger.warn("HttpMessageNotReadableException occurred: {}", ex.getMessage(), ex);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
   }
@@ -125,6 +132,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NoHandlerFoundException.class)
   public ResponseEntity<ApiResponseWrapper<Void>> handleNoHandlerFoundException(
       NoHandlerFoundException ex) {
+    logger.warn("NoHandlerFoundException occurred: {}", ex.getMessage(), ex);
     return ResponseEntity.status(ApiResponseCode.RESOURCE_NOT_FOUND.getHttpStatus())
         .body(ApiResponseWrapper.error(ApiResponseCode.RESOURCE_NOT_FOUND));
   }
@@ -132,6 +140,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NoResourceFoundException.class)
   public ResponseEntity<ApiResponseWrapper> handleNoResourceFoundException(
       NoResourceFoundException ex) {
+    logger.warn("NoResourceFoundException occurred: {}", ex.getMessage(), ex);
     return ResponseEntity.status(ApiResponseCode.API_NOT_FOUND.getHttpStatus())
         .body(ApiResponseWrapper.error(ApiResponseCode.API_NOT_FOUND));
   }
@@ -139,6 +148,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MissingServletRequestParameterException.class)
   public ResponseEntity<ApiResponseWrapper> handleMissingRequestParameter(
       MissingServletRequestParameterException ex) {
+    logger.warn("MissingServletRequestParameterException occurred: {}", ex.getMessage(), ex);
     return ResponseEntity.status(ApiResponseCode.API_BAD_REQUEST.getHttpStatus())
         .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
   }
@@ -147,6 +157,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MissingPathVariableException.class)
   public ResponseEntity<ApiResponseWrapper> handleMissingPathVariable(
       MissingPathVariableException ex) {
+    logger.warn("MissingPathVariableException occurred: {}", ex.getMessage(), ex);
     return ResponseEntity.status(ApiResponseCode.API_BAD_REQUEST.getHttpStatus())
         .body(ApiResponseWrapper.error(ApiResponseCode.API_BAD_REQUEST));
   }
@@ -156,6 +167,7 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500 오류 반환
   public ApiResponseWrapper handleException(Exception ex) {
     Sentry.captureException(ex); // Sentry에 예외 전송
+    logger.error("Unhandled Exception occurred", ex);
     return ApiResponseWrapper.error(ApiResponseCode.GONGSI_INTERNAL_SERVER_ERROR);
   }
 }
