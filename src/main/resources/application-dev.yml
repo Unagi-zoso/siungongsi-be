@@ -37,6 +37,9 @@ doc:
     enabled: true
     path: /v3/api-docs
 
+swagger:
+  server-url: ${DEV_API_SERVER_URL}
+
 korean:
   investment:
     appkey: ${KOREAN_INVESTMENT_APPKEY}
@@ -49,3 +52,10 @@ korean:
 jwt:
   secret-key: ${JWT_SECRET_KEY}
   expiration-time: ${JWT_EXPIRATION_TIME}
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
+    org.springframework.web: INFO

@@ -79,3 +79,9 @@ fcm:
 
 site:
   url: ${SITE_URL}
+
+logging:
+  level:
+    root: INFO
+    org.springframework: WARN
+

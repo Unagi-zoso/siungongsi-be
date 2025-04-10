@@ -50,3 +50,8 @@ jwt:
 redis:
   host: ${REDIS_HOST}
   port: ${REDIS_PORT}
+
+logging:
+  level:
+    root: INFO
+
