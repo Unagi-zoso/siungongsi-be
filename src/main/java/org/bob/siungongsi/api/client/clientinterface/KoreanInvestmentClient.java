@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bob.siungongsi.api.service.ApiKeyStoreManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +24,8 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 @Component
 public class KoreanInvestmentClient {
+
+  private final Logger logger = LoggerFactory.getLogger(KoreanInvestmentClient.class);
 
   private final ObjectMapper objectMapper;
   private final RestTemplate restTemplate;
@@ -51,13 +55,13 @@ public class KoreanInvestmentClient {
       String accessToken = tokenManager.getAccessToken(ApiKeyStoreManager.KI_API_KEY_NAME);
       return fetchStockData(accessToken, stockCode);
     } catch (Exception e) {
-      System.err.println("Error fetching prdyCtr from Korean Investment API: " + e.getMessage());
+      logger.error("Error fetching prdyCtr from Korean Investment API: {}", e.getMessage());
       throw new RuntimeException("Failed to fetch prdyCtr: " + e.getMessage());
     }
   }
 
   public double fallbackGetPrdyCtr(String stockCode, Throwable t) {
-    System.err.println("Error fetching prdyCtr from Korean Investment API: " + t);
+    logger.error("Fallback method called for getPrdyCtr: {}", t.getMessage());
     return -101;
   }
 
@@ -89,10 +93,10 @@ public class KoreanInvestmentClient {
       return Double.parseDouble(prdyCtrt.replaceAll("[^0-9.-]", ""));
 
     } catch (RestClientException e) {
-      System.err.println("Error fetching stock data from Korean Investment API: " + e.getMessage());
+      logger.error("Error fetching stock data from Korean Investment API: {}", e.getMessage());
       throw new RuntimeException("Failed to fetch stock data: " + e.getMessage());
     } catch (Exception e) {
-      System.err.println("Error processing stock data: " + e.getMessage());
+      logger.error("Error processing stock data: {}", e.getMessage());
       throw new RuntimeException("Failed to process stock data: " + e.getMessage());
     }
   }
@@ -151,13 +155,15 @@ public class KoreanInvestmentClient {
       }
 
       if (approvalKey == null || approvalKey.isEmpty()) {
-        root.fieldNames().forEachRemaining(fieldName -> System.out.println(" - " + fieldName));
+        root.fieldNames()
+            .forEachRemaining(
+                fieldName -> logger.debug("{}: {}", fieldName, root.path(fieldName).asText()));
         throw new Exception(
             "Failed to get approval key. Response fields don't match expected format.");
       }
       return approvalKey;
     } catch (Exception e) {
-      System.err.println("Error refreshing Korean Investment API token: " + e.getMessage());
+      logger.error("Error fetching approval key from Korean Investment API: {}", e.getMessage());
 
       throw new RuntimeException(
           "Failed to initialize access token. Please check your API credentials.");
