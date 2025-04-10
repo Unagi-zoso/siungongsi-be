@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.bob.siungongsi.common.dto.ApiResponseCode;
 import org.bob.siungongsi.common.exception.CustomException;
+import org.bob.siungongsi.common.util.RedisUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -14,9 +15,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JwtAuthFilter extends OncePerRequestFilter {
   private final JwtProvider jwtProvider;
+  private final RedisUtils redisUtils;
 
-  public JwtAuthFilter(JwtProvider jwtProvider) {
+  public JwtAuthFilter(JwtProvider jwtProvider, RedisUtils redisUtils) {
     this.jwtProvider = jwtProvider;
+    this.redisUtils = redisUtils;
   }
 
   @Override
@@ -43,6 +46,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     authHeader = authHeader.replace("Bearer ", "");
+
+    if (redisUtils.hasKeyBlackList("blacklist:" + authHeader)) {
+      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED);
+    }
+
     Long userId = jwtProvider.validateJwtToken(authHeader);
 
     JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(userId);

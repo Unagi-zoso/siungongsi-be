@@ -79,7 +79,8 @@ public class JwtProvider {
   }
 
   public long getRemainingExpirationTime(String token) {
-    long expiration = Jwts.parser()
+    long expiration =
+        Jwts.parser()
             .verifyWith(getKey())
             .build()
             .parseSignedClaims(token)
@@ -90,5 +91,4 @@ public class JwtProvider {
     long now = System.currentTimeMillis();
     return expiration - now;
   }
-
 }
