@@ -46,3 +46,7 @@ korean:
 jwt:
   secret-key: dflknlsdfjlskfncdsjlkmxnfjsklcxmvnfddddddddc
   expiration-time: 604800000
+
+logging:
+  level:
+    root: INFO
