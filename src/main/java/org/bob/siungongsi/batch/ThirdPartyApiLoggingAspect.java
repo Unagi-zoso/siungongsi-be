@@ -55,7 +55,7 @@ public class ThirdPartyApiLoggingAspect {
             arg -> {
               if (arg == null) return "null";
               String str = arg.toString();
-              return str.length() > 300 ? str.substring(0, 300) + "...)" : str;
+              return str.length() > 300 ? str.substring(0, 300) + "..." : str;
             })
         .collect(Collectors.joining(", ", "[", "]"));
   }
