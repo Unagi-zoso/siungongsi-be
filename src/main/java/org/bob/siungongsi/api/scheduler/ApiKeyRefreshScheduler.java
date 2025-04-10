@@ -54,7 +54,8 @@ public class ApiKeyRefreshScheduler {
 
       String apiKey = koreanInvestmentClient.fetchApprovalKeyWithDelayedRetry(3, 65);
 
-      logger.info("Fetched new Korean Investment API key: {}", apiKey);
+      logger.info(
+          "Fetched new Korean Investment API key: ****{}", apiKey.substring(apiKey.length() - 4));
 
       if (apiKeyStore == null) {
         apiKeyStore = new ApiKeyStoreEntity(KI_API_KEY_NAME, apiKey);

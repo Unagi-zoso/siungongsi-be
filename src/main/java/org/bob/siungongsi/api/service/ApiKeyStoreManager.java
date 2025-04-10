@@ -39,11 +39,12 @@ public class ApiKeyStoreManager {
         .findAll()
         .forEach(
             apiKeyStore -> {
-              tokenMap.put(apiKeyStore.getKeyName(), apiKeyStore.getApiKey());
+              String apiKey = apiKeyStore.getApiKey();
+              tokenMap.put(apiKeyStore.getKeyName(), apiKey);
               logger.info(
-                  "Loaded API key from DB: {} = {}",
+                  "Loaded API key from DB: {} = ****{}",
                   apiKeyStore.getKeyName(),
-                  apiKeyStore.getApiKey());
+                  apiKey.substring(apiKey.length() - 4));
             });
   }
 }
