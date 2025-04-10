@@ -7,10 +7,14 @@ import java.util.Map;
 
 import org.bob.siungongsi.common.exception.CustomException;
 import org.bob.siungongsi.common.repository.ApiKeyStoreRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ApiKeyStoreManager {
+
+  private static final Logger logger = LoggerFactory.getLogger(ApiKeyStoreManager.class);
 
   public static final String KI_API_KEY_NAME = "korean_investment_approval";
 
@@ -36,6 +40,10 @@ public class ApiKeyStoreManager {
         .forEach(
             apiKeyStore -> {
               tokenMap.put(apiKeyStore.getKeyName(), apiKeyStore.getApiKey());
+              logger.info(
+                  "Loaded API key from DB: {} = {}",
+                  apiKeyStore.getKeyName(),
+                  apiKeyStore.getApiKey());
             });
   }
 }
