@@ -34,7 +34,7 @@ public class RedisUtils {
     return redisTemplate.hasKey(key);
   }
 
-  public void setBlackList(String key, Object value, int expiredTime) {
+  public void setBlackList(String key, Object value, Long expiredTime) {
     redistBlackListTemplate.opsForValue().set(key, value, expiredTime, TimeUnit.MILLISECONDS);
   }
 

@@ -124,7 +124,7 @@ public class AuthService {
   }
 
   public void logout(String accessToken) {
-    redisUtils.setBlackList("blacklist:" + accessToken, "logout", 1000000);
+    redisUtils.setBlackList("blacklist:" + accessToken, "logout", jwtProvider.getRemainingExpirationTime(accessToken));
   }
 
   @Transactional

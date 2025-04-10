@@ -62,9 +62,9 @@ public class AuthController implements AuthControllerSpec {
   @PostMapping("/logout")
   public ResponseEntity<ApiResponseWrapper<?>> logoutUser(
       @RequestHeader("Authorization") String accessToken) {
-    authService.logout(accessToken);
+    authService.logout(accessToken.substring(7));
     return ResponseEntity.status(ApiResponseCode.AUTH_LOGOUT_SUCCESS.getHttpStatus())
-        .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_LOGIN_SUCCESS));
+        .body(ApiResponseWrapper.success(ApiResponseCode.AUTH_LOGOUT_SUCCESS));
   }
 
   @Override
