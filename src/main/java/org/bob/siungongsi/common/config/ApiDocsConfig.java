@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springdoc.core.customizers.OperationCustomizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,16 +14,29 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class ApiDocsConfig {
 
+  // dev 환경이 https 프로토콜을 사용하게 되며 직접 https 로 URL 을 설정하기 위해 추가했습니다.
+  // 프록시로 정보를 다룰 수도 있지만 당장 인프라 쪽을 손보기가 까다로워 애플리케이션 코드쪽에 작업을 했습니다.
+  @Value("${swagger.server-url:}")
+  private String swaggerServerUrl;
+
   @Bean
   public OpenAPI openAPI() {
-    return new OpenAPI()
-        .info(createApiInfo())
-        .components(createSecurityComponents())
-        .addSecurityItem(createSecurityRequirement());
+    OpenAPI openAPI =
+        new OpenAPI()
+            .info(createApiInfo())
+            .components(createSecurityComponents())
+            .addSecurityItem(createSecurityRequirement());
+
+    if (swaggerServerUrl != null && !swaggerServerUrl.isEmpty()) {
+      openAPI.addServersItem(new Server().url(swaggerServerUrl));
+    }
+
+    return openAPI;
   }
 
   // API 문서 정보
