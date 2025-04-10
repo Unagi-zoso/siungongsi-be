@@ -37,6 +37,9 @@ doc:
     enabled: true
     path: /v3/api-docs
 
+swagger:
+  server-url: ${DEV_API_SERVER_URL}
+
 korean:
   investment:
     appkey: ${KOREAN_INVESTMENT_APPKEY}

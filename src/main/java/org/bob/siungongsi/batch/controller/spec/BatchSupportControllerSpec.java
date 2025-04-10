@@ -2,15 +2,11 @@ package org.bob.siungongsi.batch.controller.spec;
 
 import java.util.List;
 
-import org.bob.siungongsi.common.dto.ApiResponseWrapper;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "관리자 API", description = "관리를 위한 API")
-public interface AdminControllerSpec {
+@Tag(name = "배치 환경 편의 API", description = "배치 환경에서 유용한 기능을 제공하는 API")
+public interface BatchSupportControllerSpec {
 
   @Operation(summary = "처리된 공시 삭제")
   void removeProcessedGongsiList(String apiKey, List<String> gongsiCodes);
@@ -20,10 +16,4 @@ public interface AdminControllerSpec {
 
   @Operation(summary = "회사명 자동완성")
   void autofillCompanyName(String apiKey, String startDt, String endDt);
-
-  @Operation(summary = "유저 정보 조회")
-  ResponseEntity<ApiResponseWrapper<?>> getUser();
-
-  @Operation(summary = "토큰 발급")
-  public ResponseEntity<ApiResponseWrapper<?>> getToken(@RequestParam("userId") String userId);
 }
