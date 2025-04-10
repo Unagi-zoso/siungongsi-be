@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bob.siungongsi.api.service.RankedCompanyManager;
 import org.bob.siungongsi.batch.client.clientinterface.OpenDartClientWrapper;
 import org.bob.siungongsi.batch.client.dto.OpenDartDtos.GongsiData;
 import org.bob.siungongsi.batch.client.dto.OpenDartDtos.GongsiListResponse;
