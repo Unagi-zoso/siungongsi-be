@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bob.siungongsi.api.service.RankedCompanyManager;
-import org.bob.siungongsi.batch.client.clientinterface.OpenDartClientInterface;
+import org.bob.siungongsi.batch.client.clientinterface.OpenDartClientWrapper;
 import org.bob.siungongsi.batch.client.dto.OpenDartDtos.GongsiData;
 import org.bob.siungongsi.batch.client.dto.OpenDartDtos.GongsiListResponse;
 import org.springframework.context.annotation.Profile;
@@ -15,12 +15,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class OpenDartReader {
   private static final int PAGE_SIZE = 100;
-  private final OpenDartClientInterface openDartClient;
+  private final OpenDartClientWrapper openDartClient;
   private final TodayProcessedGongsiManager todayProcessedGongsiManager;
   private final RankedCompanyManager rankedCompanyManager;
 
   public OpenDartReader(
-      OpenDartClientInterface openDartClient,
+      OpenDartClientWrapper openDartClient,
       TodayProcessedGongsiManager todayProcessedGongsiManager,
       RankedCompanyManager rankedCompanyManager) {
     this.openDartClient = openDartClient;

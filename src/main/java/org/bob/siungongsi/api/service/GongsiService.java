@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class GongsiService {
 
-  private final Logger logger = LoggerFactory.getLogger(GongsiService.class);
+  private static final Logger logger = LoggerFactory.getLogger(GongsiService.class);
 
   private final GongsiRepository gongsiRepository;
   private final CompanyRepository companyRepository;
@@ -227,7 +227,7 @@ public class GongsiService {
         prdyCtr = koreanInvestmentClient.getPrdyCtr(stockCode);
       }
     } catch (Exception e) {
-      logger.error("Error fetching prdyCtr: {}", e.getMessage());
+      logger.warn("Error fetching prdyCtr: {}", e.getMessage());
       prdyCtr = 0.0; // Default value
     }
 
