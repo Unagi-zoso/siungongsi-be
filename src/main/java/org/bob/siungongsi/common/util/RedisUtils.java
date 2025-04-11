@@ -9,16 +9,12 @@ import org.springframework.stereotype.Service;
 public class RedisUtils {
 
   private final RedisTemplate<String, Object> redisTemplate;
-  private final RedisTemplate<String, Object> redistBlackListTemplate;
 
-  public RedisUtils(
-      RedisTemplate<String, Object> redisTemplate,
-      RedisTemplate<String, Object> redistBlackListTemplate) {
+  public RedisUtils(RedisTemplate<String, Object> redisTemplate) {
     this.redisTemplate = redisTemplate;
-    this.redistBlackListTemplate = redistBlackListTemplate;
   }
 
-  public void set(String key, Object value, long expiredTime) {
+  public void set(String key, Object value, Long expiredTime) {
     redisTemplate.opsForValue().set(key, value, expiredTime, TimeUnit.MILLISECONDS);
   }
 
@@ -32,21 +28,5 @@ public class RedisUtils {
 
   public boolean hasKey(String key) {
     return redisTemplate.hasKey(key);
-  }
-
-  public void setBlackList(String key, Object value, Long expiredTime) {
-    redistBlackListTemplate.opsForValue().set(key, value, expiredTime, TimeUnit.MILLISECONDS);
-  }
-
-  public Object getBlackList(String key) {
-    return redistBlackListTemplate.opsForValue().get(key);
-  }
-
-  public boolean deleteBlackList(String key) {
-    return Boolean.TRUE.equals(redistBlackListTemplate.delete(key));
-  }
-
-  public boolean hasKeyBlackList(String key) {
-    return Boolean.TRUE.equals(redistBlackListTemplate.hasKey(key));
   }
 }

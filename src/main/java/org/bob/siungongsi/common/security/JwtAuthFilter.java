@@ -2,9 +2,9 @@ package org.bob.siungongsi.common.security;
 
 import java.io.IOException;
 
+import org.bob.siungongsi.api.service.AuthBlackListService;
 import org.bob.siungongsi.common.dto.ApiResponseCode;
 import org.bob.siungongsi.common.exception.CustomException;
-import org.bob.siungongsi.common.util.RedisUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,11 +15,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JwtAuthFilter extends OncePerRequestFilter {
   private final JwtProvider jwtProvider;
-  private final RedisUtils redisUtils;
+  private final AuthBlackListService authBlackListService;
 
-  public JwtAuthFilter(JwtProvider jwtProvider, RedisUtils redisUtils) {
+  public JwtAuthFilter(JwtProvider jwtProvider, AuthBlackListService authBlackListService) {
     this.jwtProvider = jwtProvider;
-    this.redisUtils = redisUtils;
+    this.authBlackListService = authBlackListService;
   }
 
   @Override
@@ -47,8 +47,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     authHeader = authHeader.replace("Bearer ", "");
 
-    if (redisUtils.hasKeyBlackList("blacklist:" + authHeader)) {
-      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_EXPIRED);
+    if (authBlackListService.hasKeyBlackList(authHeader)) {
+      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_BLACKLIST);
     }
 
     Long userId = jwtProvider.validateJwtToken(authHeader);

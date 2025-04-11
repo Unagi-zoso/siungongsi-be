@@ -39,6 +39,7 @@ public enum ApiResponseCode {
   AUTH_ACCESS_TOKEN_UNSUPPORTED(HttpStatus.BAD_REQUEST, 2411, "access_token_unsupported"),
   AUTH_ACCESS_TOKEN_INVALID_SIGNATURE(
       HttpStatus.UNAUTHORIZED, 2412, "access_token_invalid_signature"),
+  AUTH_ACCESS_TOKEN_BLACKLIST(HttpStatus.UNAUTHORIZED, 2413, "access_token_blacklist"),
   AUTH_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 2500, "internal_server_error"),
 
   // 유저 관련 응답 코드 (3)

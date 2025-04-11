@@ -1,9 +1,9 @@
 package org.bob.siungongsi.api.config;
 
+import org.bob.siungongsi.api.service.AuthBlackListService;
 import org.bob.siungongsi.common.security.ExceptionHandlerFilter;
 import org.bob.siungongsi.common.security.JwtAuthFilter;
 import org.bob.siungongsi.common.security.JwtProvider;
-import org.bob.siungongsi.common.util.RedisUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -22,14 +22,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfigForApi {
 
   private final JwtProvider jwtProvider;
-  private final RedisUtils redisUtils;
+  private final AuthBlackListService authBlackListService;
 
   private final CorsProperties corsProperties;
 
   public SecurityConfigForApi(
-      JwtProvider jwtProvider, RedisUtils redisUtils, CorsProperties corsProperties) {
+      JwtProvider jwtProvider,
+      AuthBlackListService authBlackListService,
+      CorsProperties corsProperties) {
     this.jwtProvider = jwtProvider;
-    this.redisUtils = redisUtils;
+    this.authBlackListService = authBlackListService;
     this.corsProperties = corsProperties;
   }
 
@@ -45,7 +47,8 @@ public class SecurityConfigForApi {
     http.csrf(AbstractHttpConfigurer::disable);
 
     http.addFilterBefore(
-        new JwtAuthFilter(jwtProvider, redisUtils), UsernamePasswordAuthenticationFilter.class);
+        new JwtAuthFilter(jwtProvider, authBlackListService),
+        UsernamePasswordAuthenticationFilter.class);
     http.addFilterBefore(new ExceptionHandlerFilter(), JwtAuthFilter.class);
     return http.build();
   }
