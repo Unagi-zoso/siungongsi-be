@@ -1,6 +1,5 @@
 package org.bob.siungongsi.api.config;
 
-import org.bob.siungongsi.api.service.AuthBlackListService;
 import org.bob.siungongsi.common.security.ExceptionHandlerFilter;
 import org.bob.siungongsi.common.security.JwtAuthFilter;
 import org.bob.siungongsi.common.security.JwtProvider;
@@ -22,16 +21,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfigForApi {
 
   private final JwtProvider jwtProvider;
-  private final AuthBlackListService authBlackListService;
 
   private final CorsProperties corsProperties;
 
-  public SecurityConfigForApi(
-      JwtProvider jwtProvider,
-      AuthBlackListService authBlackListService,
-      CorsProperties corsProperties) {
+  public SecurityConfigForApi(JwtProvider jwtProvider, CorsProperties corsProperties) {
     this.jwtProvider = jwtProvider;
-    this.authBlackListService = authBlackListService;
     this.corsProperties = corsProperties;
   }
 
@@ -47,8 +41,7 @@ public class SecurityConfigForApi {
     http.csrf(AbstractHttpConfigurer::disable);
 
     http.addFilterBefore(
-        new JwtAuthFilter(jwtProvider, authBlackListService),
-        UsernamePasswordAuthenticationFilter.class);
+        new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
     http.addFilterBefore(new ExceptionHandlerFilter(), JwtAuthFilter.class);
     return http.build();
   }

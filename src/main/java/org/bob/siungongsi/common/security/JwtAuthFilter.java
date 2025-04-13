@@ -2,7 +2,6 @@ package org.bob.siungongsi.common.security;
 
 import java.io.IOException;
 
-import org.bob.siungongsi.api.service.AuthBlackListService;
 import org.bob.siungongsi.common.dto.ApiResponseCode;
 import org.bob.siungongsi.common.exception.CustomException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,11 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JwtAuthFilter extends OncePerRequestFilter {
   private final JwtProvider jwtProvider;
-  private final AuthBlackListService authBlackListService;
 
-  public JwtAuthFilter(JwtProvider jwtProvider, AuthBlackListService authBlackListService) {
+  public JwtAuthFilter(JwtProvider jwtProvider) {
     this.jwtProvider = jwtProvider;
-    this.authBlackListService = authBlackListService;
   }
 
   @Override
@@ -46,11 +43,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     authHeader = authHeader.replace("Bearer ", "");
-
-    if (authBlackListService.hasKeyBlackList(authHeader)) {
-      throw new CustomException(ApiResponseCode.AUTH_ACCESS_TOKEN_BLACKLIST);
-    }
-
     Long userId = jwtProvider.validateJwtToken(authHeader);
 
     JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(userId);

@@ -23,7 +23,6 @@ public enum ApiResponseCode {
   AUTH_GET_TERMS_SUCCESS(HttpStatus.OK, 2201, "get_terms_success"),
   AUTH_LOGIN_SUCCESS(HttpStatus.OK, 2202, "login_success"),
   AUTH_REGISTER_SUCCESS(HttpStatus.CREATED, 2203, "register_success"),
-  AUTH_LOGOUT_SUCCESS(HttpStatus.OK, 2204, "logout_success"),
   AUTH_REQUIRED_AUTHORIZATION(HttpStatus.FORBIDDEN, 2400, "required_authorization"),
   AUTH_KAKAO_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, 2401, "kakao_access_token_expired"),
   AUTH_USER_NOT_FOUND(HttpStatus.NOT_FOUND, 2402, "user_not_found"),
@@ -39,7 +38,6 @@ public enum ApiResponseCode {
   AUTH_ACCESS_TOKEN_UNSUPPORTED(HttpStatus.BAD_REQUEST, 2411, "access_token_unsupported"),
   AUTH_ACCESS_TOKEN_INVALID_SIGNATURE(
       HttpStatus.UNAUTHORIZED, 2412, "access_token_invalid_signature"),
-  AUTH_ACCESS_TOKEN_BLACKLIST(HttpStatus.UNAUTHORIZED, 2413, "access_token_blacklist"),
   AUTH_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 2500, "internal_server_error"),
 
   // 유저 관련 응답 코드 (3)
