@@ -80,11 +80,6 @@ fcm:
 site:
   url: ${SITE_URL}
 
-redis:
-  host: ${REDIS_HOST}
-  port: ${REDIS_PORT}
-  ssl: true
-
 logging:
   level:
     root: INFO
