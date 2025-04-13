@@ -9,6 +9,8 @@ import org.bob.siungongsi.common.domain.UserEntity;
 import org.bob.siungongsi.common.repository.CompanyRepository;
 import org.bob.siungongsi.common.repository.NotificationRepository;
 import org.bob.siungongsi.common.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PushNotiService {
 
+  private static final Logger logger = LoggerFactory.getLogger(PushNotiService.class);
   private final FcmService fcmService;
   private final NotificationRepository notificationRepository;
   private final UserRepository userRepository;
@@ -46,6 +49,14 @@ public class PushNotiService {
       if (user.getPushTokenId() == null || user.getPushTokenId().isBlank()) {
         continue;
       }
+
+      logger.info(
+          "Sending push notification to userId={}, token={} , gongsiId={} , companyId={}",
+          user.getId(),
+          user.getPushTokenId(),
+          gongsi.getId(),
+          gongsi.getCompany().getId());
+
       if (!sendMessage(user.getPushTokenId(), gongsi)) {
         return false;
       }

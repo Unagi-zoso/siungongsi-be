@@ -20,6 +20,8 @@ import org.bob.siungongsi.common.repository.CompanyRepository;
 import org.bob.siungongsi.common.repository.GongsiRepository;
 import org.bob.siungongsi.common.repository.GongsiSentStatusRepository;
 import org.bob.siungongsi.common.repository.ProcessingFailedGongsiRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
@@ -42,6 +44,8 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 @Profile("batch")
 @Service
 public class MessageListener {
+
+  private static final Logger logger = LoggerFactory.getLogger(MessageListener.class);
 
   private final SqsAsyncClient sqsAsyncClient;
   private final String queueUrl;
@@ -100,20 +104,26 @@ public class MessageListener {
             .waitTimeSeconds(waitTimeSeconds)
             .build();
 
+    logger.info("Started receiving messages from SQS");
+
     sqsAsyncClient
         .receiveMessage(receiveRequest)
         .thenApply(ReceiveMessageResponse::messages)
         .thenAccept(
             messages -> {
+              logger.info("Received {} messages from SQS", messages.size());
               for (Message message : messages) {
                 if (handleMessage(message)) {
                   deleteMessage(message);
+                  logger.info("Message deleted: receiptHandle={}", message.receiptHandle());
+                } else {
+                  logger.warn("Failed to process message: body={}", message.body());
                 }
               }
             })
         .exceptionally(
             e -> {
-              e.printStackTrace();
+              logger.warn("Error occurred while receiving messages from SQS", e);
               return null;
             });
   }
@@ -121,8 +131,10 @@ public class MessageListener {
   private boolean handleMessage(Message message) {
     try {
       GongsiMessage gongsiMessage = objectMapper.readValue(message.body(), GongsiMessage.class);
+
       return processGongsi(gongsiMessage);
     } catch (Exception e) {
+      logger.warn("Error occurred while handling message", e);
       return false;
     }
   }
@@ -134,11 +146,13 @@ public class MessageListener {
             .receiptHandle(message.receiptHandle())
             .build();
     sqsAsyncClient.deleteMessage(deleteRequest);
+    logger.info("Delete request sent for message: receiptHandle={}", message.receiptHandle());
   }
 
   public boolean processGongsi(GongsiMessage message) {
 
     try {
+      logger.info("Started processing GongsiMessage: {}", message);
       String gongsiId = message.receiptNo();
       String s3Key = fileService.generateS3Key(gongsiId + ".zip");
 
@@ -146,6 +160,7 @@ public class MessageListener {
         byte[] file = openDartReader.fetchGongsiDocument(gongsiId);
 
         if (!fileService.isZipFile(file)) {
+          logger.warn("The file is not in zip format: {}", message);
           ProcessingFailedGongsiEntity processingFailedGongsi =
               new ProcessingFailedGongsiEntity(
                   message.receiptNo(), message.companyCode(), message.receiptTitle());
@@ -157,7 +172,7 @@ public class MessageListener {
       uploadGongsi(message);
       return true;
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.warn("Error occurred while processing GongsiMessage file", e);
       return false;
     }
   }
@@ -181,11 +196,15 @@ public class MessageListener {
                   message.receiptTitle(),
                   originalUrl + message.receiptNo(),
                   s3Key));
+
+      logger.info("Saved GongsiEntity: id={}", gongsiEntity.getId());
       // 내부 호출은 어노테이션이 적용 안되는 것으로 아는데
       // 그렇다고 최상단 메소드에 트랜잭션을 적용하자니 커넥션을 너무 오래 잡을 것 같아
       // 트랜잭션 없이 처리함. 불일치가 많이 발생한다면 추후 수정 필요
       gongsiSentStatusRepository.save(new GongsiSentStatusEntity(gongsiEntity));
+      logger.info("Saved GongsiSentStatusEntity: id={}", gongsiEntity.getId());
     } catch (IOException e) {
+      logger.error("Error occurred while processing GongsiMessage file", e);
       Sentry.captureException(e);
       throw new RuntimeException(e);
     }

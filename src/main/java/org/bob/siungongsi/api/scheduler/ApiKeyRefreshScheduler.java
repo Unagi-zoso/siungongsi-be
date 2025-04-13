@@ -22,7 +22,7 @@ import io.sentry.Sentry;
 @Component
 public class ApiKeyRefreshScheduler {
 
-  private final Logger logger = LoggerFactory.getLogger(ApiKeyRefreshScheduler.class);
+  private static final Logger logger = LoggerFactory.getLogger(ApiKeyRefreshScheduler.class);
 
   private final ApiKeyStoreRepository apiKeyStoreRepository;
 
@@ -54,6 +54,9 @@ public class ApiKeyRefreshScheduler {
 
       String apiKey = koreanInvestmentClient.fetchApprovalKeyWithDelayedRetry(3, 65);
 
+      logger.info(
+          "Fetched new Korean Investment API key: ****{}", apiKey.substring(apiKey.length() - 4));
+
       if (apiKeyStore == null) {
         apiKeyStore = new ApiKeyStoreEntity(KI_API_KEY_NAME, apiKey);
         apiKeyStoreRepository.save(apiKeyStore);
@@ -63,7 +66,7 @@ public class ApiKeyRefreshScheduler {
       apiKeyStoreManager.loadFromDB();
     } catch (Exception e) {
       Sentry.captureException(e);
-      logger.error("Error fetching and refreshing Korean Investment API key: {}", e.getMessage());
+      logger.warn("Error fetching and refreshing Korean Investment API key: {}", e.getMessage());
     }
   }
 }
