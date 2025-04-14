@@ -77,4 +77,18 @@ public class JwtProvider {
       throw new CustomException(ApiResponseCode.AUTH_INTERNAL_SERVER_ERROR);
     }
   }
+
+  public long getRemainingExpirationTime(String token) {
+    long expiration =
+        Jwts.parser()
+            .verifyWith(getKey())
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
+            .getExpiration()
+            .getTime();
+
+    long now = System.currentTimeMillis();
+    return expiration - now;
+  }
 }

@@ -34,6 +34,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 
     // swagger
     // 기존 2.2.0 버전은 Spring Boot 3.4.x 버전에서 Controller Handler 호환성 문제가 있어 최신 버전으로 맞춘다.

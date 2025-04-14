@@ -50,6 +50,11 @@ jwt:
   secret-key: ${JWT_SECRET_KEY}
   expiration-time: ${JWT_EXPIRATION_TIME}
 
+redis:
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT}
+  ssl: true
+
 logging:
   level:
     root: INFO
