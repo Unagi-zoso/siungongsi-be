@@ -2,7 +2,7 @@ package org.bob.siungongsi.batch.service;
 
 import static org.bob.siungongsi.batch.util.TextUtil.removeMarkdown;
 
-import org.bob.siungongsi.batch.client.clientinterface.GoogleAiClientInterface;
+import org.bob.siungongsi.batch.client.clientinterface.GoogleAiClientWrapper;
 import org.bob.siungongsi.batch.client.dto.GoogleAiDtos.GoogleAiRequest;
 import org.bob.siungongsi.batch.client.dto.GoogleAiDtos.GoogleAiResponse;
 import org.bob.siungongsi.common.client.RetryClientHttpRequestInterceptor.RetriesExceededException;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GongsiSummarizer {
 
-  private final GoogleAiClientInterface googleAiClientInterface;
+  private final GoogleAiClientWrapper googleAiClient;
 
   private static final String DEFAULT_SUMMARY_PROMPT =
       "다음 문서를 요약해 주세요.\n"
@@ -25,8 +25,8 @@ public class GongsiSummarizer {
           + "항목 구분은 기호 없이 문장으로 표현하고, 제목은 따로 표시하지 마세요.\n"
           + "각 항목은 새로운 줄에서 시작해야 합니다.\n";
 
-  public GongsiSummarizer(GoogleAiClientInterface googleAiClientInterface) {
-    this.googleAiClientInterface = googleAiClientInterface;
+  public GongsiSummarizer(GoogleAiClientWrapper googleAiClient) {
+    this.googleAiClient = googleAiClient;
   }
 
   public String summarizeText(String text, String prompt) {
@@ -35,13 +35,12 @@ public class GongsiSummarizer {
 
     try {
       // 🔥 1. 기본 모델 (`gemini-2.0-flash`) 요청
-      GoogleAiResponse response = googleAiClientInterface.summarizeWithGemini2Flash(request);
+      GoogleAiResponse response = googleAiClient.summarizeWithGemini2Flash(request);
       return removeMarkdown(response.getSummary());
     } catch (RetriesExceededException e) {
       try {
         // 🔥 2. 대체 모델 (`gemini-2.0-flash-lite`) 요청
-        GoogleAiResponse fallbackResponse =
-            googleAiClientInterface.summarizeWithGemini2FlashLite(request);
+        GoogleAiResponse fallbackResponse = googleAiClient.summarizeWithGemini2FlashLite(request);
         return removeMarkdown(fallbackResponse.getSummary());
       } catch (RetriesExceededException ex) {
         throw new RuntimeException("모든 모델 요청 실패", ex);

@@ -25,7 +25,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 @Component
 public class KoreanInvestmentClient {
 
-  private final Logger logger = LoggerFactory.getLogger(KoreanInvestmentClient.class);
+  private static final Logger logger = LoggerFactory.getLogger(KoreanInvestmentClient.class);
 
   private final ObjectMapper objectMapper;
   private final RestTemplate restTemplate;
@@ -55,13 +55,13 @@ public class KoreanInvestmentClient {
       String accessToken = tokenManager.getAccessToken(ApiKeyStoreManager.KI_API_KEY_NAME);
       return fetchStockData(accessToken, stockCode);
     } catch (Exception e) {
-      logger.error("Error fetching prdyCtr from Korean Investment API: {}", e.getMessage());
+      logger.warn("Error fetching prdyCtr from Korean Investment API: {}", e.getMessage());
       throw new RuntimeException("Failed to fetch prdyCtr: " + e.getMessage());
     }
   }
 
   public double fallbackGetPrdyCtr(String stockCode, Throwable t) {
-    logger.error("Fallback method called for getPrdyCtr: {}", t.getMessage());
+    logger.warn("Fallback method called for getPrdyCtr: {}", t.getMessage());
     return -101;
   }
 

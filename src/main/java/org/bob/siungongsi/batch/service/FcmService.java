@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.bob.siungongsi.common.dto.ApiResponseCode;
 import org.bob.siungongsi.common.exception.CustomException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,13 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 
-import io.sentry.Sentry;
 import jakarta.annotation.PostConstruct;
 
 @Profile("batch")
 @Service
 public class FcmService {
+
+  private final Logger logger = LoggerFactory.getLogger(FcmService.class);
 
   @Value("${fcm.key}")
   private String firebaseJsonBase64;
@@ -74,8 +77,9 @@ public class FcmService {
 
     try {
       firebaseMessaging.send(message);
+      logger.info("Push notification sent to token: {}", token);
     } catch (Exception e) {
-      Sentry.captureException(e);
+      logger.error("Failed to send push notification: {}", e.getMessage());
     }
   }
 }
