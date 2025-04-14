@@ -30,6 +30,7 @@ public class AuthService {
   private final KakaoAuthService kakaoAuthService;
   private final NotificationRepository notificationRepository;
   private final JwtProvider jwtProvider;
+  private final AuthBlackListService authBlackListService;
 
   public AuthService(
       TermRepository termRepository,
@@ -37,13 +38,15 @@ public class AuthService {
       UserAgreedTermRepository userAgreedTermRepository,
       KakaoAuthService kakaoAuthService,
       NotificationRepository notificationRepository,
-      JwtProvider jwtProvider) {
+      JwtProvider jwtProvider,
+      AuthBlackListService authBlackListService) {
     this.userRepository = userRepository;
     this.termRepository = termRepository;
     this.userAgreedTermRepository = userAgreedTermRepository;
     this.kakaoAuthService = kakaoAuthService;
     this.notificationRepository = notificationRepository;
     this.jwtProvider = jwtProvider;
+    this.authBlackListService = authBlackListService;
   }
 
   @Transactional
@@ -117,6 +120,11 @@ public class AuthService {
 
   public String createJwt(String userId) {
     return jwtProvider.createJwtToken(userId);
+  }
+
+  public void logout(String accessToken) {
+    authBlackListService.setBlackList(
+        accessToken, "logout", jwtProvider.getRemainingExpirationTime(accessToken));
   }
 
   @Transactional

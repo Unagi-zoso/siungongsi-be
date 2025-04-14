@@ -181,6 +181,70 @@ public interface AuthControllerSpec {
       })
   ResponseEntity<ApiResponseWrapper<?>> getTerms();
 
+  @Operation(
+      summary = "로그아웃",
+      description = "로그아웃하는 API",
+      responses = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "로그아웃 성공",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ApiResponseWrapper.class),
+                  examples = {
+                    @ExampleObject(
+                        name = "로그 아웃 성공",
+                        value = "{ \"code\": 2204, \"message\": \"logout_success\" }")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "401",
+            description = "JWT 토큰이 필요함",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ApiResponseWrapper.class),
+                  examples = {
+                    @ExampleObject(
+                        name = "JWT 토큰이 필요함",
+                        value = "{ \"code\": 2400, \"message\": \"required_authorization\" }")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "404",
+            description = "사용자를 찾을 수 없음",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ApiResponseWrapper.class),
+                  examples = {
+                    @ExampleObject(
+                        name = "사용자 없음",
+                        value = "{ \"code\": 2402, \"message\": \"user_not_found\" }")
+                  })
+            }),
+        @ApiResponse(
+            responseCode = "500",
+            description = "서버 내부 오류",
+            content = {
+              @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ApiResponseWrapper.class),
+                  examples = {
+                    @ExampleObject(
+                        name = "서버 오류",
+                        value = "{ \"code\": 2500, \"message\": \"internal_server_error\" }")
+                  })
+            })
+      })
+  ResponseEntity<ApiResponseWrapper<?>> logoutUser(
+      @Parameter(
+              description = "JWT 토큰 (Bearer 포함)",
+              required = true,
+              example = "Bearer your_token_here")
+          String authorization);
+
   /** 회원 탈퇴 API */
   @DeleteMapping("/withdraw")
   @Operation(

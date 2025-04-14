@@ -47,6 +47,12 @@ jwt:
   secret-key: dflknlsdfjlskfncdsjlkmxnfjsklcxmvnfddddddddc
   expiration-time: 604800000
 
+redis:
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT}
+  ssl: true
+
 logging:
   level:
     root: INFO
+
