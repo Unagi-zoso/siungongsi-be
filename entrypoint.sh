@@ -10,7 +10,10 @@ echo "[ENTRYPOINT] Fetching .env from S3 → s3://$BUCKET/$OBJECT_KEY"
 aws s3 cp s3://$BUCKET/$OBJECT_KEY /app/.env --region $REGION
 
 if [ -f /app/.env ]; then
-    export $(cat /app/.env | xargs)
+    echo "[ENTRYPOINT] Loading environment variables..."
+    set -a                      
+    source /app/.env            
+    set +a                     
 else
     echo "[ERROR] Failed to load .env"
     exit 1
