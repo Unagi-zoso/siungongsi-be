@@ -27,7 +27,7 @@ sentry:
   dsn: ${SENTRY_DSN}
   tracesSampleRate: 1.0
   environment: develop
-  release: dev-siungongsi-be
+  release: siungongsi-be
 
 doc:
   swagger-ui:

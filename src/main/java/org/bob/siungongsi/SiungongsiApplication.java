@@ -10,3 +10,17 @@ public class SiungongsiApplication {
     SpringApplication.run(SiungongsiApplication.class, args);
   }
 }
+
+@Profile("dev")
+@Component
+class SentryStartupTestRunner implements CommandLineRunner {
+
+  @Override
+  public void run(String... args) {
+    try {
+      throw new Exception("🔥 [dev] Spring Boot 앱 시작 시 테스트용 예외입니다!");
+    } catch (Exception e) {
+      Sentry.captureException(e);
+    }
+  }
+}
