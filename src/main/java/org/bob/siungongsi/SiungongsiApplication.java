@@ -1,12 +1,12 @@
 package org.bob.siungongsi;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-// sentry테스트용. 이후 삭제 예정
-import io.sentry.Sentry;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
+import io.sentry.Sentry;
 
 @SpringBootApplication
 public class SiungongsiApplication {
@@ -15,6 +15,7 @@ public class SiungongsiApplication {
     SpringApplication.run(SiungongsiApplication.class, args);
   }
 }
+
 // sentry테스트용. 이후 삭제 예정
 @Profile("dev")
 @Component
