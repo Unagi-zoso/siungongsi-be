@@ -35,9 +35,7 @@ public class RedisConfig {
 
     LettuceClientConfiguration clientConfig =
         useSsl
-            ? LettuceClientConfiguration.builder()
-                .useSsl()
-                .build()
+            ? LettuceClientConfiguration.builder().useSsl().build()
             : LettuceClientConfiguration.builder().build();
 
     try {
