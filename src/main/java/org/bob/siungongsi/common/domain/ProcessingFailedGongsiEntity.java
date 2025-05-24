@@ -25,7 +25,7 @@ public class ProcessingFailedGongsiEntity extends BaseTimeEntity {
   @Column(name = "gongsi_title", nullable = false, length = 255)
   private String gongsiTitle;
 
-  public ProcessingFailedGongsiEntity() {}
+  protected ProcessingFailedGongsiEntity() {}
 
   public ProcessingFailedGongsiEntity(String gongsiCode, String companyCode, String gongsiTitle) {
     this.gongsiCode = gongsiCode;

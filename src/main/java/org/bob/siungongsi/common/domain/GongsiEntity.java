@@ -41,10 +41,8 @@ public class GongsiEntity extends ModifiableEntity {
   @Column(name = "original_file_s3_key", length = 200, nullable = false)
   private String originalFileS3Key;
 
-  // 기본 생성자 (JPA에서 필수)
   protected GongsiEntity() {}
 
-  // 생성자
   public GongsiEntity(
       CompanyEntity company,
       String contentSummary,

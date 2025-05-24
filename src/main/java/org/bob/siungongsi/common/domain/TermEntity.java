@@ -24,7 +24,8 @@ public class TermEntity {
   @Column(name = "created_dt", nullable = false)
   private LocalDateTime createdDt;
 
-  // Getters
+  protected TermEntity() {}
+
   public Long getId() {
     return id;
   }
@@ -44,7 +45,4 @@ public class TermEntity {
   public LocalDateTime getCreatedDt() {
     return createdDt;
   }
-
-  // Default constructor for JPA
-  protected TermEntity() {}
 }

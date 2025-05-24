@@ -30,7 +30,6 @@ public class UserEntity extends ModifiableEntity {
 
   protected UserEntity() {}
 
-  // 필드 값을 받는 생성자 추가
   public UserEntity(String socialId, String accessToken) {
     this.socialId = socialId;
     this.accessToken = accessToken;

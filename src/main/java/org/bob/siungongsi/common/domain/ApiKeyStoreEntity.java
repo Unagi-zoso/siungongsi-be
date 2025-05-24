@@ -22,7 +22,7 @@ public class ApiKeyStoreEntity extends ModifiableEntity {
   @Column(name = "api_key", length = 1024)
   private String apiKey;
 
-  public ApiKeyStoreEntity() {}
+  protected ApiKeyStoreEntity() {}
 
   public ApiKeyStoreEntity(String keyName, String apiKey) {
     this.keyName = keyName;

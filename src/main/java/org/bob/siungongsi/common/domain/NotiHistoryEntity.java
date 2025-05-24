@@ -22,12 +22,12 @@ public class NotiHistoryEntity extends BaseTimeEntity {
   @Column(name = "user_id", nullable = false)
   private Long userId;
 
+  protected NotiHistoryEntity() {}
+
   public NotiHistoryEntity(Long userId, Long companyId) {
     this.userId = userId;
     this.companyId = companyId;
   }
-
-  public NotiHistoryEntity() {}
 
   public Long getId() {
     return id;

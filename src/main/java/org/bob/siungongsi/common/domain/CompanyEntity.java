@@ -25,7 +25,7 @@ public class CompanyEntity extends ModifiableEntity {
   @Column(name = "stock_code", length = 6, nullable = false, unique = true)
   private String stockCode; // 상장 종목 코드
 
-  public CompanyEntity() {}
+  protected CompanyEntity() {}
 
   public CompanyEntity(String companyName, String companyCode, String stockCode) {
     this.companyName = companyName;

@@ -25,7 +25,7 @@ public class CompanyNameAutofillEntity extends BaseTimeEntity {
   @Column(name = "company_name", nullable = false)
   private String companyName;
 
-  public CompanyNameAutofillEntity() {}
+  protected CompanyNameAutofillEntity() {}
 
   public CompanyNameAutofillEntity(String keyword, Long companyId, String companyName) {
     this.keyword = keyword;
