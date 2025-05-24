@@ -56,7 +56,7 @@ jwt:
 redis:
   host: ${REDIS_HOST}
   port: ${REDIS_PORT}
-  ssl: true
+  ssl: false
 
 logging:
   level:

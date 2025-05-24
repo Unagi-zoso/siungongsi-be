@@ -24,6 +24,9 @@ public class RedisConfig {
   @Value("${redis.port}")
   private int port;
 
+  @Value("${redis.ssl}")
+  private boolean useSsl;
+
   @Bean
   public LettuceConnectionFactory lettuceConnectionFactory() {
     RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
@@ -31,9 +34,11 @@ public class RedisConfig {
     config.setPort(port);
 
     LettuceClientConfiguration clientConfig =
-        LettuceClientConfiguration.builder()
-            .useSsl() // <<== 이 부분이 핵심
-            .build();
+        useSsl
+            ? LettuceClientConfiguration.builder()
+                .useSsl()
+                .build()
+            : LettuceClientConfiguration.builder().build();
 
     try {
       LettuceConnectionFactory connectionFactory =
