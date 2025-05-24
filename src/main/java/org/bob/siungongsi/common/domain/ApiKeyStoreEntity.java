@@ -1,5 +1,6 @@
 package org.bob.siungongsi.common.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,6 +19,7 @@ public class ApiKeyStoreEntity extends ModifiableEntity {
 
   private String keyName;
 
+  @Column(name = "api_key", length = 1024)
   private String apiKey;
 
   public ApiKeyStoreEntity() {}
