@@ -16,12 +16,12 @@ public class UserAgreedTermEntity extends BaseTimeEntity {
   @Column(name = "term_id", nullable = false)
   private Long termId;
 
+  protected UserAgreedTermEntity() {}
+
   public UserAgreedTermEntity(Long userId, Long termId) {
     this.userId = userId;
     this.termId = termId;
   }
-
-  public UserAgreedTermEntity() {}
 
   public Long getId() {
     return id;

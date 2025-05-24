@@ -27,10 +27,8 @@ public class TodayProcessedGongsiEntity extends BaseTimeEntity {
   @Column(name = "processed_at", nullable = false, updatable = false)
   private LocalDateTime processedAt;
 
-  // 기본 생성자 (JPA에서 필수)
   protected TodayProcessedGongsiEntity() {}
 
-  // 생성자
   public TodayProcessedGongsiEntity(String gongsiCode) {
     this.gongsiCode = gongsiCode;
     this.processedAt = LocalDateTime.now(); // 생성 시점 자동 설정

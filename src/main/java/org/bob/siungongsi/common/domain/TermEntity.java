@@ -1,12 +1,10 @@
 package org.bob.siungongsi.common.domain;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "terms")
-public class TermEntity {
+public class TermEntity extends ModifiableEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,10 +19,8 @@ public class TermEntity {
   @Column(name = "required_flag", nullable = false)
   private Integer requiredFlag;
 
-  @Column(name = "created_dt", nullable = false)
-  private LocalDateTime createdDt;
+  protected TermEntity() {}
 
-  // Getters
   public Long getId() {
     return id;
   }
@@ -40,11 +36,4 @@ public class TermEntity {
   public Integer getRequiredFlag() {
     return requiredFlag;
   }
-
-  public LocalDateTime getCreatedDt() {
-    return createdDt;
-  }
-
-  // Default constructor for JPA
-  protected TermEntity() {}
 }
