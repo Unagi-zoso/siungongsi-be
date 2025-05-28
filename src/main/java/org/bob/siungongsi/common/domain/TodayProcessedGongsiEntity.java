@@ -1,7 +1,5 @@
 package org.bob.siungongsi.common.domain;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,14 +22,10 @@ public class TodayProcessedGongsiEntity extends BaseTimeEntity {
   @Column(name = "gongsi_code", nullable = false, unique = true)
   private String gongsiCode; // 공시 ID (OpenDart 공시 식별자)
 
-  @Column(name = "processed_at", nullable = false, updatable = false)
-  private LocalDateTime processedAt;
-
   protected TodayProcessedGongsiEntity() {}
 
   public TodayProcessedGongsiEntity(String gongsiCode) {
     this.gongsiCode = gongsiCode;
-    this.processedAt = LocalDateTime.now(); // 생성 시점 자동 설정
   }
 
   public Long getId() {
@@ -40,9 +34,5 @@ public class TodayProcessedGongsiEntity extends BaseTimeEntity {
 
   public String getGongsiCode() {
     return gongsiCode;
-  }
-
-  public LocalDateTime getProcessedAt() {
-    return processedAt;
   }
 }
