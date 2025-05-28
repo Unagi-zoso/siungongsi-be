@@ -1,10 +1,9 @@
 package org.bob.siungongsi.api.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bob.siungongsi.api.controller.dto.CompanyResponse;
-import org.bob.siungongsi.common.domain.CompanyNameAutofillEntity;
+import org.bob.siungongsi.common.dto.projection.CompanyNameAutofillProjection;
 import org.bob.siungongsi.common.repository.CompanyNameAutofillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,17 +18,12 @@ public class CompanyService {
   }
 
   public CompanyResponse.CompanyNameListResponse getCompanyNames(String keyword) {
-    List<CompanyNameAutofillEntity> companies =
+    List<CompanyNameAutofillProjection.CompanyNameRecord> companyNameRecords =
         companyNameAutofillRepository.findTop5ByKeyword(keyword);
 
     List<CompanyResponse.CompanyNameResponse> companyNameList =
-        companies.stream()
-            .map(
-                autofill ->
-                    new CompanyResponse.CompanyNameResponse(
-                        autofill.getCompanyId(), autofill.getCompanyName()))
-            .collect(Collectors.toList());
+        companyNameRecords.stream().map(CompanyResponse.CompanyNameResponse::from).toList();
 
-    return new CompanyResponse.CompanyNameListResponse(companyNameList.size(), companyNameList);
+    return CompanyResponse.CompanyNameListResponse.from(companyNameList);
   }
 }
