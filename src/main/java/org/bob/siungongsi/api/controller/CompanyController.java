@@ -34,10 +34,6 @@ public class CompanyController implements CompanyControllerSpec {
     CompanyNameListResponse companies = companyService.getCompanyNames(keyword);
 
     return ResponseEntity.status(ApiResponseCode.COMPANY_GET_NAME_LIST_SUCCESS.getHttpStatus())
-        .body(
-            ApiResponseWrapper.success(
-                COMPANY_GET_NAME_LIST_SUCCESS,
-                CompanyNameListResponse.of(
-                    companies.companyNameListSize(), companies.companyNameList())));
+        .body(ApiResponseWrapper.success(COMPANY_GET_NAME_LIST_SUCCESS, companies));
   }
 }

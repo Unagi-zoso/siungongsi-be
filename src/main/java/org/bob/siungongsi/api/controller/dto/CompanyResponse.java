@@ -2,18 +2,21 @@ package org.bob.siungongsi.api.controller.dto;
 
 import java.util.List;
 
+import org.bob.siungongsi.common.dto.projection.CompanyNameAutofillProjection;
+
 public class CompanyResponse {
   public record CompanyNameListResponse(
       int companyNameListSize, List<CompanyNameResponse> companyNameList) {
-    public static CompanyNameListResponse of(
-        int companyNameListSize, List<CompanyNameResponse> companyNameList) {
-      return new CompanyNameListResponse(companyNameListSize, companyNameList);
+    public static CompanyNameListResponse from(List<CompanyNameResponse> companyNameList) {
+      return new CompanyNameListResponse(companyNameList.size(), companyNameList);
     }
   }
 
   public record CompanyNameResponse(long companyId, String companyName) {
-    public static CompanyNameResponse of(long companyId, String companyName) {
-      return new CompanyNameResponse(companyId, companyName);
+    public static CompanyNameResponse from(
+        CompanyNameAutofillProjection.CompanyNameRecord companyNameRecord) {
+      return new CompanyNameResponse(
+          companyNameRecord.companyId(), companyNameRecord.companyName());
     }
   }
 
