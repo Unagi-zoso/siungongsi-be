@@ -27,7 +27,6 @@ import org.bob.siungongsi.api.controller.dto.TermsResponse;
 import org.bob.siungongsi.api.service.AuthService;
 import org.bob.siungongsi.common.dto.ApiResponseCode;
 import org.bob.siungongsi.common.exception.CustomException;
-import org.bob.siungongsi.common.exception.GlobalExceptionHandler;
 import org.bob.siungongsi.testhelper.config.SecurityConfigBeansForTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +41,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ActiveProfiles("test")
-@Import({SecurityConfigForApi.class, SecurityConfigBeansForTest.class, GlobalExceptionHandler.class})
+@Import({SecurityConfigForApi.class, SecurityConfigBeansForTest.class})
 @WebMvcTest(AuthController.class)
 class AuthControllerTest {
 
