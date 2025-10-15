@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class SecurityConfigBeansForTest {
 
-  // 해당 Mock을 임의로 stubbing 할 경우 기존 상태로 초기화 필수
+  // 해당 Mock을 임의로 stubbing 할 경우 기존 상태(본 메소드에서 정의한 stub)로 초기화 필수
   @Bean
   JwtProvider jwtProvider() {
     JwtProvider mock = mock(JwtProvider.class);
@@ -45,7 +45,7 @@ public class SecurityConfigBeansForTest {
     return new CorsProperties(List.of("*"));
   }
 
-  // 해당 Mock을 임의로 stubbing 할 경우 기존 상태로 초기화 필수
+  // 해당 Mock을 임의로 stubbing 할 경우 기존 상태(본 메소드에서 정의한 stub)로 초기화 필수
   @Bean
   AuthBlackListService authBlackListService() {
     AuthBlackListService mock = mock(AuthBlackListService.class);
