@@ -20,6 +20,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -239,8 +240,8 @@ class AuthServiceTest {
   @DisplayName("회원탈퇴 시 사용자 정보가 삭제된다")
   void whenWithdrawUser_thenUserIsDeleted() {
     // given
-    SecurityContext securityContext = org.mockito.Mockito.mock(SecurityContext.class);
-    Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+    SecurityContext securityContext = mock(SecurityContext.class);
+    Authentication authentication = mock(Authentication.class);
 
     when(authentication.getPrincipal()).thenReturn(TEST_USER_ID);
     when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -262,8 +263,8 @@ class AuthServiceTest {
   @DisplayName("존재하지 않는 사용자 회원탈퇴 시 예외가 발생한다")
   void whenWithdrawNonExistentUser_thenThrowsException() {
     // given
-    SecurityContext securityContext = org.mockito.Mockito.mock(SecurityContext.class);
-    Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
+    SecurityContext securityContext = mock(SecurityContext.class);
+    Authentication authentication = mock(Authentication.class);
 
     when(authentication.getPrincipal()).thenReturn(TEST_USER_ID);
     when(securityContext.getAuthentication()).thenReturn(authentication);
