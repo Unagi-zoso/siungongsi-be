@@ -56,7 +56,7 @@ public class UserFixture {
     return new UserEntityBuilder();
   }
 
-  /** Service 단위 테스트용 Mock UserEntity를 생성합니다. Mock 객체를 생성하고 필요한 필드값을 stub하여 반환합니다. */
+  /** Service 단위 테스트용 Mock UserEntity를 생성합니다. Mock 객체를 생성하고 필요한 필드값을 stubbing하여 반환합니다. */
   public static UserEntity createMockedUser(Long id, String socialId, String accessToken) {
     UserEntity user = mock(UserEntity.class);
     lenient().when(user.getId()).thenReturn(id);
