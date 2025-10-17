@@ -3,13 +3,9 @@ package org.bob.siungongsi.api.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.bob.siungongsi.fixture.AuthFixture.ALL_REQUIRED_TERM_IDS;
-import static org.bob.siungongsi.fixture.AuthFixture.ALL_TERM_IDS;
 import static org.bob.siungongsi.fixture.AuthFixture.OPTIONAL_TERM_ID;
-import static org.bob.siungongsi.fixture.AuthFixture.REQUIRED_TERM_ID_1;
-import static org.bob.siungongsi.fixture.AuthFixture.REQUIRED_TERM_ID_2;
 import static org.bob.siungongsi.fixture.AuthFixture.TEST_BEARER_TOKEN;
 import static org.bob.siungongsi.fixture.AuthFixture.TEST_JWT_TOKEN;
-import static org.bob.siungongsi.fixture.AuthFixture.TEST_KAKAO_ACCESS_TOKEN;
 import static org.bob.siungongsi.fixture.AuthFixture.TEST_SOCIAL_ID;
 import static org.bob.siungongsi.fixture.AuthFixture.createValidRegisterRequest;
 import static org.bob.siungongsi.fixture.TermFixture.createAllTermEntities;
@@ -18,7 +14,6 @@ import static org.bob.siungongsi.fixture.UserFixture.createMockedUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -31,7 +26,6 @@ import org.bob.siungongsi.api.controller.dto.AuthRequest;
 import org.bob.siungongsi.api.controller.dto.AuthResponse;
 import org.bob.siungongsi.api.controller.dto.TermsResponse;
 import org.bob.siungongsi.common.domain.TermEntity;
-import org.bob.siungongsi.common.domain.UserAgreedTermEntity;
 import org.bob.siungongsi.common.domain.UserEntity;
 import org.bob.siungongsi.common.dto.ApiResponseCode;
 import org.bob.siungongsi.common.exception.CustomException;
@@ -40,7 +34,6 @@ import org.bob.siungongsi.common.repository.TermRepository;
 import org.bob.siungongsi.common.repository.UserAgreedTermRepository;
 import org.bob.siungongsi.common.repository.UserRepository;
 import org.bob.siungongsi.common.security.JwtProvider;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -131,8 +124,7 @@ class AuthServiceTest {
     // when & then
     assertThatThrownBy(() -> authService.register(request, TEST_BEARER_TOKEN))
         .isInstanceOf(CustomException.class)
-        .hasFieldOrPropertyWithValue(
-            "errorCode", ApiResponseCode.AUTH_REQUIRED_TERMS_NOT_AGREED);
+        .hasFieldOrPropertyWithValue("errorCode", ApiResponseCode.AUTH_REQUIRED_TERMS_NOT_AGREED);
   }
 
   @Test
