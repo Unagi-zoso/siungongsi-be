@@ -10,7 +10,7 @@ import static org.bob.siungongsi.fixture.AuthFixture.TEST_SOCIAL_ID;
 import static org.bob.siungongsi.fixture.AuthFixture.createValidRegisterRequest;
 import static org.bob.siungongsi.fixture.TermFixture.createAllTermEntities;
 import static org.bob.siungongsi.fixture.UserFixture.TEST_USER_ID;
-import static org.bob.siungongsi.fixture.UserFixture.createMockedUser;
+import static org.bob.siungongsi.fixture.UserFixture.mockedUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -63,7 +63,7 @@ class AuthServiceTest {
   void whenRegister_thenReturnsJwtToken() {
     // given
     AuthRequest.RegisterRequest request = createValidRegisterRequest();
-    UserEntity user = createMockedUser(TEST_USER_ID);
+    UserEntity user = mockedUser().withId(TEST_USER_ID).build();
 
     when(kakaoAuthService.getSocialIdFromAccessToken(TEST_BEARER_TOKEN)).thenReturn(TEST_SOCIAL_ID);
     when(userRepository.existsBySocialId(TEST_SOCIAL_ID)).thenReturn(false);
@@ -114,7 +114,7 @@ class AuthServiceTest {
     // given
     AuthRequest.RegisterRequest request =
         new AuthRequest.RegisterRequest(List.of(OPTIONAL_TERM_ID));
-    UserEntity user = createMockedUser(TEST_USER_ID);
+    UserEntity user = mockedUser().withId(TEST_USER_ID).build();
 
     when(kakaoAuthService.getSocialIdFromAccessToken(TEST_BEARER_TOKEN)).thenReturn(TEST_SOCIAL_ID);
     when(userRepository.existsBySocialId(TEST_SOCIAL_ID)).thenReturn(false);
@@ -132,7 +132,7 @@ class AuthServiceTest {
   void whenRegisterWithInvalidTermId_thenThrowsException() {
     // given
     AuthRequest.RegisterRequest request = createValidRegisterRequest();
-    UserEntity user = createMockedUser(TEST_USER_ID);
+    UserEntity user = mockedUser().withId(TEST_USER_ID).build();
 
     when(kakaoAuthService.getSocialIdFromAccessToken(TEST_BEARER_TOKEN)).thenReturn(TEST_SOCIAL_ID);
     when(userRepository.existsBySocialId(TEST_SOCIAL_ID)).thenReturn(false);
@@ -151,7 +151,7 @@ class AuthServiceTest {
   @DisplayName("기존 사용자 로그인 시 JWT 토큰과 isUser가 true를 반환한다")
   void whenLoginExistingUser_thenReturnsJwtTokenAndIsUserTrue() {
     // given
-    UserEntity user = createMockedUser(TEST_USER_ID);
+    UserEntity user = mockedUser().withId(TEST_USER_ID).build();
 
     when(kakaoAuthService.getSocialIdFromAccessToken(TEST_BEARER_TOKEN)).thenReturn(TEST_SOCIAL_ID);
     when(userRepository.findBySocialId(TEST_SOCIAL_ID)).thenReturn(Optional.of(user));
