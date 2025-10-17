@@ -2,6 +2,8 @@ package org.bob.siungongsi.fixture;
 
 import static org.bob.siungongsi.fixture.AuthFixture.TEST_KAKAO_ACCESS_TOKEN;
 import static org.bob.siungongsi.fixture.AuthFixture.TEST_SOCIAL_ID;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -54,7 +56,22 @@ public class UserFixture {
     return new UserEntityBuilder();
   }
 
-  // 단건 생성 편의 메서드
+  /**
+   * Service 단위 테스트용 Mock UserEntity를 생성합니다. Mock 객체를 생성하고 필요한 필드값을 stub하여 반환합니다.
+   */
+  public static UserEntity createMockedUser(Long id, String socialId, String accessToken) {
+    UserEntity user = mock(UserEntity.class);
+    when(user.getId()).thenReturn(id);
+    when(user.getSocialId()).thenReturn(socialId);
+    when(user.getAccessToken()).thenReturn(accessToken);
+    return user;
+  }
+
+  public static UserEntity createMockedUser(Long id) {
+    return createMockedUser(id, TEST_SOCIAL_ID, TEST_KAKAO_ACCESS_TOKEN);
+  }
+
+  // 단건 생성 편의 메서드 (Repository/Integration 테스트용)
   public static UserEntity createDefaultUser() {
     return userEntity().build();
   }
