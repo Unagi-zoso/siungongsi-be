@@ -29,7 +29,8 @@ class AuthBlackListServiceTest {
   @DisplayName("블랙리스트에 토큰을 추가한다")
   void whenSetBlackList_thenSavesToRedis() {
     // when
-    authBlackListService.setBlackList(TEST_ACCESS_TOKEN, TEST_BLACKLIST_VALUE, TEST_TOKEN_EXPIRATION);
+    authBlackListService.setBlackList(
+        TEST_ACCESS_TOKEN, TEST_BLACKLIST_VALUE, TEST_TOKEN_EXPIRATION);
 
     // then
     verify(redisUtils, times(1))
@@ -59,7 +60,8 @@ class AuthBlackListServiceTest {
   @DisplayName("블랙리스트에 없는 토큰 조회 시 null을 반환한다")
   void whenGetBlackListWithNonExistentToken_thenReturnsNull() {
     // given
-    when(redisUtils.get(AuthBlackListService.BLACKLIST_PREFIX + TEST_ACCESS_TOKEN)).thenReturn(null);
+    when(redisUtils.get(AuthBlackListService.BLACKLIST_PREFIX + TEST_ACCESS_TOKEN))
+        .thenReturn(null);
 
     // when
     Object result = authBlackListService.getBlackList(TEST_ACCESS_TOKEN);
@@ -73,7 +75,8 @@ class AuthBlackListServiceTest {
   @DisplayName("블랙리스트에 토큰이 존재하는지 확인한다")
   void whenHasKeyBlackList_thenReturnsTrue() {
     // given
-    when(redisUtils.hasKey(AuthBlackListService.BLACKLIST_PREFIX + TEST_ACCESS_TOKEN)).thenReturn(true);
+    when(redisUtils.hasKey(AuthBlackListService.BLACKLIST_PREFIX + TEST_ACCESS_TOKEN))
+        .thenReturn(true);
 
     // when
     boolean result = authBlackListService.hasKeyBlackList(TEST_ACCESS_TOKEN);
@@ -87,7 +90,8 @@ class AuthBlackListServiceTest {
   @DisplayName("블랙리스트에 토큰이 없으면 false를 반환한다")
   void whenHasKeyBlackListWithNonExistentToken_thenReturnsFalse() {
     // given
-    when(redisUtils.hasKey(AuthBlackListService.BLACKLIST_PREFIX + TEST_ACCESS_TOKEN)).thenReturn(false);
+    when(redisUtils.hasKey(AuthBlackListService.BLACKLIST_PREFIX + TEST_ACCESS_TOKEN))
+        .thenReturn(false);
 
     // when
     boolean result = authBlackListService.hasKeyBlackList(TEST_ACCESS_TOKEN);
@@ -101,7 +105,8 @@ class AuthBlackListServiceTest {
   @DisplayName("블랙리스트에서 토큰을 삭제한다")
   void whenDeleteBlackList_thenReturnsTrue() {
     // given
-    when(redisUtils.delete(AuthBlackListService.BLACKLIST_PREFIX + TEST_ACCESS_TOKEN)).thenReturn(true);
+    when(redisUtils.delete(AuthBlackListService.BLACKLIST_PREFIX + TEST_ACCESS_TOKEN))
+        .thenReturn(true);
 
     // when
     boolean result = authBlackListService.deleteBlackList(TEST_ACCESS_TOKEN);
@@ -115,7 +120,8 @@ class AuthBlackListServiceTest {
   @DisplayName("블랙리스트에 없는 토큰 삭제 시 false를 반환한다")
   void whenDeleteBlackListWithNonExistentToken_thenReturnsFalse() {
     // given
-    when(redisUtils.delete(AuthBlackListService.BLACKLIST_PREFIX + TEST_ACCESS_TOKEN)).thenReturn(false);
+    when(redisUtils.delete(AuthBlackListService.BLACKLIST_PREFIX + TEST_ACCESS_TOKEN))
+        .thenReturn(false);
 
     // when
     boolean result = authBlackListService.deleteBlackList(TEST_ACCESS_TOKEN);
