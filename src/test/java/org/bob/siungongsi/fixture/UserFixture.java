@@ -2,6 +2,8 @@ package org.bob.siungongsi.fixture;
 
 import static org.bob.siungongsi.fixture.AuthFixture.TEST_KAKAO_ACCESS_TOKEN;
 import static org.bob.siungongsi.fixture.AuthFixture.TEST_SOCIAL_ID;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -54,11 +56,45 @@ public class UserFixture {
     return new UserEntityBuilder();
   }
 
-  // 단건 생성 편의 메서드
-  public static UserEntity createDefaultUser() {
-    return userEntity().build();
+  /** Service 단위 테스트용 Mock UserEntity Builder */
+  public static class MockedUserEntityBuilder {
+    private final UserEntity user = mock(UserEntity.class);
+
+    public MockedUserEntityBuilder withId(Long id) {
+      when(user.getId()).thenReturn(id);
+      return this;
+    }
+
+    public MockedUserEntityBuilder withSocialId(String socialId) {
+      when(user.getSocialId()).thenReturn(socialId);
+      return this;
+    }
+
+    public MockedUserEntityBuilder withAccessToken(String accessToken) {
+      when(user.getAccessToken()).thenReturn(accessToken);
+      return this;
+    }
+
+    public MockedUserEntityBuilder withPushTokenId(String pushTokenId) {
+      when(user.getPushTokenId()).thenReturn(pushTokenId);
+      return this;
+    }
+
+    public MockedUserEntityBuilder withNotiFlag(boolean notiFlag) {
+      when(user.getNotiFlag()).thenReturn(notiFlag);
+      return this;
+    }
+
+    public UserEntity build() {
+      return user;
+    }
   }
 
+  public static MockedUserEntityBuilder mockedUser() {
+    return new MockedUserEntityBuilder();
+  }
+
+  // 단건 생성 편의 메서드 (Repository/Integration 테스트용)
   public static UserEntity createUser(String socialId, String accessToken) {
     return userEntity().socialId(socialId).accessToken(accessToken).build();
   }

@@ -19,6 +19,16 @@ public class AuthFixture {
   public static final String TEST_JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test-jwt-token";
   public static final String TEST_JWT_TOKEN_2 = TEST_JWT_TOKEN + "-2";
   public static final String INVALID_JWT_TOKEN = "invalid.jwt.token";
+  public static final String TEST_ACCESS_TOKEN = "test-access-token";
+
+  // Redis 블랙리스트 관련
+  public static final String TEST_BLACKLIST_VALUE = "blacklisted";
+  public static final Long TEST_TOKEN_EXPIRATION = 3600L;
+
+  // API Key Store 관련
+  public static final String TEST_API_KEY_NAME = "test_api_key";
+  public static final String TEST_API_KEY = "test-key-1234567890";
+  public static final String TEST_KI_API_KEY = "ki-test-key-1234567890";
 
   // 약관 ID 상수
   public static final Long REQUIRED_TERM_ID_1 = 1L;
