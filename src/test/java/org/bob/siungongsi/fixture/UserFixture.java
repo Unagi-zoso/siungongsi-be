@@ -24,6 +24,7 @@ public class UserFixture {
   // 테스트용 사용자 ID 상수
   public static final Long TEST_USER_ID = 1L;
   public static final Long TEST_USER_ID_2 = 2L;
+  public static final String TEST_USER_ID_STR = String.valueOf(TEST_USER_ID);
 
   public static class UserEntityBuilder {
     private String socialId = TEST_SOCIAL_ID;
