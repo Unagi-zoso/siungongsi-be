@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Profile({"dev", "local"})
+@Profile({"dev"})
 @RestController
 @RequestMapping("/support")
 public class DevSupportController implements DevSupportControllerSpec {
