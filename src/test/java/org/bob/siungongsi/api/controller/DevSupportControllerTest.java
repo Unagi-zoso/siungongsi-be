@@ -8,6 +8,7 @@ import static org.bob.siungongsi.fixture.DevSupportFixture.TEST_JWT_TOKEN;
 import static org.bob.siungongsi.fixture.DevSupportFixture.TEST_JWT_TOKEN_DEFAULT;
 import static org.bob.siungongsi.fixture.DevSupportFixture.TEST_JWT_TOKEN_WITH_EXPIRATION;
 import static org.bob.siungongsi.fixture.UserFixture.TEST_USER_ID;
+import static org.bob.siungongsi.fixture.UserFixture.TEST_USER_ID_STR;
 import static org.bob.siungongsi.fixture.UserFixture.mockedUser;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -53,9 +54,9 @@ class DevSupportControllerTest {
     // given
     List<UserEntity> users =
         List.of(
-            mockedUser().withId(1L).build(),
-            mockedUser().withId(2L).build(),
-            mockedUser().withId(3L).build());
+            mockedUser().withId(TEST_USER_ID).build(),
+            mockedUser().withId(TEST_USER_ID + 1).build(),
+            mockedUser().withId(TEST_USER_ID + 2).build());
     when(userService.getUser()).thenReturn(users);
 
     // when & then
@@ -88,12 +89,11 @@ class DevSupportControllerTest {
   @DisplayName("userId로 JWT 토큰 생성 시 토큰을 반환한다")
   void whenGetToken_thenReturnsJwtToken() throws Exception {
     // given
-    String userId = String.valueOf(TEST_USER_ID);
-    when(jwtProvider.createJwtToken(userId)).thenReturn(TEST_JWT_TOKEN);
+    when(jwtProvider.createJwtToken(TEST_USER_ID_STR)).thenReturn(TEST_JWT_TOKEN);
 
     // when & then
     mockMvc
-        .perform(post("/support/token").param("userId", userId))
+        .perform(post("/support/token").param("userId", TEST_USER_ID_STR))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.code").value(DEV_SUPPORT_RESPONSE_CODE))
         .andExpect(jsonPath("$.message").value(DEV_SUPPORT_TOKEN_MESSAGE))
@@ -104,15 +104,14 @@ class DevSupportControllerTest {
   @DisplayName("userId와 expirationTime으로 JWT 토큰 생성 시 토큰을 반환한다")
   void whenGetTokenWithExpirationTime_thenReturnsJwtToken() throws Exception {
     // given
-    String userId = String.valueOf(TEST_USER_ID);
-    when(jwtProvider.createJwtToken(eq(userId), eq(DEFAULT_EXPIRATION_TIME)))
+    when(jwtProvider.createJwtToken(eq(TEST_USER_ID_STR), eq(DEFAULT_EXPIRATION_TIME)))
         .thenReturn(TEST_JWT_TOKEN_WITH_EXPIRATION);
 
     // when & then
     mockMvc
         .perform(
             post("/support/token")
-                .param("userId", userId)
+                .param("userId", TEST_USER_ID_STR)
                 .param("expirationTime", String.valueOf(DEFAULT_EXPIRATION_TIME)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.code").value(DEV_SUPPORT_RESPONSE_CODE))
@@ -124,12 +123,11 @@ class DevSupportControllerTest {
   @DisplayName("expirationTime 없이 토큰 생성 시 기본 만료 시간으로 토큰을 생성한다")
   void whenGetTokenWithoutExpirationTime_thenReturnsDefaultToken() throws Exception {
     // given
-    String userId = String.valueOf(TEST_USER_ID);
-    when(jwtProvider.createJwtToken(userId)).thenReturn(TEST_JWT_TOKEN_DEFAULT);
+    when(jwtProvider.createJwtToken(TEST_USER_ID_STR)).thenReturn(TEST_JWT_TOKEN_DEFAULT);
 
     // when & then
     mockMvc
-        .perform(post("/support/token").param("userId", userId))
+        .perform(post("/support/token").param("userId", TEST_USER_ID_STR))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.code").value(DEV_SUPPORT_RESPONSE_CODE))
         .andExpect(jsonPath("$.data").value(TEST_JWT_TOKEN_DEFAULT));
